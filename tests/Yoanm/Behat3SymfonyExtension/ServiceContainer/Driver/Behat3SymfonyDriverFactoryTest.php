@@ -3,11 +3,11 @@ namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver;
 
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver\Behat3SymfonyFactory;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver\Behat3SymfonyDriverFactory;
 
-class Behat3SymfonyFactoryTest extends \PHPUnit_Framework_TestCase
+class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Behat3SymfonyFactory */
+    /** @var Behat3SymfonyDriverFactory */
     private $factory;
 
     /**
@@ -15,7 +15,7 @@ class Behat3SymfonyFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->factory = new Behat3SymfonyFactory();
+        $this->factory = new Behat3SymfonyDriverFactory();
     }
 
     public function testGetDriverName()
