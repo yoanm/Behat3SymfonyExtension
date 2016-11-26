@@ -15,8 +15,7 @@ build_failure_conditions:
 build:
     cache:
         directories:
-            - vendor/
-            - bin/
+            - vendor
             - ~/.composer
     dependencies:
         override:
