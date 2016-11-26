@@ -1,0 +1,75 @@
+checks:
+    php:
+        code_rating: true
+        duplication: true
+build_failure_conditions:
+    - 'project.metric_change("scrutinizer.quality", < -0.10)'
+    - 'elements.rating(<= D).exists'               # No classes/methods with a rating of D or worse
+    - 'issues.label("coding-style").exists'        # No coding style issues allowed
+    - 'issues.severity(>= MAJOR).exists'           # New major or higher severity issues
+    - 'project.metric("scrutinizer.quality", < 9)' # Code Quality Rating drops below 9
+    - 'project.metric("scrutinizer.test_coverage", < 0.90)' # Code Coverage drops below 90%
+    - 'project.metric_change("scrutinizer.test_coverage", < -0.02)'
+    - 'patches.label("Doc Comments").exists'       # No doc comments patches allowed
+    - 'patches.label("Spacing").exists'            # No spacing patches allowed
+build:
+    cache:
+        directories:
+            - vendor/
+            - bin/
+    dependencies:
+        override:
+            - composer install
+
+    environment:
+        rabbitmq: false
+        variables:
+            SYMFONY_ENV: 'test'
+    tests:
+        override:
+            -
+                command: phpcs-run # @see https://scrutinizer-ci.com/docs/tools/php/code-sniffer/
+            -
+                command: ./vendor/bin/phpunit --coverage-clover=coverage-report
+                idle_timeout: 1200
+                coverage:
+                    file: 'coverage-report'
+                    format: 'php-clover'
+
+tools:
+    php_analyzer:
+        enabled: true
+        config:
+            checkstyle:
+                enabled: true
+                naming:
+                    isser_method_name: ^.*$
+                    utility_class_name: ^.*$
+            doc_comment_fixes:
+                enabled: false
+            reflection_fixes:
+                enabled: false
+            use_statement_fixes:
+                enabled: false
+            simplify_boolean_return:
+                enabled: true
+    external_code_coverage: false
+    php_code_coverage:      false
+    php_changetracking: true
+    php_cpd: true
+    php_cs_fixer: false
+    php_mess_detector: true
+    php_pdepend: true
+    sensiolabs_security_checker: true
+
+filter:
+    paths:
+        - src/*
+
+coding_style:
+    php:
+        spaces:
+            before_parentheses:
+                closure_definition: true
+            around_operators:
+                concatenation: false
