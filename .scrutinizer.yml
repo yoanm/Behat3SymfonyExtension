@@ -17,6 +17,7 @@ build:
         directories:
             - vendor/
             - bin/
+            - ~/.composer
     dependencies:
         override:
             - composer install
