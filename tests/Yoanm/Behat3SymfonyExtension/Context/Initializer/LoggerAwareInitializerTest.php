@@ -13,7 +13,7 @@ use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
 class LoggerAwareInitializerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Logger|ObjectProphecy */
-    private $logger;
+    private $behatLogger;
     /** @var LoggerAwareInitializer */
     private $initializer;
 
@@ -22,10 +22,10 @@ class LoggerAwareInitializerTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->logger = $this->prophesize(Logger::class);
+        $this->behatLogger = $this->prophesize(Logger::class);
 
         $this->initializer = new LoggerAwareInitializer(
-            $this->logger->reveal()
+            $this->behatLogger->reveal()
         );
     }
 
@@ -34,7 +34,7 @@ class LoggerAwareInitializerTest extends \PHPUnit_Framework_TestCase
         /** @var LoggerAwareInterface|ObjectProphecy $context */
         $context = $this->prophesize(LoggerAwareInterface::class);
 
-        $context->setLogger($this->logger->reveal())
+        $context->setBehatLogger($this->behatLogger->reveal())
             ->shouldBeCalledTimes(1);
 
         $this->initializer->initializeContext($context->reveal());

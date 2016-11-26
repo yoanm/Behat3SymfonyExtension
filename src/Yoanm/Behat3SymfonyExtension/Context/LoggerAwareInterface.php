@@ -13,5 +13,5 @@ interface LoggerAwareInterface extends Context
     /**
      * @param Logger $behatLogger
      */
-    public function setLogger(Logger $behatLogger);
+    public function setBehatLogger(Logger $behatLogger);
 }
