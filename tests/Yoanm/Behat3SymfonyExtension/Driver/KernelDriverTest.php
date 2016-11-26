@@ -66,6 +66,4 @@ class KernelDriverTest extends \PHPUnit_Framework_TestCase
 
         return [$kernel, $client];
     }
-
-
 }
