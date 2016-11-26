@@ -16,7 +16,7 @@ class SfKernelLoggerSubscriber implements EventSubscriberInterface
     private $sfKernelEventLogger;
 
     /**
-     * @param Kernel $kernel
+     * @param SfKernelEventLogger $sfKernelEventLogger
      */
     public function __construct(SfKernelEventLogger $sfKernelEventLogger)
     {
@@ -32,7 +32,6 @@ class SfKernelLoggerSubscriber implements EventSubscriberInterface
             KernelEvent::AFTER_BOOT => 'initSfKernelLogger',
         ];
     }
-
 
     /**
      * @param KernelEvent $event
