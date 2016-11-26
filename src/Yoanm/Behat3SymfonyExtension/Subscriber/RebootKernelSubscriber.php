@@ -23,7 +23,7 @@ class RebootKernelSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
