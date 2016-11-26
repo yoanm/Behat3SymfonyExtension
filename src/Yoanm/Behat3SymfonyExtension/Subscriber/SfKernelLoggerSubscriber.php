@@ -3,7 +3,6 @@ namespace Yoanm\Behat3SymfonyExtension\Subscriber;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 
