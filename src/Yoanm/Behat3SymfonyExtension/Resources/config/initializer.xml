@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service
+                id="behat3_symfony_extension.initializer.kernel_aware"
+                class="Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelHandlerAwareInitializer"
+        >
+            <argument type="service" id="behat3_symfony_extension.handler.kernel" />
+            <tag name="context.initializer"/>
+        </service>
+        <service
+                id="behat3_symfony_extension.initializer.logger_aware"
+                class="Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer"
+        >
+            <argument type="service" id="behat3_symfony_extension.logger" />
+            <tag name="context.initializer"/>
+        </service>
+        <service
+                id="behat3_symfony_extension.initializer.behat_subscriber"
+                class="Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer"
+        >
+            <argument type="service" id="event_dispatcher"/>
+            <tag name="context.initializer"/>
+        </service>
+    </services>
+</container>
