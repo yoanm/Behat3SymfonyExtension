@@ -1,8 +1,11 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver;
 
+use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver\Behat3SymfonyDriverFactory;
 
 class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
@@ -11,7 +14,7 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
     private $factory;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function setUp()
     {
@@ -34,6 +37,15 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testConfigure()
+    {
+        /** @var ArrayNodeDefinition|ObjectProphecy $arrayNodeDefinition */
+        $arrayNodeDefinition = $this->prophesize(ArrayNodeDefinition::class);
+        $this->assertNull(
+            $this->factory->configure($arrayNodeDefinition->reveal())
+        );
+    }
+
     public function testBuildDriver()
     {
         $definition = $this->factory->buildDriver([]);
@@ -50,7 +62,7 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
             $arg0
         );
         $this->assertSame(
-            'behat3_symfony_extension.kernel',
+            Behat3SymfonyExtension::KERNEL_SERVICE_ID,
             $arg0->__toString()
         );
 
@@ -59,7 +71,10 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
             $definition->getArgument(1)
         );
         $this->assertSame(
-            '%behat3_symfony_extension.kernel.reboot%',
+            sprintf(
+                '%%%s.kernel.reboot%%',
+                Behat3SymfonyExtension::BASE_CONTAINER_ID
+            ),
             $definition->getArgument(2)
         );
     }

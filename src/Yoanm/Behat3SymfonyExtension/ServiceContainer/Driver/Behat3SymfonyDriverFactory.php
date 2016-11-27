@@ -6,6 +6,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 
 class Behat3SymfonyDriverFactory implements DriverFactory
 {
@@ -46,9 +47,12 @@ class Behat3SymfonyDriverFactory implements DriverFactory
         return new Definition(
             KernelDriver::class,
             array(
-                new Reference('behat3_symfony_extension.kernel'),
+                new Reference(Behat3SymfonyExtension::KERNEL_SERVICE_ID),
                 '%mink.base_url%',
-                '%behat3_symfony_extension.kernel.reboot%',
+                sprintf(
+                    '%%%s.kernel.reboot%%',
+                    Behat3SymfonyExtension::BASE_CONTAINER_ID
+                )
             )
         );
     }
