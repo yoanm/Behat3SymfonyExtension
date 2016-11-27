@@ -11,7 +11,7 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
     private $factory;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function setUp()
     {
