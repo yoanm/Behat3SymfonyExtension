@@ -20,10 +20,6 @@ class KernelSubExtension extends AbstractSubExtension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-        /**
-         * @codeCoverageIgnoreStart
-         * Will be a pain to cover this manually
-         */
         $castToBool = function ($value) {
             $filtered = filter_var(
                 $value,
@@ -64,7 +60,6 @@ class KernelSubExtension extends AbstractSubExtension
                     ->defaultTrue()
                 ->end()
             ->end();
-        // @codeCoverageIgnoreEnd
     }
 
     /**

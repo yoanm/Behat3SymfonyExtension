@@ -30,15 +30,13 @@ class Behat3SymfonyExtension implements Extension
         return 'behat3_symfony';
     }
 
+    // @codeCoverageIgnoreStart
+    // Not possible to cover this because ExtensionManager is a final class
     /**
      * {@inheritdoc}
      */
     public function initialize(ExtensionManager $extensionManager)
     {
-        /**
-         * @codeCoverageIgnoreStart
-         * Not possible to test this because of ExtensionManager is a final class
-         */
         $extensionManager->getExtension('mink')
             ->registerDriverFactory(new Behat3SymfonyDriverFactory());
 
@@ -47,8 +45,8 @@ class Behat3SymfonyExtension implements Extension
         $this->subExtensionList[] = new HandlerSubExtension();
         $this->subExtensionList[] = new InitializerSubExtension();
         $this->subExtensionList[] = new SubscriberSubExtension();
-        // @codeCoverageIgnoreEnd
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
@@ -59,16 +57,16 @@ class Behat3SymfonyExtension implements Extension
             ->addDefaultsIfNotSet()
             ->children();
         foreach ($this->subExtensionList as $subExtension) {
-            if (false !== $subExtension->getConfigKey()) {
+            $configKey = $subExtension->getConfigKey();
+            if (is_string($configKey)) {
                 $tree = new TreeBuilder();
-                $subBuilder = $tree->root($subExtension->getConfigKey());
+                $subBuilder = $tree->root($configKey);
                 $subExtension->configure($subBuilder);
                 $node->append($subBuilder);
             }
         }
 
         $node->end();
-        // @codeCoverageIgnoreEnd
     }
 
     /**

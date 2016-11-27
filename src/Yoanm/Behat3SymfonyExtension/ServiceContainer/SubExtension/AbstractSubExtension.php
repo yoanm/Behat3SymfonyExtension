@@ -26,7 +26,6 @@ abstract class AbstractSubExtension implements CompilerPassInterface
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-
     }
 
     /**
@@ -42,7 +41,6 @@ abstract class AbstractSubExtension implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-
     }
 
     /**

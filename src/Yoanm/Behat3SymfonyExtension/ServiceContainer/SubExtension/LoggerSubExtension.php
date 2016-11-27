@@ -23,19 +23,6 @@ class LoggerSubExtension extends AbstractSubExtension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-        /**
-         * @codeCoverageIgnoreStart
-         * Will be a pain to cover this manually
-         */
-        $castToBool = function ($value) {
-            $filtered = filter_var(
-                $value,
-                FILTER_VALIDATE_BOOLEAN,
-                FILTER_NULL_ON_FAILURE
-            );
-
-            return (null === $filtered) ? (bool) $value : $filtered;
-        };
         $builder
             ->addDefaultsIfNotSet()
             ->children()
@@ -53,7 +40,6 @@ class LoggerSubExtension extends AbstractSubExtension
                 ->end()
             ->end()
         ->end();
-        // @codeCoverageIgnoreEnd
     }
 
     /**
