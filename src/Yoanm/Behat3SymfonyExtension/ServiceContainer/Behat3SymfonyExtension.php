@@ -22,6 +22,15 @@ class Behat3SymfonyExtension implements Extension
     /** @var AbstractSubExtension[] */
     private $subExtensionList = array();
 
+    public function __construct()
+    {
+        $this->subExtensionList[] = new KernelSubExtension();
+        $this->subExtensionList[] = new LoggerSubExtension();
+        $this->subExtensionList[] = new HandlerSubExtension();
+        $this->subExtensionList[] = new InitializerSubExtension();
+        $this->subExtensionList[] = new SubscriberSubExtension();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -39,12 +48,6 @@ class Behat3SymfonyExtension implements Extension
     {
         $extensionManager->getExtension('mink')
             ->registerDriverFactory(new Behat3SymfonyDriverFactory());
-
-        $this->subExtensionList[] = new KernelSubExtension();
-        $this->subExtensionList[] = new LoggerSubExtension();
-        $this->subExtensionList[] = new HandlerSubExtension();
-        $this->subExtensionList[] = new InitializerSubExtension();
-        $this->subExtensionList[] = new SubscriberSubExtension();
     }
     // @codeCoverageIgnoreEnd
 
