@@ -1,6 +1,8 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver;
 
+use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
@@ -32,6 +34,15 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             false,
             $this->factory->supportsJavascript()
+        );
+    }
+
+    public function testConfigure()
+    {
+        /** @var ArrayNodeDefinition|ObjectProphecy $arrayNodeDefinition */
+        $arrayNodeDefinition = $this->prophesize(ArrayNodeDefinition::class);
+        $this->assertNull(
+            $this->factory->configure($arrayNodeDefinition->reveal())
         );
     }
 

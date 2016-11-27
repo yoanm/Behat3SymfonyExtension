@@ -37,8 +37,13 @@ class Behat3SymfonyExtension implements Extension
      */
     public function initialize(ExtensionManager $extensionManager)
     {
+        /**
+         * @codeCoverageIgnoreStart
+         * Not possible to test this because of ExtensionManager is a final class
+         */
         $extensionManager->getExtension('mink')
             ->registerDriverFactory(new Behat3SymfonyDriverFactory());
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -46,6 +51,10 @@ class Behat3SymfonyExtension implements Extension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
+        /**
+         * @codeCoverageIgnoreStart
+         * Will be a pain to cover this manually
+         */
         $castToBool = function ($value) {
             $filtered = filter_var(
                 $value,
@@ -110,6 +119,7 @@ class Behat3SymfonyExtension implements Extension
                     ->end()
                 ->end()
             ->end();
+        // @codeCoverageIgnoreEnd
     }
 
     /**
