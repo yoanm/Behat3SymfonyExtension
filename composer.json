@@ -23,8 +23,12 @@
     },
     "autoload": {
         "psr-0": {
-            "Yoanm\\Behat3SymfonyExtension": "src/",
-            "Tests": "tests"
+            "Yoanm\\Behat3SymfonyExtension": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     }
 }
