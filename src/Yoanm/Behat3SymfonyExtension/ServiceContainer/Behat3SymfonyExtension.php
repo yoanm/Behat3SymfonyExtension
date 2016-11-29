@@ -56,20 +56,15 @@ class Behat3SymfonyExtension implements Extension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-        $node = $builder
-            ->addDefaultsIfNotSet()
-            ->children();
         foreach ($this->subExtensionList as $subExtension) {
             $configKey = $subExtension->getConfigKey();
             if (is_string($configKey)) {
-                $tree = new TreeBuilder();
-                $subBuilder = $tree->root($configKey);
-                $subExtension->configure($subBuilder);
-                $node->append($subBuilder);
+                $subExtension->configure(
+                    $builder->children()
+                        ->arrayNode($subExtension->getConfigKey())
+                );
             }
         }
-
-        $node->end();
     }
 
     /**
