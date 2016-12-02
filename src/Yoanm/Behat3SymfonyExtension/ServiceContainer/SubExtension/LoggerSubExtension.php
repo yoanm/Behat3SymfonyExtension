@@ -96,15 +96,17 @@ class LoggerSubExtension extends AbstractExtension
             ]
         );
         // SfKernelEventLogger
-        $this->createService(
-            $container,
-            'logger.sf_kernel_logger',
-            SfKernelEventLogger::class,
-            [
-                new Reference($this->buildContainerId('kernel'))
-            ],
-            ['event_dispatcher.subscriber']
-        );
+        if (true === $config['kernel']['debug']) {
+            $this->createService(
+                $container,
+                'logger.sf_kernel_logger',
+                SfKernelEventLogger::class,
+                [
+                    new Reference($this->buildContainerId('kernel'))
+                ],
+                ['event_dispatcher.subscriber']
+            );
+        }
     }
 
     /**

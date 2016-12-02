@@ -30,18 +30,29 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
         );
     }
 
-    public function testLoad()
+    /**
+     * @dataProvider getTestLoadData
+     *
+     * @param bool $debug
+     */
+    public function testLoad($debug)
     {
         $loggerConfig = [
             'path' => 'path',
             'level' => 'level',
+        ];
+        $config = [
+            'kernel' => [
+                'debug' => $debug,
+            ],
+            $this->subExtension->getConfigKey() => $loggerConfig,
         ];
         $handlerService = 'logger.handler';
 
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->subExtension->load($container->reveal(), [$this->subExtension->getConfigKey() => $loggerConfig]);
+        $this->subExtension->load($container->reveal(), $config);
 
         // Handler
         $this->assertCreateServiceCalls(
@@ -78,7 +89,24 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
             [$this->getReferenceAssertion($this->buildContainerId('kernel'))],
-            ['event_dispatcher.subscriber']
+            ['event_dispatcher.subscriber'],
+            null,
+            true === $debug
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getTestLoadData()
+    {
+        return [
+            'debug mode' => [
+                'debug' => true,
+            ],
+            'not debug mode' => [
+                'debug' => false,
+            ],
+        ];
     }
 }
