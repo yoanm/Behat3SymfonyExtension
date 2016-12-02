@@ -33,6 +33,8 @@ class KernelSubExtension extends AbstractExtension
     }
     // @codeCoverageIgnoreEnd
 
+    // @codeCoverageIgnoreStart
+    // Will be covered by FT
     /**
      * @inheritDoc
      */

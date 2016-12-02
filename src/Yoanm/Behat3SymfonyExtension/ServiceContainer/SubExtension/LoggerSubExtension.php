@@ -20,14 +20,18 @@ class LoggerSubExtension extends AbstractExtension
         return 'logger';
     }
 
+    // @codeCoverageIgnoreStart
+    // Not possible to cover this because ExtensionManager is a final class
     /**
      * {@inheritdoc}
      */
     public function initialize(ExtensionManager $extensionManager)
     {
     }
+    // @codeCoverageIgnoreEnd
 
-
+    // @codeCoverageIgnoreStart
+    // Will be covered by FT
     /**
      * @inheritDoc
      */
@@ -51,6 +55,7 @@ class LoggerSubExtension extends AbstractExtension
             ->end()
         ->end();
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
