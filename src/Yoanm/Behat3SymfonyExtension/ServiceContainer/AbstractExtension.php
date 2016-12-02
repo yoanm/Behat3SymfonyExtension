@@ -36,9 +36,9 @@ abstract class AbstractExtension implements Extension
         ContainerBuilder $container,
         $id,
         $class,
-        $argumentList = array(),
-        $tagList = array(),
-        $addMethodCallList = array()
+        $argumentList = [],
+        $tagList = [],
+        $addMethodCallList = []
     ) {
         $definition = new Definition($class, $argumentList);
 

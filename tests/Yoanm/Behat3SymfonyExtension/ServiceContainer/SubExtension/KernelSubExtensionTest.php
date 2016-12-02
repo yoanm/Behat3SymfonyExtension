@@ -35,18 +35,18 @@ class KernelSubExtensionTest extends AbstractExtensionTest
      */
     public function testLoad($reboot)
     {
-        $kernelConfig = array(
+        $kernelConfig = [
             'class' => 'class',
             'env' => 'test',
             'debug' => false,
             'reboot' => $reboot,
             'bootstrap' => 'bootstrap',
-        );
+        ];
 
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->subExtension->load($container->reveal(), array($this->subExtension->getConfigKey() => $kernelConfig));
+        $this->subExtension->load($container->reveal(), [$this->subExtension->getConfigKey() => $kernelConfig]);
 
         $container->setParameter($this->buildContainerId('kernel.reboot'), $kernelConfig['reboot'])
             ->shouldHaveBeenCalledTimes(1);
@@ -56,7 +56,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
             $container,
             'kernel',
             $kernelConfig['class'],
-            array($kernelConfig['env'], $kernelConfig['debug'])
+            [$kernelConfig['env'], $kernelConfig['debug']]
         );
     }
 
@@ -122,13 +122,13 @@ class KernelSubExtensionTest extends AbstractExtensionTest
      */
     public function getTestLoadData()
     {
-        return array(
-            'with reboot' => array(
+        return [
+            'with reboot' => [
                 'reboot' => true,
-            ),
-            'without reboot' => array(
+            ],
+            'without reboot' => [
                 'reboot' => false,
-            ),
-        );
+            ],
+        ];
     }
 }

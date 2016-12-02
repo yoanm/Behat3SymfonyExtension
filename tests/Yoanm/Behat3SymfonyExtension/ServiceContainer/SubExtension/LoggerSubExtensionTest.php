@@ -32,44 +32,44 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
 
     public function testLoad()
     {
-        $loggerConfig = array(
+        $loggerConfig = [
             'path' => 'path',
             'level' => 'level',
-        );
+        ];
         $handlerService = 'logger.handler';
 
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->subExtension->load($container->reveal(), array($this->subExtension->getConfigKey() => $loggerConfig));
+        $this->subExtension->load($container->reveal(), [$this->subExtension->getConfigKey() => $loggerConfig]);
 
         // Handler
         $this->assertCreateServiceCalls(
             $container,
             $handlerService,
             StreamHandler::class,
-            array(
+            [
                 sprintf(
                     '%s/%s',
                     '%behat.paths.base%',
                     $loggerConfig['path']
                 ),
-                $loggerConfig['level']
-            )
+                $loggerConfig['level'],
+            ]
         );
         // Logger
-        $expectedCallArgumentList = array(
-            array(
+        $expectedCallArgumentList = [
+            [
                 'pushHandler',
-                array($this->getReferenceAssertion($this->buildContainerId($handlerService)))
-            )
-        );
+                [$this->getReferenceAssertion($this->buildContainerId($handlerService))]
+            ]
+        ];
         $this->assertCreateServiceCalls(
             $container,
             'logger',
             Logger::class,
-            array('behat3Symfony', $loggerConfig['level']),
-            array('event_dispatcher.subscriber'),
+            ['behat3Symfony', $loggerConfig['level']],
+            ['event_dispatcher.subscriber'],
             $expectedCallArgumentList
         );
         // SfKernelEventLogger
@@ -77,8 +77,8 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             $container,
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
-            array($this->getReferenceAssertion($this->buildContainerId('kernel'))),
-            array('event_dispatcher.subscriber')
+            [$this->getReferenceAssertion($this->buildContainerId('kernel'))],
+            ['event_dispatcher.subscriber']
         );
     }
 }

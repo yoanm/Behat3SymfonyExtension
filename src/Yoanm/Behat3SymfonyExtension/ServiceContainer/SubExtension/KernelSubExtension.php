@@ -18,14 +18,20 @@ class KernelSubExtension extends AbstractExtension
         return 'kernel';
     }
 
+    // @codeCoverageIgnoreStart
+    // Not possible to cover this because ExtensionManager is a final class
     /**
      * @inheritDoc
      */
     public function initialize(ExtensionManager $extensionManager)
     {
-        $extensionManager->getExtension('mink')
-            ->registerDriverFactory(new Behat3SymfonyDriverFactory());
+        $minExtension = $extensionManager->getExtension('mink');
+
+        if ($minExtension) {
+            $minExtension->registerDriverFactory(new Behat3SymfonyDriverFactory());
+        }
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * @inheritDoc

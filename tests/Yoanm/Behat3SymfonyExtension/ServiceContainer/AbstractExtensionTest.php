@@ -40,15 +40,15 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
         $id,
         $class,
         array $expectedDefinitionArgumentList = null,
-        $tagList = array(),
+        $tagList = [],
         array $expectedCallArgumentList = null,
         $called = true
     ) {
 
-        $globalSetDefinitionArgumentCheckList = array(
+        $globalSetDefinitionArgumentCheckList = [
             Argument::type(Definition::class),
             Argument::which('getClass', $class)
-        );
+        ];
         if (null !== $expectedDefinitionArgumentList) {
             $globalSetDefinitionArgumentCheckList[] = Argument::that(
                 function (Definition $definition) use ($expectedDefinitionArgumentList) {

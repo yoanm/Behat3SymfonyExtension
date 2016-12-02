@@ -78,27 +78,27 @@ class LoggerSubExtension extends AbstractExtension
             $container,
             'logger',
             Logger::class,
-            array(
+            [
                 'behat3Symfony',
                 $loggerConfig['level'],
-            ),
-            array('event_dispatcher.subscriber'),
-            array(
-                array(
+            ],
+            ['event_dispatcher.subscriber'],
+            [
+                [
                     'pushHandler',
-                    array(new Reference($this->buildContainerId($baseHandlerServiceId)))
-                )
-            )
+                    [new Reference($this->buildContainerId($baseHandlerServiceId))]
+                ]
+            ]
         );
         // SfKernelEventLogger
         $this->createService(
             $container,
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
-            array(
+            [
                 new Reference($this->buildContainerId('kernel'))
-            ),
-            array('event_dispatcher.subscriber')
+            ],
+            ['event_dispatcher.subscriber']
         );
     }
 

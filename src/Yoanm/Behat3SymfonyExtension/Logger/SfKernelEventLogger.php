@@ -34,10 +34,10 @@ class SfKernelEventLogger implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             KernelEvents::REQUEST => 'onKernelRequest',
             KernelEvents::EXCEPTION => 'onKernelException',
-        );
+        ];
     }
 
     /**
@@ -47,14 +47,14 @@ class SfKernelEventLogger implements EventSubscriberInterface
     {
         $this->log(
             '[REQUEST_HANDLED]',
-            array(
+            [
                 'type' => ($event->getRequestType() == HttpKernelInterface::MASTER_REQUEST
                     ? 'Master'
                     : 'Sub'
                 ),
                 'method' => $event->getRequest()->getMethod(),
                 'uri' => $event->getRequest()->getUri(),
-            )
+            ]
         );
     }
 
@@ -65,9 +65,9 @@ class SfKernelEventLogger implements EventSubscriberInterface
     {
         $this->log(
             '[EXCEPTION_THROWN]',
-            array(
+            [
                 'message' => $event->getException()->getMessage(),
-            ),
+            ],
             Logger::CRITICAL
         );
     }
@@ -77,7 +77,7 @@ class SfKernelEventLogger implements EventSubscriberInterface
      * @param array  $context
      * @param int    $level
      */
-    private function log($message, array $context = array(), $level = Logger::DEBUG)
+    private function log($message, array $context = [], $level = Logger::DEBUG)
     {
         $this->logger->addRecord(
             $level,

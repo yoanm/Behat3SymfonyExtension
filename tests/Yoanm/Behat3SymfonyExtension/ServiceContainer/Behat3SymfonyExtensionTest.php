@@ -89,19 +89,19 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
      */
     public function testLoad($reboot)
     {
-        $config = array(
-            'kernel' => array(
+        $config = [
+            'kernel' => [
                 'class' => 'class',
                 'env' => 'test',
                 'debug' => false,
                 'reboot' => $reboot,
                 'bootstrap' => null,
-            ),
-            'logger' => array(
+            ],
+            'logger' => [
                 'path' => 'path',
                 'level' => 'level'
-            ),
-        );
+            ],
+        ];
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
@@ -116,48 +116,48 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
             $container,
             'handler.kernel',
             KernelHandler::class,
-            array(
+            [
                 $this->getReferenceAssertion('event_dispatcher'),
                 $this->getReferenceAssertion(Behat3SymfonyExtension::KERNEL_SERVICE_ID),
-            )
+            ]
         );
         // KernelAware
         $this->assertCreateServiceCalls(
             $container,
             'initializer.kernel_aware',
             KernelHandlerAwareInitializer::class,
-            array($this->getReferenceAssertion($this->buildContainerId('handler.kernel'))),
-            array('context.initializer')
+            [$this->getReferenceAssertion($this->buildContainerId('handler.kernel'))],
+            ['context.initializer']
         );
         // LoggerAware
         $this->assertCreateServiceCalls(
             $container,
             'initializer.logger_aware',
             LoggerAwareInitializer::class,
-            array($this->getReferenceAssertion($this->buildContainerId('logger'))),
-            array('context.initializer')
+            [$this->getReferenceAssertion($this->buildContainerId('logger'))],
+            ['context.initializer']
         );
         // BehatSubscriber
         $this->assertCreateServiceCalls(
             $container,
             'initializer.behat_subscriber',
             BehatContextSubscriberInitializer::class,
-            array($this->getReferenceAssertion('event_dispatcher')),
-            array('context.initializer')
+            [$this->getReferenceAssertion('event_dispatcher')],
+            ['context.initializer']
         );
         $this->assertCreateServiceCalls(
             $container,
             'subscriber.sf_kernel_logger',
             SfKernelLoggerSubscriber::class,
-            array($this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))),
-            array('event_dispatcher.subscriber')
+            [$this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))],
+            ['event_dispatcher.subscriber']
         );
 
         $this->assertCreateServiceCalls(
             $container,
             'subscriber.reboot_kernel',
             RebootKernelSubscriber::class,
-            array($this->getReferenceAssertion($this->buildContainerId('handler.kernel'))),
+            [$this->getReferenceAssertion($this->buildContainerId('handler.kernel'))],
             ['event_dispatcher.subscriber'],
             null,
             true === $reboot
@@ -182,13 +182,13 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
      */
     public function getTestLoadData()
     {
-        return array(
-            'with reboot' => array(
+        return [
+            'with reboot' => [
                 'reboot' => true,
-            ),
-            'without reboot' => array(
+            ],
+            'without reboot' => [
                 'reboot' => false,
-            ),
-        );
+            ],
+        ];
     }
 }

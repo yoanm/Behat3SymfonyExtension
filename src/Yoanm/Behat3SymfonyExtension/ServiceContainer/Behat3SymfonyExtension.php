@@ -18,7 +18,7 @@ use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 class Behat3SymfonyExtension extends AbstractExtension
 {
     /** @var Extension[] */
-    private $subExtensionList = array();
+    private $subExtensionList = [];
 
     public function __construct(Extension $kernelSubExtension = null, Extension $loggerSubExtension = null)
     {

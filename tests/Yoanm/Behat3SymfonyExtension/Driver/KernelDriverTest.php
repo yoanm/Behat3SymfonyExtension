@@ -35,14 +35,14 @@ class KernelDriverTest extends \PHPUnit_Framework_TestCase
 
     public function getTestConstructData()
     {
-        return array(
-            'with reboot' => array(
+        return [
+            'with reboot' => [
                 'reboot' => true,
-            ),
-            'without reboot' => array(
+            ],
+            'without reboot' => [
                 'reboot' => false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
