@@ -5,6 +5,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Yoanm\Behat3SymfonyExtension\Event\Events;
 use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 
@@ -65,7 +66,7 @@ class KernelHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->behatEventDispatcher
             ->dispatch(
-                KernelEvent::BEFORE_SHUTDOWN,
+                Events::BEFORE_KERNEL_SHUTDOWN,
                 Argument::type(KernelEvent::class)
             )
             ->shouldBeCalledTimes(1);
@@ -74,7 +75,7 @@ class KernelHandlerTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
         $this->behatEventDispatcher
             ->dispatch(
-                KernelEvent::AFTER_SHUTDOWN,
+                Events::AFTER_KERNEL_SHUTDOWN,
                 Argument::type(KernelEvent::class)
             )
             ->shouldBeCalledTimes(1);
@@ -84,7 +85,7 @@ class KernelHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->behatEventDispatcher
             ->dispatch(
-                KernelEvent::BEFORE_BOOT,
+                Events::BEFORE_KERNEL_BOOT,
                 Argument::type(KernelEvent::class)
             )
             ->shouldBeCalledTimes(1);
@@ -93,7 +94,7 @@ class KernelHandlerTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
         $this->behatEventDispatcher
             ->dispatch(
-                KernelEvent::AFTER_BOOT,
+                Events::AFTER_KERNEL_BOOT,
                 Argument::type(KernelEvent::class)
             )
             ->shouldBeCalledTimes(1);

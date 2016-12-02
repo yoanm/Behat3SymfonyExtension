@@ -11,4 +11,4 @@ Behat3SymfonyExtension is a layer between Behat 3.0+ and Symfony3.0+, strongly i
 It provide : 
  * a [`KernelHandlerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/KernelHandlerAwareInterface.php), it will inject a [`KernelHandler`](./src/Yoanm/Behat3SymfonyExtension/Handler/KernelHandler.php) instance to play with your symfony application kernel (boot/shutdown/restart)
  * a [`LoggerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/LoggerAwareInterface.php), it will inject a monolog logger instance
- * a [`BehatContextSubscriberInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/BehatContextSubscriberInterface.php), it will allow your context to be aware of behat events (including those dispatched by this library)
+ * a [`BehatContextSubscriberInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/BehatContextSubscriberInterface.php), it will allow your context to be aware of behat events (including [those](./src/Yoanm/Behat3SymfonyExtension/Event/Events.php) dispatched by this library)

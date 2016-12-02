@@ -5,6 +5,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpKernel\Kernel;
+use Yoanm\Behat3SymfonyExtension\Event\Events;
 use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
@@ -35,7 +36,7 @@ class SfKernelLoggerSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             [
-                KernelEvent::AFTER_BOOT => 'initSfKernelLogger',
+                Events::AFTER_KERNEL_BOOT => 'initSfKernelLogger',
             ],
             SfKernelLoggerSubscriber::getSubscribedEvents()
         );
