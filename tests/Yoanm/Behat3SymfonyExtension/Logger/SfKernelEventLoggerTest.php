@@ -35,10 +35,10 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
     public function testGetSubscribedEvents()
     {
         $this->assertSame(
-            array(
+            [
                 KernelEvents::REQUEST => 'onKernelRequest',
                 KernelEvents::EXCEPTION => 'onKernelException',
-            ),
+            ],
             SfKernelEventLogger::getSubscribedEvents()
         );
     }
@@ -76,14 +76,14 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
 
         $this->prophesizeLog(
             '[REQUEST_HANDLED]',
-            array(
+            [
                 'type' => ($requestType == HttpKernelInterface::MASTER_REQUEST
                     ? 'Master'
                     : 'Sub'
                 ),
                 'method' => $method,
                 'uri' => $uri,
-            )
+            ]
         );
 
         $this->sfKernelLogger->onKernelRequest($event->reveal());
@@ -103,9 +103,7 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
 
         $this->prophesizeLog(
             '[EXCEPTION_THROWN]',
-            array(
-                'message' => $message,
-            ),
+            ['message' => $message],
             Logger::CRITICAL
         );
 
@@ -129,7 +127,7 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
      * @param array  $context
      * @param int    $level
      */
-    private function prophesizeLog($message, array $context = array(), $level = Logger::DEBUG)
+    private function prophesizeLog($message, array $context = [], $level = Logger::DEBUG)
     {
         $this->logger
             ->addRecord(

@@ -46,14 +46,14 @@ class Behat3SymfonyDriverFactory implements DriverFactory
 
         return new Definition(
             KernelDriver::class,
-            array(
+            [
                 new Reference(Behat3SymfonyExtension::KERNEL_SERVICE_ID),
                 '%mink.base_url%',
                 sprintf(
                     '%%%s.kernel.reboot%%',
                     Behat3SymfonyExtension::BASE_CONTAINER_ID
                 )
-            )
+            ]
         );
     }
 }

@@ -4,9 +4,10 @@ namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 
-class KernelSubExtensionTest extends AbstractSubExtension
+class KernelSubExtensionTest extends AbstractExtensionTest
 {
     /** @var KernelSubExtension */
     private $subExtension;
@@ -34,25 +35,28 @@ class KernelSubExtensionTest extends AbstractSubExtension
      */
     public function testLoad($reboot)
     {
-        $kernelConfig = array(
+        $kernelConfig = [
             'class' => 'class',
             'env' => 'test',
             'debug' => false,
             'reboot' => $reboot,
-        );
+            'bootstrap' => 'bootstrap',
+        ];
 
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->subExtension->load($container->reveal(), array($this->subExtension->getConfigKey() => $kernelConfig));
+        $this->subExtension->load($container->reveal(), [$this->subExtension->getConfigKey() => $kernelConfig]);
 
-        $container->setParameter($this->getContainerParamOrServiceId('kernel.reboot'), $kernelConfig['reboot'])
+        $container->setParameter($this->buildContainerId('kernel.reboot'), $kernelConfig['reboot'])
+            ->shouldHaveBeenCalledTimes(1);
+        $container->setParameter($this->buildContainerId('kernel.bootstrap'), $kernelConfig['bootstrap'])
             ->shouldHaveBeenCalledTimes(1);
         $this->assertCreateServiceCalls(
             $container,
             'kernel',
             $kernelConfig['class'],
-            array($kernelConfig['env'], $kernelConfig['debug'])
+            [$kernelConfig['env'], $kernelConfig['debug']]
         );
     }
 
@@ -64,7 +68,7 @@ class KernelSubExtensionTest extends AbstractSubExtension
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->getContainerParamOrServiceId('kernel.bootstrap'))
+        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -82,7 +86,7 @@ class KernelSubExtensionTest extends AbstractSubExtension
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->getContainerParamOrServiceId('kernel.bootstrap'))
+        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -100,7 +104,7 @@ class KernelSubExtensionTest extends AbstractSubExtension
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->getContainerParamOrServiceId('kernel.bootstrap'))
+        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -118,13 +122,13 @@ class KernelSubExtensionTest extends AbstractSubExtension
      */
     public function getTestLoadData()
     {
-        return array(
-            'with reboot' => array(
+        return [
+            'with reboot' => [
                 'reboot' => true,
-            ),
-            'without reboot' => array(
+            ],
+            'without reboot' => [
                 'reboot' => false,
-            ),
-        );
+            ],
+        ];
     }
 }

@@ -1,14 +1,16 @@
 <?php
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
+use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 
-class LoggerSubExtension extends AbstractSubExtension
+class LoggerSubExtension extends AbstractExtension
 {
     /**
      * @inheritDoc
@@ -18,6 +20,18 @@ class LoggerSubExtension extends AbstractSubExtension
         return 'logger';
     }
 
+    // @codeCoverageIgnoreStart
+    // Not possible to cover this because ExtensionManager is a final class
+    /**
+     * {@inheritdoc}
+     */
+    public function initialize(ExtensionManager $extensionManager)
+    {
+    }
+    // @codeCoverageIgnoreEnd
+
+    // @codeCoverageIgnoreStart
+    // Will be covered by FT
     /**
      * @inheritDoc
      */
@@ -41,6 +55,7 @@ class LoggerSubExtension extends AbstractSubExtension
             ->end()
         ->end();
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
@@ -54,41 +69,48 @@ class LoggerSubExtension extends AbstractSubExtension
             $container,
             $baseHandlerServiceId,
             StreamHandler::class,
-            array(
+            [
                 sprintf(
                     '%s/%s',
                     '%behat.paths.base%',
                     $loggerConfig['path']
                 ),
                 $loggerConfig['level'],
-            )
+            ]
         );
         // Logger
         $this->createService(
             $container,
             'logger',
             Logger::class,
-            array(
+            [
                 'behat3Symfony',
                 $loggerConfig['level'],
-            ),
-            array('event_dispatcher.subscriber'),
-            array(
-                array(
+            ],
+            ['event_dispatcher.subscriber'],
+            [
+                [
                     'pushHandler',
-                    array(new Reference($this->getContainerParamOrServiceId($baseHandlerServiceId)))
-                )
-            )
+                    [new Reference($this->buildContainerId($baseHandlerServiceId))]
+                ]
+            ]
         );
         // SfKernelEventLogger
         $this->createService(
             $container,
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
-            array(
-                new Reference($this->getContainerParamOrServiceId('kernel'))
-            ),
-            array('event_dispatcher.subscriber')
+            [
+                new Reference($this->buildContainerId('kernel'))
+            ],
+            ['event_dispatcher.subscriber']
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
     }
 }

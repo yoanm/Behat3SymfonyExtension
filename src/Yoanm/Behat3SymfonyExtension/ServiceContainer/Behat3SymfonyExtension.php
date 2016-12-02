@@ -4,31 +4,26 @@ namespace Yoanm\Behat3SymfonyExtension\ServiceContainer;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver\Behat3SymfonyDriverFactory;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\AbstractSubExtension;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\HandlerSubExtension;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\InitializerSubExtension;
+use Symfony\Component\DependencyInjection\Reference;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelHandlerAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\SubscriberSubExtension;
+use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
+use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
-class Behat3SymfonyExtension implements Extension
+class Behat3SymfonyExtension extends AbstractExtension
 {
-    const BASE_CONTAINER_ID = 'behat3_symfony_extension';
-    const KERNEL_SERVICE_ID = 'behat3_symfony_extension.kernel';
+    /** @var Extension[] */
+    private $subExtensionList = [];
 
-    /** @var AbstractSubExtension[] */
-    private $subExtensionList = array();
-
-    public function __construct()
+    public function __construct(Extension $kernelSubExtension = null, Extension $loggerSubExtension = null)
     {
-        $this->subExtensionList[] = new KernelSubExtension();
-        $this->subExtensionList[] = new LoggerSubExtension();
-        $this->subExtensionList[] = new HandlerSubExtension();
-        $this->subExtensionList[] = new InitializerSubExtension();
-        $this->subExtensionList[] = new SubscriberSubExtension();
+        $this->subExtensionList[] = $kernelSubExtension ?: new KernelSubExtension();
+        $this->subExtensionList[] = $loggerSubExtension ?: new LoggerSubExtension();
     }
 
     /**
@@ -46,8 +41,9 @@ class Behat3SymfonyExtension implements Extension
      */
     public function initialize(ExtensionManager $extensionManager)
     {
-        $extensionManager->getExtension('mink')
-            ->registerDriverFactory(new Behat3SymfonyDriverFactory());
+        foreach ($this->subExtensionList as $subExtension) {
+            $subExtension->initialize($extensionManager);
+        }
     }
     // @codeCoverageIgnoreEnd
 
@@ -56,20 +52,12 @@ class Behat3SymfonyExtension implements Extension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-        $node = $builder
-            ->addDefaultsIfNotSet()
-            ->children();
         foreach ($this->subExtensionList as $subExtension) {
-            $configKey = $subExtension->getConfigKey();
-            if (is_string($configKey)) {
-                $tree = new TreeBuilder();
-                $subBuilder = $tree->root($configKey);
-                $subExtension->configure($subBuilder);
-                $node->append($subBuilder);
-            }
+            $subExtension->configure(
+                $builder->children()
+                    ->arrayNode($subExtension->getConfigKey())
+            );
         }
-
-        $node->end();
     }
 
     /**
@@ -79,6 +67,53 @@ class Behat3SymfonyExtension implements Extension
     {
         foreach ($this->subExtensionList as $subExtension) {
             $subExtension->load($container, $config);
+        }
+        $this->createService(
+            $container,
+            'handler.kernel',
+            KernelHandler::class,
+            [
+                new Reference('event_dispatcher'),
+                new Reference(self::KERNEL_SERVICE_ID),
+            ]
+        );
+        $this->createService(
+            $container,
+            'initializer.kernel_aware',
+            KernelHandlerAwareInitializer::class,
+            [new Reference($this->buildContainerId('handler.kernel'))],
+            ['context.initializer']
+        );
+        $this->createService(
+            $container,
+            'initializer.logger_aware',
+            LoggerAwareInitializer::class,
+            [new Reference($this->buildContainerId('logger'))],
+            ['context.initializer']
+        );
+        $this->createService(
+            $container,
+            'initializer.behat_subscriber',
+            BehatContextSubscriberInitializer::class,
+            [new Reference('event_dispatcher')],
+            ['context.initializer']
+        );
+        $this->createService(
+            $container,
+            'subscriber.sf_kernel_logger',
+            SfKernelLoggerSubscriber::class,
+            [new Reference($this->buildContainerId('logger.sf_kernel_logger'))],
+            ['event_dispatcher.subscriber']
+        );
+
+        if (true === $config['kernel']['reboot']) {
+            $this->createService(
+                $container,
+                'subscriber.reboot_kernel',
+                RebootKernelSubscriber::class,
+                [new Reference($this->buildContainerId('handler.kernel'))],
+                ['event_dispatcher.subscriber']
+            );
         }
     }
 
