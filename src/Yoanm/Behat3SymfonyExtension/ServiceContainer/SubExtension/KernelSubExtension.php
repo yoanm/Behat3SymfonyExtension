@@ -2,10 +2,13 @@
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
+use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver\Behat3SymfonyDriverFactory;
 
-class KernelSubExtension extends AbstractSubExtension
+class KernelSubExtension extends AbstractExtension
 {
     /**
      * @inheritDoc
@@ -13,6 +16,15 @@ class KernelSubExtension extends AbstractSubExtension
     public function getConfigKey()
     {
         return 'kernel';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function initialize(ExtensionManager $extensionManager)
+    {
+        $extensionManager->getExtension('mink')
+            ->registerDriverFactory(new Behat3SymfonyDriverFactory());
     }
 
     /**
@@ -69,17 +81,21 @@ class KernelSubExtension extends AbstractSubExtension
     {
         $kernelConfig = $config[$this->getConfigKey()];
         $container->setParameter(
-            $this->getContainerParamOrServiceId('kernel.reboot'),
+            $this->buildContainerId('kernel.reboot'),
             $kernelConfig['reboot']
+        );
+        $container->setParameter(
+            $this->buildContainerId('kernel.bootstrap'),
+            $kernelConfig['bootstrap']
         );
         $this->createService(
             $container,
             'kernel',
             $kernelConfig['class'],
-            array(
+            [
                 $kernelConfig['env'],
                 $kernelConfig['debug'],
-            )
+            ]
         );
     }
 
@@ -88,7 +104,7 @@ class KernelSubExtension extends AbstractSubExtension
      */
     public function process(ContainerBuilder $container)
     {
-        $bootstrapPath = $container->getParameter($this->getContainerParamOrServiceId('kernel.bootstrap'));
+        $bootstrapPath = $container->getParameter($this->buildContainerId('kernel.bootstrap'));
         if ($bootstrapPath) {
             $bootstrap = sprintf(
                 '%s/%s',

@@ -6,10 +6,22 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelHandlerAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
+use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
+use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
-class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
+class Behat3SymfonyExtensionTest extends AbstractExtensionTest
 {
+    /** @var KernelSubExtension|ObjectProphecy */
+    private $kernelSubExtension;
+    /** @var LoggerSubExtension|ObjectProphecy */
+    private $loggerSubExtension;
     /** @var Behat3SymfonyExtension */
     private $extension;
 
@@ -18,7 +30,12 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->extension = new Behat3SymfonyExtension();
+        $this->kernelSubExtension = $this->prophesize(KernelSubExtension::class);
+        $this->loggerSubExtension = $this->prophesize(LoggerSubExtension::class);
+        $this->extension = new Behat3SymfonyExtension(
+            $this->kernelSubExtension->reveal(),
+            $this->loggerSubExtension->reveal()
+        );
     }
 
     public function testGetConfigKey()
@@ -31,34 +48,54 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigure()
     {
-        /** @var ArrayNodeDefinition|ObjectProphecy $builder */
-        $builder = $this->prophesize(ArrayNodeDefinition::class);
+        $kernelSubExtensionConfigKey = 'kernel';
+        $loggerSubExtensionConfigKey = 'logger';
+        /** @var ArrayNodeDefinition|ObjectProphecy $subExtensionBuilder */
+        $subExtensionBuilder = $this->prophesize(ArrayNodeDefinition::class);
+        /** @var ArrayNodeDefinition|ObjectProphecy $extensionBuilder */
+        $extensionBuilder = $this->prophesize(ArrayNodeDefinition::class);
         /** @var NodeBuilder|ObjectProphecy $nodeBuilder */
         $nodeBuilder = $this->prophesize(NodeBuilder::class);
-        $builder
-            ->addDefaultsIfNotSet()
-            ->willReturn($builder->reveal())
-            ->shouldBeCalled();
-        $builder->children()
+
+        $extensionBuilder->children()
             ->willReturn($nodeBuilder->reveal())
             ->shouldBeCalled();
-        $nodeBuilder->append(Argument::type(ArrayNodeDefinition::class))
-            ->shouldBeCalledTimes(2);
+        $nodeBuilder->arrayNode($kernelSubExtensionConfigKey)
+            ->willReturn($subExtensionBuilder->reveal())
+            ->shouldBeCalledTimes(1);
+        $nodeBuilder->arrayNode($loggerSubExtensionConfigKey)
+            ->willReturn($subExtensionBuilder->reveal())
+            ->shouldBeCalledTimes(1);
 
-        $nodeBuilder->end()
-            ->shouldBeCalled();
+        $this->kernelSubExtension->configure($subExtensionBuilder->reveal())
+            ->shouldBeCalledTimes(1);
+        $this->loggerSubExtension->configure($subExtensionBuilder->reveal())
+            ->shouldBeCalledTimes(1);
 
-        $this->extension->configure($builder->reveal());
+        $this->kernelSubExtension->getConfigKey()
+            ->willReturn($kernelSubExtensionConfigKey)
+            ->shouldBeCalledTimes(1);
+        $this->loggerSubExtension->getConfigKey()
+            ->willReturn($loggerSubExtensionConfigKey)
+            ->shouldBeCalledTimes(1);
+
+        $this->extension->configure($extensionBuilder->reveal());
     }
 
-    public function testLoad()
+    /**
+     * @dataProvider getTestLoadData
+     *
+     * @param bool $reboot
+     */
+    public function testLoad($reboot)
     {
         $config = array(
             'kernel' => array(
                 'class' => 'class',
                 'env' => 'test',
                 'debug' => false,
-                'reboot' => true,
+                'reboot' => $reboot,
+                'bootstrap' => null,
             ),
             'logger' => array(
                 'path' => 'path',
@@ -68,7 +105,63 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
+        $this->kernelSubExtension->load($container->reveal(), $config)
+            ->shouldBeCalledTimes(1);
+        $this->loggerSubExtension->load($container->reveal(), $config)
+            ->shouldBeCalledTimes(1);
+
         $this->assertNull($this->extension->load($container->reveal(), $config));
+
+        $this->assertCreateServiceCalls(
+            $container,
+            'handler.kernel',
+            KernelHandler::class,
+            array(
+                $this->getReferenceAssertion('event_dispatcher'),
+                $this->getReferenceAssertion(Behat3SymfonyExtension::KERNEL_SERVICE_ID),
+            )
+        );
+        // KernelAware
+        $this->assertCreateServiceCalls(
+            $container,
+            'initializer.kernel_aware',
+            KernelHandlerAwareInitializer::class,
+            array($this->getReferenceAssertion($this->buildContainerId('handler.kernel'))),
+            array('context.initializer')
+        );
+        // LoggerAware
+        $this->assertCreateServiceCalls(
+            $container,
+            'initializer.logger_aware',
+            LoggerAwareInitializer::class,
+            array($this->getReferenceAssertion($this->buildContainerId('logger'))),
+            array('context.initializer')
+        );
+        // BehatSubscriber
+        $this->assertCreateServiceCalls(
+            $container,
+            'initializer.behat_subscriber',
+            BehatContextSubscriberInitializer::class,
+            array($this->getReferenceAssertion('event_dispatcher')),
+            array('context.initializer')
+        );
+        $this->assertCreateServiceCalls(
+            $container,
+            'subscriber.sf_kernel_logger',
+            SfKernelLoggerSubscriber::class,
+            array($this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))),
+            array('event_dispatcher.subscriber')
+        );
+
+        $this->assertCreateServiceCalls(
+            $container,
+            'subscriber.reboot_kernel',
+            RebootKernelSubscriber::class,
+            array($this->getReferenceAssertion($this->buildContainerId('handler.kernel'))),
+            ['event_dispatcher.subscriber'],
+            null,
+            true === $reboot
+        );
     }
 
     public function testProcess()
@@ -76,6 +169,26 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
+        $this->kernelSubExtension->process($container->reveal())
+            ->shouldBeCalledTimes(1);
+        $this->loggerSubExtension->process($container->reveal())
+            ->shouldBeCalledTimes(1);
+
         $this->assertNull($this->extension->process($container->reveal()));
+    }
+
+    /**
+     * @return array
+     */
+    public function getTestLoadData()
+    {
+        return array(
+            'with reboot' => array(
+                'reboot' => true,
+            ),
+            'without reboot' => array(
+                'reboot' => false,
+            ),
+        );
     }
 }

@@ -5,10 +5,11 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
 
-class LoggerSubExtensionTest extends AbstractSubExtension
+class LoggerSubExtensionTest extends AbstractExtensionTest
 {
     /** @var LoggerSubExtension*/
     private $subExtension;
@@ -60,7 +61,7 @@ class LoggerSubExtensionTest extends AbstractSubExtension
         $expectedCallArgumentList = array(
             array(
                 'pushHandler',
-                array($this->getReferenceAssertion($this->getContainerParamOrServiceId($handlerService)))
+                array($this->getReferenceAssertion($this->buildContainerId($handlerService)))
             )
         );
         $this->assertCreateServiceCalls(
@@ -76,7 +77,7 @@ class LoggerSubExtensionTest extends AbstractSubExtension
             $container,
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
-            array($this->getReferenceAssertion($this->getContainerParamOrServiceId('kernel'))),
+            array($this->getReferenceAssertion($this->buildContainerId('kernel'))),
             array('event_dispatcher.subscriber')
         );
     }

@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
+namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
@@ -10,14 +10,14 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 
-abstract class AbstractSubExtension extends \PHPUnit_Framework_TestCase
+abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $key
      *
      * @return string
      */
-    protected function getContainerParamOrServiceId($key)
+    protected function buildContainerId($key)
     {
         return sprintf(
             '%s.%s',
@@ -102,10 +102,10 @@ abstract class AbstractSubExtension extends \PHPUnit_Framework_TestCase
 
         /** @var MethodProphecy $setDefinitionProphecy */
         $setDefinitionProphecy = $container->setDefinition(
-            $this->getContainerParamOrServiceId($id),
+            $this->buildContainerId($id),
             new Token\LogicalAndToken($globalSetDefinitionArgumentCheckList)
         );
-        if ($called) {
+        if (true === $called) {
             $setDefinitionProphecy->shouldHaveBeenCalled();
         } else {
             $setDefinitionProphecy->shouldNotHaveBeenCalled();

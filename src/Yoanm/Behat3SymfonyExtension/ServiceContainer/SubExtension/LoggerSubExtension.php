@@ -1,14 +1,16 @@
 <?php
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
+use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 
-class LoggerSubExtension extends AbstractSubExtension
+class LoggerSubExtension extends AbstractExtension
 {
     /**
      * @inheritDoc
@@ -17,6 +19,14 @@ class LoggerSubExtension extends AbstractSubExtension
     {
         return 'logger';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initialize(ExtensionManager $extensionManager)
+    {
+    }
+
 
     /**
      * @inheritDoc
@@ -54,14 +64,14 @@ class LoggerSubExtension extends AbstractSubExtension
             $container,
             $baseHandlerServiceId,
             StreamHandler::class,
-            array(
+            [
                 sprintf(
                     '%s/%s',
                     '%behat.paths.base%',
                     $loggerConfig['path']
                 ),
                 $loggerConfig['level'],
-            )
+            ]
         );
         // Logger
         $this->createService(
@@ -76,7 +86,7 @@ class LoggerSubExtension extends AbstractSubExtension
             array(
                 array(
                     'pushHandler',
-                    array(new Reference($this->getContainerParamOrServiceId($baseHandlerServiceId)))
+                    array(new Reference($this->buildContainerId($baseHandlerServiceId)))
                 )
             )
         );
@@ -86,9 +96,16 @@ class LoggerSubExtension extends AbstractSubExtension
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
             array(
-                new Reference($this->getContainerParamOrServiceId('kernel'))
+                new Reference($this->buildContainerId('kernel'))
             ),
             array('event_dispatcher.subscriber')
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
     }
 }
