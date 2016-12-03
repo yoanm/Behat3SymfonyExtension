@@ -5,6 +5,7 @@ php:
 
 sudo: false
 before_script:
+  - rm -rf vendor/*
   - composer require --update-with-dependencies "symfony/symfony:${SYMFONY_VERSION}"
 env:
   - SYMFONY_VERSION=2.7.*
