@@ -5,7 +5,7 @@ php:
 
 sudo: false
 before_script:
-  - composer require --update-with-dependencies "symfony/symfony:${SYMFONY_VERSION}"
+  - composer require "symfony/symfony:${SYMFONY_VERSION}"
 env:
   - SYMFONY_VERSION=2.7.*
   - SYMFONY_VERSION=2.8.*
