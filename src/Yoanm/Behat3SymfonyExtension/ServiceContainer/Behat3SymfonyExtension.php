@@ -13,7 +13,6 @@ use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
 use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
-use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
 class Behat3SymfonyExtension extends AbstractExtension
 {
@@ -97,13 +96,6 @@ class Behat3SymfonyExtension extends AbstractExtension
             BehatContextSubscriberInitializer::class,
             [new Reference('event_dispatcher')],
             ['context.initializer']
-        );
-        $this->createService(
-            $container,
-            'subscriber.sf_kernel_logger',
-            SfKernelLoggerSubscriber::class,
-            [new Reference($this->buildContainerId('logger.sf_kernel_logger'))],
-            ['event_dispatcher.subscriber']
         );
 
         if (true === $config['kernel']['reboot']) {

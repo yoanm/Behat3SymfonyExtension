@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
+use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
 class LoggerSubExtensionTest extends AbstractExtensionTest
 {
@@ -30,18 +31,28 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
         );
     }
 
-    public function testLoad()
+    /**
+     * @dataProvider getTestLoadData
+     *
+     * @param bool $debug
+     */
+    public function testLoad($debug)
     {
-        $loggerConfig = [
-            'path' => 'path',
-            'level' => 'level',
+        $config = [
+            'kernel' => [
+                'debug' => $debug,
+            ],
+            'logger' => [
+                'path' => 'path',
+                'level' => 'level',
+            ],
         ];
         $handlerService = 'logger.handler';
 
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->subExtension->load($container->reveal(), [$this->subExtension->getConfigKey() => $loggerConfig]);
+        $this->subExtension->load($container->reveal(), $config);
 
         // Handler
         $this->assertCreateServiceCalls(
@@ -52,9 +63,9 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
                 sprintf(
                     '%s/%s',
                     '%behat.paths.base%',
-                    $loggerConfig['path']
+                    $config['logger']['path']
                 ),
-                $loggerConfig['level'],
+                $config['logger']['level'],
             ]
         );
         // Logger
@@ -68,17 +79,43 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             $container,
             'logger',
             Logger::class,
-            ['behat3Symfony', $loggerConfig['level']],
+            ['behat3Symfony', $config['logger']['level']],
             ['event_dispatcher.subscriber'],
             $expectedCallArgumentList
         );
         // SfKernelEventLogger
         $this->assertCreateServiceCalls(
             $container,
+            'subscriber.sf_kernel_logger',
+            SfKernelLoggerSubscriber::class,
+            [$this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))],
+            ['event_dispatcher.subscriber'],
+            null,
+            true === $debug
+        );
+        $this->assertCreateServiceCalls(
+            $container,
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
             [$this->getReferenceAssertion($this->buildContainerId('kernel'))],
-            ['event_dispatcher.subscriber']
+            [],
+            null,
+            true === $debug
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getTestLoadData()
+    {
+        return [
+            'debug mode' => [
+                'debug' => true,
+            ],
+            'not debug mode' => [
+                'debug' => false,
+            ],
+        ];
     }
 }

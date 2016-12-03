@@ -3,6 +3,7 @@ namespace Yoanm\Behat3SymfonyExtension\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Yoanm\Behat3SymfonyExtension\Event\Events;
 use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 
 /**
@@ -51,12 +52,12 @@ class KernelHandler
     {
         $event = new KernelEvent($this->sfKernel);
         $this->behatEventDispatcher->dispatch(
-            KernelEvent::BEFORE_SHUTDOWN,
+            Events::BEFORE_KERNEL_SHUTDOWN,
             $event
         );
         $this->sfKernel->shutdown();
         $this->behatEventDispatcher->dispatch(
-            KernelEvent::AFTER_SHUTDOWN,
+            Events::AFTER_KERNEL_SHUTDOWN,
             $event
         );
     }
@@ -68,12 +69,12 @@ class KernelHandler
     {
         $event = new KernelEvent($this->sfKernel);
         $this->behatEventDispatcher->dispatch(
-            KernelEvent::BEFORE_BOOT,
+            Events::BEFORE_KERNEL_BOOT,
             $event
         );
         $this->sfKernel->boot();
         $this->behatEventDispatcher->dispatch(
-            KernelEvent::AFTER_BOOT,
+            Events::AFTER_KERNEL_BOOT,
             $event
         );
     }

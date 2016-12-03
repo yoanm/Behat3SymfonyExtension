@@ -3,6 +3,7 @@ namespace Yoanm\Behat3SymfonyExtension\Subscriber;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Yoanm\Behat3SymfonyExtension\Event\Events;
 use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 
@@ -28,7 +29,7 @@ class SfKernelLoggerSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvent::AFTER_BOOT => 'initSfKernelLogger',
+            Events::AFTER_KERNEL_BOOT => 'initSfKernelLogger',
         ];
     }
 
