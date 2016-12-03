@@ -9,12 +9,13 @@
             "email":     "yoanm@users.noreply.github.com"
         }
     ],
-
+    "suggest": {
+      "behat/mink-extension": "~2.0",
+      "behat/mink-browserkit-driver":  "~1.0"
+    },
     "require": {
         "php": ">=5.5",
         "behat/behat": "~3.0",
-        "behat/mink-extension": "~2.0",
-        "behat/mink-browserkit-driver":  "~1.0",
         "monolog/monolog": "~1.0",
         "symfony/framework-bundle": "~2.7|~3.0"
     },
