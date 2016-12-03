@@ -6,7 +6,7 @@
 
 [![Travis Build Status](https://img.shields.io/travis/yoanm/Behat3SymfonyExtension.svg?label=travis)](https://travis-ci.org/yoanm/Behat3SymfonyExtension?label=Travis)
 
-Behat3SymfonyExtension is a layer between Behat 3.0+ and Symfony3.0+, strongly inspired by [Symfony2Extension](https://github.com/Behat/Symfony2Extension).
+Behat3SymfonyExtension is a layer between Behat 3.0+ and Symfony2.7+|3+, strongly inspired by [Symfony2Extension](https://github.com/Behat/Symfony2Extension).
 
 It provide :
  * Context aware interfaces : 
