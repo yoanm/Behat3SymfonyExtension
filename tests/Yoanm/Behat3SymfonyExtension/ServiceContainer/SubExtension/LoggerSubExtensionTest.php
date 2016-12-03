@@ -38,15 +38,14 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
      */
     public function testLoad($debug)
     {
-        $loggerConfig = [
-            'path' => 'path',
-            'level' => 'level',
-        ];
         $config = [
             'kernel' => [
                 'debug' => $debug,
             ],
-            $this->subExtension->getConfigKey() => $loggerConfig,
+            'logger' => [
+                'path' => 'path',
+                'level' => 'level',
+            ],
         ];
         $handlerService = 'logger.handler';
 
@@ -64,9 +63,9 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
                 sprintf(
                     '%s/%s',
                     '%behat.paths.base%',
-                    $loggerConfig['path']
+                    $config['logger']['path']
                 ),
-                $loggerConfig['level'],
+                $config['logger']['level'],
             ]
         );
         // Logger
@@ -80,7 +79,7 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             $container,
             'logger',
             Logger::class,
-            ['behat3Symfony', $loggerConfig['level']],
+            ['behat3Symfony', $config['logger']['level']],
             ['event_dispatcher.subscriber'],
             $expectedCallArgumentList
         );
