@@ -14,7 +14,6 @@ use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
 use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
-use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
 class Behat3SymfonyExtensionTest extends AbstractExtensionTest
 {
@@ -144,13 +143,6 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
             BehatContextSubscriberInitializer::class,
             [$this->getReferenceAssertion('event_dispatcher')],
             ['context.initializer']
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'subscriber.sf_kernel_logger',
-            SfKernelLoggerSubscriber::class,
-            [$this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))],
-            ['event_dispatcher.subscriber']
         );
 
         $this->assertCreateServiceCalls(

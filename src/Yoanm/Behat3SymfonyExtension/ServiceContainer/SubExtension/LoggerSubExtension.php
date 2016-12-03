@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
+use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
 class LoggerSubExtension extends AbstractExtension
 {
@@ -99,12 +100,16 @@ class LoggerSubExtension extends AbstractExtension
         if (true === $config['kernel']['debug']) {
             $this->createService(
                 $container,
+                'subscriber.sf_kernel_logger',
+                SfKernelLoggerSubscriber::class,
+                [new Reference($this->buildContainerId('logger.sf_kernel_logger'))],
+                ['event_dispatcher.subscriber']
+            );
+            $this->createService(
+                $container,
                 'logger.sf_kernel_logger',
                 SfKernelEventLogger::class,
-                [
-                    new Reference($this->buildContainerId('kernel'))
-                ],
-                ['event_dispatcher.subscriber']
+                [new Reference($this->buildContainerId('kernel'))]
             );
         }
     }
