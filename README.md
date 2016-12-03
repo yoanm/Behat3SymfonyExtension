@@ -27,7 +27,7 @@ It provide :
 > composer require --dev yoanm/behat3-symfony-extension
 ```
 
-Behat3SymfonyExtension require [behat/behat](https://github.com/Behat/Behat), [monolog/monolog](https://github.com/Seldaek/monolog) and [symfony/framework-bundle](https://github.com/symfony/framework-bundle)
+Behat3SymfonyExtension require [behat/behat](https://github.com/Behat/Behat), [monolog/monolog](https://github.com/Seldaek/monolog), [symfony/browser-kit](https://github.com/symfony/browser-kit) and [symfony/framework-bundle](https://github.com/symfony/framework-bundle)
 
 ## Configuration
 Add the following in your behat configuration file (usually `behat.yml`) : 
