@@ -19,7 +19,7 @@ It provide :
     - handle a request
     - catch an exception
     
- All data are loggued in the configured filed (see logger configuration below)
+ All data are loggued in the configured file (see logger configuration below)
  
  
 ## Installation
