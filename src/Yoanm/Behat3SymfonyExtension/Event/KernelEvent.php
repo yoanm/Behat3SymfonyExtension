@@ -2,25 +2,25 @@
 namespace Yoanm\Behat3SymfonyExtension\Event;
 
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class KernelEvent extends Event
 {
-    /** @var Kernel */
+    /** @var KernelInterface */
     private $kernel;
     /** @var string */
     private $name;
 
     /**
-     * @param Kernel $kernel
+     * @param KernelInterface $kernel
      */
-    public function __construct(Kernel $kernel)
+    public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }
 
     /**
-     * @return Kernel
+     * @return KernelInterface
      */
     public function getKernel()
     {
