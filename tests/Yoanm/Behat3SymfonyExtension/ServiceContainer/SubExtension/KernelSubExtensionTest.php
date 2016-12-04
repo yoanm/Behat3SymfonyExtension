@@ -10,6 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
 use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
+use Yoanm\Behat3SymfonyExtension\Factory\KernelFactory;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
@@ -70,6 +72,24 @@ class KernelSubExtensionTest extends AbstractExtensionTest
             [],
             null,
             $this->getFactoryServiceAssertion($this->buildContainerId('factory.kernel'), 'load')
+        );
+        $this->assertCreateServiceCalls(
+            $container,
+            'dispatcher.kernel_event',
+            BehatKernelEventDispatcher::class,
+            [$this->getReferenceAssertion('event_dispatcher')]
+        );
+        $this->assertCreateServiceCalls(
+            $container,
+            'factory.kernel',
+            KernelFactory::class,
+            [
+                $this->getReferenceAssertion($this->buildContainerId('dispatcher.kernel_event')),
+                '%'.$this->buildContainerId('kernel.path').'%',
+                '%'.$this->buildContainerId('kernel.class').'%',
+                '%'.$this->buildContainerId('kernel.env').'%',
+                '%'.$this->buildContainerId('kernel.debug').'%'
+            ]
         );
         // KernelAware
         $this->assertCreateServiceCalls(
