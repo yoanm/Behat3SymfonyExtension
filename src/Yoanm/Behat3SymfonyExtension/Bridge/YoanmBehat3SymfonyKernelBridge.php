@@ -10,9 +10,9 @@ namespace {
      * This file should be automatically deleted after kernel load. Except if kernel.kernelDebug === true
      */
     use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
-    use OriginalKernelClassNameToReplace as YoanmBehat3SymfonyKernelBridgeBaseKernel;
+    use __OriginalKernelClassNameToReplace__ as YoanmBehat3SymfonyKernelBridgeBaseKernel;
 
-    class YoanmBehat3SymfonyKernelBridge extends YoanmBehat3SymfonyKernelBridgeBaseKernel
+    class YoanmBehat3SymfonyKernelBridge__BridgeId__ extends YoanmBehat3SymfonyKernelBridgeBaseKernel
     {
         /** @var BehatKernelEventDispatcher */
         private $behatKernelEventDispatcher;

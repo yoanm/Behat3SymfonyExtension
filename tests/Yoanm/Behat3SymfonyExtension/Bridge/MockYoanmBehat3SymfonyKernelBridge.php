@@ -3,8 +3,18 @@ namespace Tests\Yoanm\Behat3SymfonyExtension\Bridge;
 
 use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
 
-class YoanmBehat3SymfonyKernelBridgeMock
+class MockYoanmBehat3SymfonyKernelBridge
 {
+    /** @var bool */
+    public static $throwExceptionOnStartup = false;
+
+    public function __construct()
+    {
+        if (true === self::$throwExceptionOnStartup) {
+            throw new \Exception('my-custom-message');
+        }
+    }
+
     /**
      * @param BehatKernelEventDispatcher $behatKernelEventDispatcher
      */

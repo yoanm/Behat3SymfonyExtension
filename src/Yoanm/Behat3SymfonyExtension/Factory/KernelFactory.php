@@ -54,8 +54,9 @@ COMMENT;
     public function load()
     {
         // Write the custom kernel file at same level than original one for autoloading purpose
-        $kernelBridgeClassName = self::KERNEL_BRIDGE_CLASS_NAME;
         $originAppKernelDir = dirname($this->originalKernelPath);
+        $bridgeId = uniqid();
+        $kernelBridgeClassName = self::KERNEL_BRIDGE_CLASS_NAME.$bridgeId;
         $customAppKernelPath = sprintf('%s/%s.php', $originAppKernelDir, $kernelBridgeClassName);
         try {
             /* /!\ YoanmBehat3SymfonyKernelBridge.php is just template file /!\ */
@@ -63,8 +64,8 @@ COMMENT;
             file_put_contents(
                 $customAppKernelPath,
                 $template = str_replace(
-                    ['OriginalKernelClassNameToReplace', self::KERNEL_BRIDGE_TEMPLATE_COMMENT],
-                    [$this->originalKernelClassName, ''],
+                    ['__BridgeId__', '__OriginalKernelClassNameToReplace__', self::KERNEL_BRIDGE_TEMPLATE_COMMENT],
+                    [$bridgeId, $this->originalKernelClassName, ''],
                     $template
                 )
             );
@@ -77,7 +78,9 @@ COMMENT;
 
             return $kernelBridge;
         } catch (\Exception $e) {
-            unlink($customAppKernelPath);
+            if (file_exists($customAppKernelPath)) {
+                unlink($customAppKernelPath);
+            }
 
             throw new \Exception('An exception occured during Kernel decoration : '.$e->getMessage(), 0, $e);
         }
