@@ -18,4 +18,5 @@ Feature: SfKernelLogger
     Then I should have caught 4 symfony kernel events
     And I should have caught events for symfony kernel shutdown
     And I should have caught events for symfony kernel boot
+    And A log entry for request event to exception route must exists
     And A log entry for exception event must exists
