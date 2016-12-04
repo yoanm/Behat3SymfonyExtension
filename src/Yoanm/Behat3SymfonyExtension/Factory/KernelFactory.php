@@ -12,8 +12,6 @@ class KernelFactory
     private $originalKernelPath;
     /** @var string */
     private $originalKernelClassName;
-    /** @var bool */
-    private $extensionDebugMode;
 
     /** @var string  */
     private $kernelEnvironment;
@@ -27,22 +25,19 @@ class KernelFactory
      * @param string                     $originalKernelClassName
      * @param string                     $kernelEnvironment
      * @param bool                       $kernelDebug
-     * @param bool                       $extensionDebugMode
      */
     public function __construct(
         BehatKernelEventDispatcher $behatKernelEventDispatcher,
         $originalKernelPath,
         $originalKernelClassName,
         $kernelEnvironment,
-        $kernelDebug,
-        $extensionDebugMode = false
+        $kernelDebug
     ) {
         $this->originalKernelPath = $originalKernelPath;
         $this->originalKernelClassName = $originalKernelClassName;
         $this->kernelEnvironment = $kernelEnvironment;
         $this->kernelDebug = $kernelDebug;
         $this->behatKernelEventDispatcher = $behatKernelEventDispatcher;
-        $this->extensionDebugMode = $extensionDebugMode;
     }
 
     /**
@@ -126,18 +121,14 @@ TEMPLATE;
             file_put_contents($customAppKernelPath, $template);
 
             require($customAppKernelPath);
-            if (true !== $this->kernelDebug) {
-                unlink($customAppKernelPath);
-            }
+            unlink($customAppKernelPath);
 
             $class = new $className($this->kernelEnvironment, $this->kernelDebug);
             $class->setBehatKernelEventDispatcher($this->behatKernelEventDispatcher);
 
             return $class;
         } catch (\Exception $e) {
-            if (true !== $this->kernelDebug) {
-                unlink($customAppKernelPath);
-            }
+            unlink($customAppKernelPath);
             throw new \Exception(
                 'An exception occured during Kernel decoration : '.$e->getMessage(),
                 0,
