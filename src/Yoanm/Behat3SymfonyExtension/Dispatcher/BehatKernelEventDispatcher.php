@@ -9,8 +9,8 @@ use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 
 /**
  * Will dispatch events related to symfony app kernel
- * It's just a wrapper to have the minimum requirement in the AppKernel mock
- *
+ * It's just a wrapper to have the minimum of requirements in the AppKernel mock
+ * and the maximum of code coverage for this extension
  * @see Yoanm\Behat3SymfonyExtension\Factory\KernelFactory::load()
  */
 class BehatKernelEventDispatcher
