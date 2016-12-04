@@ -30,6 +30,8 @@
             <exclude>
                 <!-- Will be covered by FT -->
                 <file>src/Yoanm/Behat3SymfonyExtension/Client/Client.php</file>
+                <!-- Not possible to test it, it's just a template -->
+                <file>src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php</file>
             </exclude>
         </whitelist>
     </filter>

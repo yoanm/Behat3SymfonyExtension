@@ -17,7 +17,7 @@ class BehatKernelEventDispatcherTest extends \PHPUnit_Framework_TestCase
     private $dispatcher;
 
     /**
-     * {@inheritdoc
+     * {@inheritdoc}
      */
     public function setUp()
     {
@@ -56,7 +56,7 @@ class BehatKernelEventDispatcherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $eventName
-     * 
+     *
      * @return ObjectProphecy|KernelInterface
      */
     protected function prophesizeEventDispatch($eventName)
