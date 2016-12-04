@@ -2,19 +2,19 @@
 namespace Tests\Yoanm\Behat3SymfonyExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
-use Monolog\Logger;
 use Prophecy\Prophecy\ObjectProphecy;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Context\KernelAwareInterface;
 
 /**
- * Class LoggerAwareInitializerTest
+ * Class KernelAwareInitializerTest
  */
-class LoggerAwareInitializerTest extends \PHPUnit_Framework_TestCase
+class KernelAwareInitializerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Logger|ObjectProphecy */
-    private $logger;
-    /** @var LoggerAwareInitializer */
+    /** @var KernelInterface|ObjectProphecy */
+    private $kernel;
+    /** @var KernelAwareInitializer */
     private $initializer;
 
     /**
@@ -22,19 +22,19 @@ class LoggerAwareInitializerTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->logger = $this->prophesize(Logger::class);
+        $this->kernel = $this->prophesize(KernelInterface::class);
 
-        $this->initializer = new LoggerAwareInitializer(
-            $this->logger->reveal()
+        $this->initializer = new KernelAwareInitializer(
+            $this->kernel->reveal()
         );
     }
 
     public function testInitializeContextIfImplementInterface()
     {
-        /** @var LoggerAwareInterface|ObjectProphecy $context */
-        $context = $this->prophesize(LoggerAwareInterface::class);
+        /** @var KernelAwareInterface|ObjectProphecy $context */
+        $context = $this->prophesize(KernelAwareInterface::class);
 
-        $context->setBehatLogger($this->logger->reveal())
+        $context->setKernel($this->kernel->reveal())
             ->shouldBeCalledTimes(1);
 
         $this->initializer->initializeContext($context->reveal());

@@ -75,14 +75,16 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
                         if ($callList[$key][0] !== $data[0]) {
                             return false;
                         }
-                        foreach ($data[1] as $subKey => $expected) {
-                            $actual = $callList[$key][1][$subKey];
-                            if ($expected instanceof Token\TokenInterface) {
-                                if ($expected->scoreArgument($actual) === false) {
+                        if (isset($data[1])) {
+                            foreach ($data[1] as $subKey => $expected) {
+                                $actual = $callList[$key][1][$subKey];
+                                if ($expected instanceof Token\TokenInterface) {
+                                    if ($expected->scoreArgument($actual) === false) {
+                                        return false;
+                                    }
+                                } elseif ($expected != $actual) {
                                     return false;
                                 }
-                            } elseif ($expected != $actual) {
-                                return false;
                             }
                         }
                     }

@@ -6,6 +6,7 @@ use Monolog\Logger;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
 use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
 use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
@@ -54,17 +55,23 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
 
         $this->subExtension->load($container->reveal(), $config);
 
+        $logFilePath = $config['logger']['path'];
+        $logFilePathUnderBasePath = sprintf(
+            '%s/%s',
+            '%paths.base%',
+            $config['logger']['path']
+        );
+        if (file_exists($logFilePathUnderBasePath)) {
+            $logFilePath = $logFilePathUnderBasePath;
+        }
+
         // Handler
         $this->assertCreateServiceCalls(
             $container,
             $handlerService,
             StreamHandler::class,
             [
-                sprintf(
-                    '%s/%s',
-                    '%behat.paths.base%',
-                    $config['logger']['path']
-                ),
+                $logFilePath,
                 $config['logger']['level'],
             ]
         );
@@ -79,8 +86,8 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             $container,
             'logger',
             Logger::class,
-            ['behat3Symfony', $config['logger']['level']],
-            ['event_dispatcher.subscriber'],
+            ['behat3Symfony'],
+            [],
             $expectedCallArgumentList
         );
         // SfKernelEventLogger
@@ -89,7 +96,7 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             'subscriber.sf_kernel_logger',
             SfKernelLoggerSubscriber::class,
             [$this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))],
-            ['event_dispatcher.subscriber'],
+            [],
             null,
             true === $debug
         );
@@ -97,10 +104,18 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             $container,
             'logger.sf_kernel_logger',
             SfKernelEventLogger::class,
-            [$this->getReferenceAssertion($this->buildContainerId('kernel'))],
+            [$this->getReferenceAssertion($this->buildContainerId('logger'))],
             [],
             null,
             true === $debug
+        );
+        // LoggerAware
+        $this->assertCreateServiceCalls(
+            $container,
+            'initializer.logger_aware',
+            LoggerAwareInitializer::class,
+            [$this->getReferenceAssertion($this->buildContainerId('logger'))],
+            ['context.initializer']
         );
     }
 

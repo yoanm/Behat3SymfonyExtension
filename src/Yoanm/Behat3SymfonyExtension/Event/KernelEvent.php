@@ -8,9 +8,12 @@ class KernelEvent extends Event
 {
     /** @var Kernel */
     private $kernel;
+    /** @var string */
+    private $name;
 
     /**
      * @param Kernel $kernel
+     * @param string $name
      */
     public function __construct(Kernel $kernel)
     {
@@ -23,5 +26,21 @@ class KernelEvent extends Event
     public function getKernel()
     {
         return $this->kernel;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }
