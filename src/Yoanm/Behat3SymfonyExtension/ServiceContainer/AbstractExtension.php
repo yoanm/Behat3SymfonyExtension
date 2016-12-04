@@ -32,6 +32,7 @@ abstract class AbstractExtension implements Extension
      * @param array            $argumentList
      * @param array            $tagList
      * @param array            $addMethodCallList
+     * @param array|null       $factory
      *
      * @return Definition
      */
@@ -41,7 +42,8 @@ abstract class AbstractExtension implements Extension
         $class,
         $argumentList = [],
         $tagList = [],
-        $addMethodCallList = []
+        $addMethodCallList = [],
+        $factory = null
     ) {
         $definition = new Definition($class, $argumentList);
 
@@ -52,6 +54,10 @@ abstract class AbstractExtension implements Extension
         foreach ($addMethodCallList as $methodCall) {
             $args = isset($methodCall[1]) ? $methodCall[1] : [];
             $definition->addMethodCall($methodCall[0], $args);
+        }
+
+        if (null !== $factory) {
+            $definition->setFactory($factory);
         }
 
         $container->setDefinition($this->buildContainerId($id), $definition);

@@ -88,6 +88,7 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             [$this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))],
             [],
             null,
+            null,
             true === $debug
         );
         $this->assertCreateServiceCalls(
@@ -96,6 +97,7 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
             SfKernelEventLogger::class,
             [$this->getReferenceAssertion($this->buildContainerId('logger'))],
             [],
+            null,
             null,
             true === $debug
         );

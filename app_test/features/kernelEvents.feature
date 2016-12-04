@@ -1,14 +1,7 @@
-Feature: kernelHandler
-  In order to boot/shudown/reboot app symfony kernel
+Feature: kernelEvents
+  In order to be aware of symfony app kernel life cycle
   As behat context
-  I need to have kernelHandler injected
-
-  Scenario: Reboot Kernel
-    Given I listen for symfony kernel event
-    When I reboot symfony kernel
-    Then I should have caught 4 symfony kernel events
-    And I should have caught events for symfony kernel shutdown
-    And I should have caught events for symfony kernel boot
+  I need to receive symfony app kernel events
 
   Scenario: Shutdown and then boot Kernel
     Given I listen for symfony kernel event

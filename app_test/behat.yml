@@ -9,7 +9,6 @@ default:
             loggerConfig:
               path: %behat3_symfony_extension.logger.path%
               level: %behat3_symfony_extension.logger.level%
-        - FunctionalTest\KernelHandlerContext: ~
         - FunctionalTest\KernelContext:
             kernelConfig:
               bootstrap: %behat3_symfony_extension.kernel.bootstrap%
