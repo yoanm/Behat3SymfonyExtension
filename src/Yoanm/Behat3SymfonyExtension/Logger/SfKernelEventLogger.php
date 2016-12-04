@@ -46,7 +46,7 @@ class SfKernelEventLogger implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $this->log(
-            '[REQUEST_HANDLED]',
+            '[REQUEST]',
             [
                 'type' => ($event->getRequestType() == HttpKernelInterface::MASTER_REQUEST
                     ? 'Master'
@@ -68,7 +68,7 @@ class SfKernelEventLogger implements EventSubscriberInterface
             [
                 'message' => $event->getException()->getMessage(),
             ],
-            Logger::CRITICAL
+            Logger::ERROR
         );
     }
 

@@ -88,12 +88,8 @@ class BehatContextSubscriberContext implements Context, BehatContextSubscriberIn
     {
         return [
             Events::BEFORE_KERNEL_BOOT => 'catchKernelEvent',
-            Events::BEFORE_KERNEL_HANDLE => 'catchKernelEvent',
-            Events::BEFORE_KERNEL_TERMINATE => 'catchKernelEvent',
             Events::BEFORE_KERNEL_SHUTDOWN => 'catchKernelEvent',
             Events::AFTER_KERNEL_BOOT => 'catchKernelEvent',
-            Events::AFTER_KERNEL_HANDLE => 'catchKernelEvent',
-            Events::AFTER_KERNEL_TERMINATE => 'catchKernelEvent',
             Events::AFTER_KERNEL_SHUTDOWN => 'catchKernelEvent',
         ];
     }

@@ -12,14 +12,14 @@ use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
 class LoggerAwareInitializer implements ContextInitializer
 {
     /** @var Logger */
-    private $behatLogger;
+    private $logger;
 
     /**
-     * @param Logger $behatLogger
+     * @param Logger $logger
      */
-    public function __construct(Logger $behatLogger)
+    public function __construct(Logger $logger)
     {
-        $this->behatLogger = $behatLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -31,6 +31,6 @@ class LoggerAwareInitializer implements ContextInitializer
             return;
         }
 
-        $context->setBehatLogger($this->behatLogger);
+        $context->setBehatLogger($this->logger);
     }
 }
