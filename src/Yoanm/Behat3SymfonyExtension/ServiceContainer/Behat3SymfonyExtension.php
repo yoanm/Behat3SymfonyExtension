@@ -47,6 +47,23 @@ class Behat3SymfonyExtension extends AbstractExtension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
+        $builder->children()
+            ->booleanNode('debug_mode')
+                ->beforeNormalization()
+                    ->always()
+                    ->then(function ($value) {
+                        $filtered = filter_var(
+                            $value,
+                            FILTER_VALIDATE_BOOLEAN,
+                            FILTER_NULL_ON_FAILURE
+                        );
+
+                        return (null === $filtered) ? (bool) $value : $filtered;
+                    })
+                    ->end()
+                ->defaultFalse()
+            ->end()
+            ;
         foreach ($this->subExtensionList as $subExtension) {
             $subExtension->configure(
                 $builder->children()
@@ -60,6 +77,10 @@ class Behat3SymfonyExtension extends AbstractExtension
      */
     public function load(ContainerBuilder $container, array $config)
     {
+        $container->setParameter(
+            '%'.$this->buildContainerId('debug_mode').'%',
+            $container['debug_mode']
+        );
         foreach ($this->subExtensionList as $subExtension) {
             $subExtension->load($container, $config);
         }

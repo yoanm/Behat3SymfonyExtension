@@ -159,7 +159,8 @@ class KernelSubExtension extends AbstractExtension
                 '%'.$this->buildContainerId('kernel.path').'%',
                 '%'.$this->buildContainerId('kernel.class').'%',
                 '%'.$this->buildContainerId('kernel.env').'%',
-                '%'.$this->buildContainerId('kernel.debug').'%'
+                '%'.$this->buildContainerId('kernel.debug').'%',
+                '%'.$this->buildContainerId('debug_mode').'%'
             ]
         );
     }

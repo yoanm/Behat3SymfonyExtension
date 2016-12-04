@@ -12,32 +12,37 @@ class KernelFactory
     private $originalKernelPath;
     /** @var string */
     private $originalKernelClassName;
+    /** @var bool */
+    private $extensionDebugMode;
 
     /** @var string  */
-    private $environment;
+    private $kernelEnvironment;
     /** @var bool */
-    private $debug;
+    private $kernelDebug;
 
 
     /**
      * @param BehatKernelEventDispatcher $behatKernelEventDispatcher
      * @param string                     $originalKernelPath
      * @param string                     $originalKernelClassName
-     * @param string                     $environment
-     * @param bool                       $debug
+     * @param string                     $kernelEnvironment
+     * @param bool                       $kernelDebug
+     * @param bool                       $extensionDebugMode
      */
     public function __construct(
         BehatKernelEventDispatcher $behatKernelEventDispatcher,
         $originalKernelPath,
         $originalKernelClassName,
-        $environment,
-        $debug
+        $kernelEnvironment,
+        $kernelDebug,
+        $extensionDebugMode = false
     ) {
         $this->originalKernelPath = $originalKernelPath;
         $this->originalKernelClassName = $originalKernelClassName;
-        $this->environment = $environment;
-        $this->debug = $debug;
+        $this->kernelEnvironment = $kernelEnvironment;
+        $this->kernelDebug = $kernelDebug;
         $this->behatKernelEventDispatcher = $behatKernelEventDispatcher;
+        $this->extensionDebugMode = $extensionDebugMode;
     }
 
     /**
@@ -56,7 +61,7 @@ class KernelFactory
  * Don't touch the content it will be erased !
  * See Yoanm\Behat3SymfonyExtension\Factory\KernelFactory::load()
  *
- * This file should be automatically deleted after kernel load. Except if kernel.debug === true
+ * This file should be automatically deleted after kernel load. Except if kernel.kernelDebug === true
  */
 use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
 use ${originalKernelClassName} as ${className}BaseKernel;
@@ -121,15 +126,23 @@ TEMPLATE;
             file_put_contents($customAppKernelPath, $template);
 
             require($customAppKernelPath);
-            unlink($customAppKernelPath);
+            if (true !== $this->kernelDebug) {
+                unlink($customAppKernelPath);
+            }
 
-            $class = new $className($this->environment, $this->debug);
+            $class = new $className($this->kernelEnvironment, $this->kernelDebug);
             $class->setBehatKernelEventDispatcher($this->behatKernelEventDispatcher);
 
             return $class;
         } catch (\Exception $e) {
-            unlink($customAppKernelPath);
-            throw new \Exception('An exception occured during Kernel decoration : '.$e->getMessage());
+            if (true !== $this->kernelDebug) {
+                unlink($customAppKernelPath);
+            }
+            throw new \Exception(
+                'An exception occured during Kernel decoration : '.$e->getMessage(),
+                0,
+                $e
+            );
         }
     }
 }
