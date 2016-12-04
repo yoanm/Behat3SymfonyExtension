@@ -142,13 +142,15 @@ class KernelSubExtension extends AbstractExtension
             [new Reference('event_dispatcher')]
         );
         // Load Kernel thanks to the factory
-        $this
-            ->createService(
-                $container,
-                'kernel',
-                $kernelConfig['class']
-            )
-            ->setFactory([new Reference($this->buildContainerId('factory.kernel')), 'load']);
+        $this->createService(
+            $container,
+            'kernel',
+            $kernelConfig['class'],
+            [],
+            [],
+            [],
+            [new Reference($this->buildContainerId('factory.kernel')), 'load']
+        );
 
         $this->createService(
             $container,

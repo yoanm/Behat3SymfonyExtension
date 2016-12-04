@@ -33,6 +33,7 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
      * @param array|null                      $expectedDefinitionArgumentList
      * @param array                           $tagList
      * @param array|null                      $expectedCallArgumentList
+     * @param Token\TokenInterface|null      $factory
      * @param bool                            $called
      */
     protected function assertCreateServiceCalls(
@@ -42,6 +43,7 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
         array $expectedDefinitionArgumentList = null,
         $tagList = [],
         array $expectedCallArgumentList = null,
+        Token\TokenInterface $factoryAssertion = null,
         $called = true
     ) {
 
@@ -105,6 +107,10 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
             );
         }
 
+        if (null !== $factoryAssertion) {
+            $globalSetDefinitionArgumentCheckList[] = $factoryAssertion;
+        }
+
         /** @var MethodProphecy $setDefinitionProphecy */
         $setDefinitionProphecy = $container->setDefinition(
             $this->buildContainerId($id),
@@ -120,7 +126,7 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $serviceId
      *
-     * @return Argument\Token\TokenInterface
+     * @return Token\TokenInterface
      */
     protected function getReferenceAssertion($serviceId)
     {
@@ -128,5 +134,32 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
             Argument::type(Reference::class),
             Argument::which('__toString', $serviceId)
         );
+    }
+
+    /**
+     * @param string $factoryServiceId
+     * @param string $methodName
+     *
+     * @return Token\TokenInterface
+     */
+    protected function getFactoryServiceAssertion($factoryServiceId, $methodName)
+    {
+        return Argument::that(function (Definition $definition) use ($factoryServiceId, $methodName) {
+            $factory = $definition->getFactory();
+            $assertion = Argument::allOf(
+                Argument::type('array'),
+                // Check reference
+                Argument::withEntry(
+                    '0',
+                    Argument::allOf(
+                        Argument::type(Reference::class),
+                        Argument::which('__toString', $factoryServiceId)
+                    )
+                ),
+                // Check method name
+                Argument::withEntry('1', $methodName)
+            );
+            return $assertion->scoreArgument($factory) === false ? false : true;
+        });
     }
 }

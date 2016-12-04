@@ -66,9 +66,10 @@ class KernelSubExtensionTest extends AbstractExtensionTest
             $container,
             'kernel',
             $kernelConfig['class'],
-            [$kernelConfig['env'], $kernelConfig['debug']]/*,
+            null,
             [],
-            [['boot']]*/
+            null,
+            $this->getFactoryServiceAssertion($this->buildContainerId('factory.kernel'), 'load')
         );
         // KernelAware
         $this->assertCreateServiceCalls(
@@ -84,6 +85,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
             RebootKernelSubscriber::class,
             [$this->getReferenceAssertion($this->buildContainerId('handler.kernel'))],
             [EventDispatcherExtension::SUBSCRIBER_TAG],
+            null,
             null,
             true === $reboot
         );

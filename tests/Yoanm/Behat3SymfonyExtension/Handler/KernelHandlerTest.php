@@ -64,39 +64,15 @@ class KernelHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function prophesizeShutdownSfKernel()
     {
-        $this->behatEventDispatcher
-            ->dispatch(
-                Events::BEFORE_KERNEL_SHUTDOWN,
-                Argument::type(KernelEvent::class)
-            )
-            ->shouldBeCalledTimes(1);
         $this->sfKernel
             ->shutdown()
-            ->shouldBeCalledTimes(1);
-        $this->behatEventDispatcher
-            ->dispatch(
-                Events::AFTER_KERNEL_SHUTDOWN,
-                Argument::type(KernelEvent::class)
-            )
             ->shouldBeCalledTimes(1);
     }
 
     protected function prophesizeBootSfKernel()
     {
-        $this->behatEventDispatcher
-            ->dispatch(
-                Events::BEFORE_KERNEL_BOOT,
-                Argument::type(KernelEvent::class)
-            )
-            ->shouldBeCalledTimes(1);
         $this->sfKernel
             ->boot()
-            ->shouldBeCalledTimes(1);
-        $this->behatEventDispatcher
-            ->dispatch(
-                Events::AFTER_KERNEL_BOOT,
-                Argument::type(KernelEvent::class)
-            )
             ->shouldBeCalledTimes(1);
     }
 }
