@@ -87,7 +87,6 @@ class KernelSubExtensionTest extends AbstractExtensionTest
             null,
             true === $reboot
         );
-
     }
 
     public function testProcess()
