@@ -79,7 +79,7 @@ class Behat3SymfonyExtension extends AbstractExtension
     {
         $container->setParameter(
             '%'.$this->buildContainerId('debug_mode').'%',
-            $container['debug_mode']
+            $config['debug_mode']
         );
         foreach ($this->subExtensionList as $subExtension) {
             $subExtension->load($container, $config);
