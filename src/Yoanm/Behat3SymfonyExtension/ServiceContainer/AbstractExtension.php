@@ -9,6 +9,7 @@ abstract class AbstractExtension implements Extension
 {
     const BASE_CONTAINER_ID = 'behat3_symfony_extension';
     const KERNEL_SERVICE_ID = 'behat3_symfony_extension.kernel';
+    const TEST_CLIENT_SERVICE_ID = 'behat3_symfony_extension.test.client';
 
     /**
      * @param string $key
