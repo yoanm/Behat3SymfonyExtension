@@ -13,6 +13,7 @@ class Client extends BaseClient
     private $kernelHandler;
     /** @var bool */
     private $requestPerformed = false;
+
     /**
      * @inheritDoc
      */
