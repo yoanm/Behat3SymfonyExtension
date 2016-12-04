@@ -4,7 +4,7 @@ namespace Tests\Yoanm\Behat3SymfonyExtension\Subscriber;
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Prophecy\Prophecy\ObjectProphecy;
-use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 /**
@@ -12,8 +12,8 @@ use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
  */
 class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var KernelHandler|ObjectProphecy */
-    private $kernelHandler;
+    /** @var KernelInterface|ObjectProphecy */
+    private $kernel;
     /** @var RebootKernelSubscriber */
     private $subscriber;
 
@@ -22,10 +22,10 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->kernelHandler = $this->prophesize(KernelHandler::class);
+        $this->kernel = $this->prophesize(KernelInterface::class);
 
         $this->subscriber = new RebootKernelSubscriber(
-            $this->kernelHandler->reveal()
+            $this->kernel->reveal()
         );
     }
 
@@ -42,7 +42,9 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testRebootKernel()
     {
-        $this->kernelHandler->rebootSfKernel()
+        $this->kernel->shutdown()
+            ->shouldBeCalledTimes(1);
+        $this->kernel->boot()
             ->shouldBeCalledTimes(1);
 
         $this->subscriber->rebootKernel();

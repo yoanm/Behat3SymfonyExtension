@@ -103,7 +103,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
             $container,
             'subscriber.reboot_kernel',
             RebootKernelSubscriber::class,
-            [$this->getReferenceAssertion($this->buildContainerId('handler.kernel'))],
+            [$this->getReferenceAssertion(AbstractExtension::KERNEL_SERVICE_ID)],
             [EventDispatcherExtension::SUBSCRIBER_TAG],
             null,
             null,

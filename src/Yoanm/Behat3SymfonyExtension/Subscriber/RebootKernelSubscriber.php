@@ -4,22 +4,22 @@ namespace Yoanm\Behat3SymfonyExtension\Subscriber;
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Class RebootKernelSubscriber
  */
 class RebootKernelSubscriber implements EventSubscriberInterface
 {
-    /** @var KernelHandler */
-    private $kernelHandler;
+    /** @var KernelInterface */
+    private $kernel;
 
     /**
-     * @param KernelHandler $kernelHandler
+     * @param KernelInterface $kernel
      */
-    public function __construct(KernelHandler $kernelHandler)
+    public function __construct(KernelInterface $kernel)
     {
-        $this->kernelHandler = $kernelHandler;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -35,6 +35,7 @@ class RebootKernelSubscriber implements EventSubscriberInterface
 
     public function rebootKernel()
     {
-        $this->kernelHandler->rebootSfKernel();
+        $this->kernel->shutdown();
+        $this->kernel->boot();
     }
 }
