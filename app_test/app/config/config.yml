@@ -1,0 +1,8 @@
+framework:
+    test: true
+    secret: my_test_secret
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+
+parameters:
+    container_test_parameter: 'my-container-test-parameter'
