@@ -28,8 +28,8 @@ class RebootKernelSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ScenarioTested::AFTER => 'rebootKernel',
-            ExampleTested::AFTER => 'rebootKernel',
+            ScenarioTested::BEFORE => 'rebootKernel',
+            ExampleTested::BEFORE => 'rebootKernel',
         ];
     }
 

@@ -33,8 +33,8 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             [
-                ScenarioTested::AFTER => 'rebootKernel',
-                ExampleTested::AFTER => 'rebootKernel',
+                ScenarioTested::BEFORE => 'rebootKernel',
+                ExampleTested::BEFORE => 'rebootKernel',
             ],
             RebootKernelSubscriber::getSubscribedEvents()
         );

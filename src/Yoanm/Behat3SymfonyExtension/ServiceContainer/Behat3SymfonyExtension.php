@@ -7,12 +7,8 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelHandlerAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
-use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 class Behat3SymfonyExtension extends AbstractExtension
 {
@@ -69,44 +65,11 @@ class Behat3SymfonyExtension extends AbstractExtension
         }
         $this->createService(
             $container,
-            'handler.kernel',
-            KernelHandler::class,
-            [
-                new Reference('event_dispatcher'),
-                new Reference(self::KERNEL_SERVICE_ID),
-            ]
-        );
-        $this->createService(
-            $container,
-            'initializer.kernel_aware',
-            KernelHandlerAwareInitializer::class,
-            [new Reference($this->buildContainerId('handler.kernel'))],
-            ['context.initializer']
-        );
-        $this->createService(
-            $container,
-            'initializer.logger_aware',
-            LoggerAwareInitializer::class,
-            [new Reference($this->buildContainerId('logger'))],
-            ['context.initializer']
-        );
-        $this->createService(
-            $container,
             'initializer.behat_subscriber',
             BehatContextSubscriberInitializer::class,
             [new Reference('event_dispatcher')],
             ['context.initializer']
         );
-
-        if (true === $config['kernel']['reboot']) {
-            $this->createService(
-                $container,
-                'subscriber.reboot_kernel',
-                RebootKernelSubscriber::class,
-                [new Reference($this->buildContainerId('handler.kernel'))],
-                ['event_dispatcher.subscriber']
-            );
-        }
     }
 
     /**
