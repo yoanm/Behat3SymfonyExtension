@@ -6,6 +6,8 @@ php:
 sudo: false
 before_script:
   - composer require "symfony/symfony:${SYMFONY_VERSION}"
+after_script:
+  - composer run-script behat
 env:
   - SYMFONY_VERSION=2.7.*
   - SYMFONY_VERSION=2.8.*
