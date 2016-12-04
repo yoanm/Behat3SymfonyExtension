@@ -1,0 +1,59 @@
+default:
+  suites:
+    default:
+      filters:
+        tags: "@nothing"
+      contexts:
+        - FunctionalTest\LoggerContext:
+            pathBase: %paths.base%
+            loggerConfig:
+              path: %behat3_symfony_extension.logger.path%
+              level: %behat3_symfony_extension.logger.level%
+        - FunctionalTest\KernelHandlerContext: ~
+        - FunctionalTest\KernelContext:
+            kernelConfig:
+              bootstrap: %behat3_symfony_extension.kernel.bootstrap%
+              path: %behat3_symfony_extension.kernel.path%
+              class: %behat3_symfony_extension.kernel.class%
+              env: %behat3_symfony_extension.kernel.env%
+              debug: %behat3_symfony_extension.kernel.debug%
+              reboot: %behat3_symfony_extension.kernel.reboot%
+        - FunctionalTest\MinkContext: ~
+        - FunctionalTest\BehatContextSubscriberContext: ~
+
+default-config:
+  suites:
+    default:
+      filters:
+        tags: "~@custom-config-check&&~@with-mink"
+  extensions:
+    Yoanm\Behat3SymfonyExtension: ~
+
+custom-config:
+  suites:
+    default:
+      filters:
+        tags: "@custom-config-check"
+  extensions:
+    Yoanm\Behat3SymfonyExtension:
+      kernel:
+        bootstrap: app/custom-autoload.php
+        path: app/CustomAppKernel.php
+        class: CustomAppKernel
+        env: dev
+        debug: false
+        reboot: false
+      logger:
+        path: var/log/behat2.log
+        level: INFO
+with-mink:
+  suites:
+    default:
+      filters:
+        tags: "~@default-config-check&&~@custom-config-check&&~"
+  extensions:
+    Yoanm\Behat3SymfonyExtension: ~
+    Behat\MinkExtension:
+      sessions:
+        my_session:
+            behat3Symfony: ~

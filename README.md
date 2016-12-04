@@ -9,7 +9,9 @@
 Behat3SymfonyExtension is a layer between Behat 3.0+ and Symfony2.7+|3+, strongly inspired by [Symfony2Extension](https://github.com/Behat/Symfony2Extension).
 
 It provide :
+ * [`Client`](./src/Yoanm/Behat3SymfonyExtension/Client/Client.php) : It will be used by the mink driver. Like FrameworkBundle::Client do, this client will reboot kernel before a request in case a request has already been performed.
  * Context aware interfaces : 
+    * [`KernelAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/KernelAwareInterface.php) : Will inject your symfony app kernel instance in your behat contexts
     * [`KernelHandlerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/KernelHandlerAwareInterface.php) : Will inject a [`KernelHandler`](./src/Yoanm/Behat3SymfonyExtension/Handler/KernelHandler.php) instance to play with your symfony application kernel (boot/shutdown/restart) in your behat contexts
     * [`LoggerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/LoggerAwareInterface.php) : Will inject a monolog logger instance in your behat contexts
  * [`BehatContextSubscriberInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/BehatContextSubscriberInterface.php) : Will allow your behat contexts to be aware of behat events (including [those](./src/Yoanm/Behat3SymfonyExtension/Event/Events.php) dispatched by this extension)
@@ -51,7 +53,7 @@ Be sure that symfony framework test mode is enabled in your application :
 ```yaml
 # app/config/config_test.yml
 framework:
-    test: ~
+    test: true
 ```
 
 ## Default configuration

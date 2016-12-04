@@ -32,7 +32,15 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "FunctionalTest\\": "app_test/features/bootstrap/"
         }
+    },
+    "scripts": {
+      "behat": [
+        "cd app_test && ../vendor/bin/behat --colors --format progress --profile default-config",
+        "cd app_test && ../vendor/bin/behat --colors --format progress --profile custom-config",
+        "cd app_test && ../vendor/bin/behat --colors --format progress --profile with-mink"
+      ]
     }
 }

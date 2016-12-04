@@ -19,4 +19,18 @@ class KernelEventTest extends \PHPUnit_Framework_TestCase
             $event->getKernel()
         );
     }
+
+    public function testGetName()
+    {
+        $name = 'myName';
+        /** @var Kernel|ObjectProphecy $kernel */
+        $kernel = $this->prophesize(Kernel::class);
+
+        $event = new KernelEvent($kernel->reveal());
+        $event->setName($name);
+        $this->assertSame(
+            $event->getName(),
+            $name
+        );
+    }
 }

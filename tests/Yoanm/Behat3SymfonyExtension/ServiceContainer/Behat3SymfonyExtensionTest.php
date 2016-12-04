@@ -7,13 +7,9 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelHandlerAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
-use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 class Behat3SymfonyExtensionTest extends AbstractExtensionTest
 {
@@ -111,31 +107,7 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
 
         $this->assertNull($this->extension->load($container->reveal(), $config));
 
-        $this->assertCreateServiceCalls(
-            $container,
-            'handler.kernel',
-            KernelHandler::class,
-            [
-                $this->getReferenceAssertion('event_dispatcher'),
-                $this->getReferenceAssertion(Behat3SymfonyExtension::KERNEL_SERVICE_ID),
-            ]
-        );
-        // KernelAware
-        $this->assertCreateServiceCalls(
-            $container,
-            'initializer.kernel_aware',
-            KernelHandlerAwareInitializer::class,
-            [$this->getReferenceAssertion($this->buildContainerId('handler.kernel'))],
-            ['context.initializer']
-        );
-        // LoggerAware
-        $this->assertCreateServiceCalls(
-            $container,
-            'initializer.logger_aware',
-            LoggerAwareInitializer::class,
-            [$this->getReferenceAssertion($this->buildContainerId('logger'))],
-            ['context.initializer']
-        );
+
         // BehatSubscriber
         $this->assertCreateServiceCalls(
             $container,
@@ -143,16 +115,6 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
             BehatContextSubscriberInitializer::class,
             [$this->getReferenceAssertion('event_dispatcher')],
             ['context.initializer']
-        );
-
-        $this->assertCreateServiceCalls(
-            $container,
-            'subscriber.reboot_kernel',
-            RebootKernelSubscriber::class,
-            [$this->getReferenceAssertion($this->buildContainerId('handler.kernel'))],
-            ['event_dispatcher.subscriber'],
-            null,
-            true === $reboot
         );
     }
 

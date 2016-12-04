@@ -11,7 +11,7 @@ use Monolog\Logger;
 interface LoggerAwareInterface extends Context
 {
     /**
-     * @param Logger $behatLogger
+     * @param Logger $logger
      */
-    public function setBehatLogger(Logger $behatLogger);
+    public function setBehatLogger(Logger $logger);
 }

@@ -9,6 +9,7 @@ abstract class AbstractExtension implements Extension
 {
     const BASE_CONTAINER_ID = 'behat3_symfony_extension';
     const KERNEL_SERVICE_ID = 'behat3_symfony_extension.kernel';
+    const TEST_CLIENT_SERVICE_ID = 'behat3_symfony_extension.test.client';
 
     /**
      * @param string $key
@@ -31,6 +32,8 @@ abstract class AbstractExtension implements Extension
      * @param array            $argumentList
      * @param array            $tagList
      * @param array            $addMethodCallList
+     *
+     * @return Definition
      */
     protected function createService(
         ContainerBuilder $container,
@@ -47,9 +50,12 @@ abstract class AbstractExtension implements Extension
         }
 
         foreach ($addMethodCallList as $methodCall) {
-            $definition->addMethodCall($methodCall[0], $methodCall[1]);
+            $args = isset($methodCall[1]) ? $methodCall[1] : [];
+            $definition->addMethodCall($methodCall[0], $args);
         }
 
         $container->setDefinition($this->buildContainerId($id), $definition);
+
+        return $definition;
     }
 }

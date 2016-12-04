@@ -75,7 +75,7 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
 
         $this->prophesizeLog(
-            '[REQUEST_HANDLED]',
+            '[REQUEST]',
             [
                 'type' => ($requestType == HttpKernelInterface::MASTER_REQUEST
                     ? 'Master'
@@ -104,7 +104,7 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
         $this->prophesizeLog(
             '[EXCEPTION_THROWN]',
             ['message' => $message],
-            Logger::CRITICAL
+            Logger::ERROR
         );
 
         $this->sfKernelLogger->onKernelException($event->reveal());

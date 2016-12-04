@@ -1,0 +1,6 @@
+test:
+    path:  /test
+    defaults: { _controller: YoanmTestBundle:Test:test }
+exception:
+    path:  /exception
+    defaults: { _controller: YoanmTestBundle:Test:exception }

@@ -1,16 +1,17 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver;
+namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory;
 
+use Behat\Mink\Driver\BrowserKitDriver;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver\Behat3SymfonyDriverFactory;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
 
-class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
+class Behat3SymfonyFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Behat3SymfonyDriverFactory */
+    /** @var Behat3SymfonyFactory */
     private $factory;
 
     /**
@@ -18,7 +19,7 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->factory = new Behat3SymfonyDriverFactory();
+        $this->factory = new Behat3SymfonyFactory();
     }
 
     public function testGetDriverName()
@@ -51,7 +52,7 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
         $definition = $this->factory->buildDriver([]);
 
         $this->assertSame(
-            KernelDriver::class,
+            BrowserKitDriver::class,
             $definition->getClass()
         );
 
@@ -62,20 +63,13 @@ class Behat3SymfonyDriverFactoryTest extends \PHPUnit_Framework_TestCase
             $arg0
         );
         $this->assertSame(
-            Behat3SymfonyExtension::KERNEL_SERVICE_ID,
+            Behat3SymfonyExtension::TEST_CLIENT_SERVICE_ID,
             $arg0->__toString()
         );
 
         $this->assertSame(
             '%mink.base_url%',
             $definition->getArgument(1)
-        );
-        $this->assertSame(
-            sprintf(
-                '%%%s.kernel.reboot%%',
-                Behat3SymfonyExtension::BASE_CONTAINER_ID
-            ),
-            $definition->getArgument(2)
         );
     }
 }

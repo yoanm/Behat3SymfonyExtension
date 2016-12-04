@@ -1,12 +1,22 @@
 <?php
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
+use Behat\MinkExtension\ServiceContainer\MinkExtension;
+use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
+use Symfony\Component\BrowserKit\CookieJar;
+use Symfony\Component\BrowserKit\History;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+use Yoanm\Behat3SymfonyExtension\Client\Client;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelHandlerAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver\Behat3SymfonyDriverFactory;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
+use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 class KernelSubExtension extends AbstractExtension
 {
@@ -26,9 +36,8 @@ class KernelSubExtension extends AbstractExtension
     public function initialize(ExtensionManager $extensionManager)
     {
         $minExtension = $extensionManager->getExtension('mink');
-
-        if ($minExtension) {
-            $minExtension->registerDriverFactory(new Behat3SymfonyDriverFactory());
+        if ($minExtension instanceof MinkExtension) {
+            $minExtension->registerDriverFactory(new Behat3SymfonyFactory());
         }
     }
     // @codeCoverageIgnoreEnd
@@ -81,6 +90,7 @@ class KernelSubExtension extends AbstractExtension
                 ->end()
             ->end();
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
@@ -88,21 +98,47 @@ class KernelSubExtension extends AbstractExtension
     public function load(ContainerBuilder $container, array $config)
     {
         $kernelConfig = $config[$this->getConfigKey()];
-        $container->setParameter(
-            $this->buildContainerId('kernel.reboot'),
-            $kernelConfig['reboot']
+
+        $this->loadContainerParameter($container, $kernelConfig);
+        $this->loadInitializer($container);
+        $this->loadSubscriber($container, $kernelConfig);
+        $this->createService(
+            $container,
+            'test.client',
+            Client::class,
+            [
+                    new Reference($this->buildContainerId('handler.kernel')),
+                    new Reference(self::KERNEL_SERVICE_ID),
+                    [],
+                    new Reference($this->buildContainerId('test.client.history')),
+                    new Reference($this->buildContainerId('test.client.cookiejar'))
+                ]
         );
-        $container->setParameter(
-            $this->buildContainerId('kernel.bootstrap'),
-            $kernelConfig['bootstrap']
+        $this->createService(
+            $container,
+            'test.client.history',
+            History::class
+        );
+        $this->createService(
+            $container,
+            'test.client.cookiejar',
+            CookieJar::class
         );
         $this->createService(
             $container,
             'kernel',
             $kernelConfig['class'],
+            [$kernelConfig['env'], $kernelConfig['debug']],
+            [],
+            [['boot']]
+        );
+        $this->createService(
+            $container,
+            'handler.kernel',
+            KernelHandler::class,
             [
-                $kernelConfig['env'],
-                $kernelConfig['debug'],
+                new Reference('event_dispatcher'),
+                new Reference(self::KERNEL_SERVICE_ID),
             ]
         );
     }
@@ -112,18 +148,78 @@ class KernelSubExtension extends AbstractExtension
      */
     public function process(ContainerBuilder $container)
     {
+        $basePath = $container->getParameter('paths.base');
         $bootstrapPath = $container->getParameter($this->buildContainerId('kernel.bootstrap'));
         if ($bootstrapPath) {
-            $bootstrap = sprintf(
-                '%s/%s',
-                $container->getParameter('paths.base'),
-                $bootstrapPath
-            );
-            if (file_exists($bootstrap)) {
-                require_once($bootstrap);
+            $bootstrapPathUnderBasePath = sprintf('%s/%s', $basePath, $bootstrapPath);
+            if (file_exists($bootstrapPathUnderBasePath)) {
+                $bootstrapPath = $bootstrapPathUnderBasePath;
+            }
+            if (file_exists($bootstrapPath)) {
+                require_once($bootstrapPath);
             } else {
                 throw new ProcessingException('Could not find bootstrap file !');
             }
+        }
+
+        // load kernel
+        $kernelPath = $container->getParameter($this->buildContainerId('kernel.path'));
+        $kernelPathUnderBasePath = sprintf('%s/%s', $basePath, $kernelPath);
+        if (file_exists($kernelPathUnderBasePath)) {
+            $kernelPath = $kernelPathUnderBasePath;
+        }
+
+        $container->getDefinition(self::KERNEL_SERVICE_ID)
+            ->setFile($kernelPath);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function loadInitializer(ContainerBuilder $container)
+    {
+        $this->createService(
+            $container,
+            'initializer.kernel_aware',
+            KernelAwareInitializer::class,
+            [new Reference(self::KERNEL_SERVICE_ID)],
+            ['context.initializer']
+        );
+
+        $this->createService(
+            $container,
+            'initializer.kernel_handler_aware',
+            KernelHandlerAwareInitializer::class,
+            [new Reference($this->buildContainerId('handler.kernel'))],
+            ['context.initializer']
+        );
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param $kernelConfig
+     */
+    protected function loadSubscriber(ContainerBuilder $container, $kernelConfig)
+    {
+        if (true === $kernelConfig['reboot']) {
+            $this->createService(
+                $container,
+                'subscriber.reboot_kernel',
+                RebootKernelSubscriber::class,
+                [new Reference($this->buildContainerId('handler.kernel'))],
+                [EventDispatcherExtension::SUBSCRIBER_TAG]
+            );
+        }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param $kernelConfig
+     */
+    protected function loadContainerParameter(ContainerBuilder $container, $kernelConfig)
+    {
+        foreach ($kernelConfig as $key => $value) {
+            $container->setParameter($this->buildContainerId(sprintf('kernel.%s', $key)), $value);
         }
     }
 }

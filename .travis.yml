@@ -4,8 +4,11 @@ php:
   - '5.6'
 
 sudo: false
-before_script:
+install:
   - composer require "symfony/symfony:${SYMFONY_VERSION}"
+script:
+  - ./vendor/bin/phpunit
+  - composer run-script behat
 env:
   - SYMFONY_VERSION=2.7.*
   - SYMFONY_VERSION=2.8.*
