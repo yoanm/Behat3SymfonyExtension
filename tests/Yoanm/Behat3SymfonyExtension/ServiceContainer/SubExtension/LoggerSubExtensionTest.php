@@ -109,6 +109,14 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
         );
     }
 
+    public function testProcess()
+    {
+        /** @var ContainerBuilder|ObjectProphecy $container */
+        $container = $this->prophesize(ContainerBuilder::class);
+
+        $this->assertNull($this->subExtension->process($container->reveal()));
+    }
+
     /**
      * @return array
      */

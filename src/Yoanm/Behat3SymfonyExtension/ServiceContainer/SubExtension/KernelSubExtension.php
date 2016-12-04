@@ -90,6 +90,7 @@ class KernelSubExtension extends AbstractExtension
                 ->end()
             ->end();
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
