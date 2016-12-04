@@ -110,6 +110,7 @@ class KernelSubExtension extends AbstractExtension
             'test.client',
             Client::class,
             [
+                    new Reference($this->buildContainerId('handler.kernel')),
                     new Reference(self::KERNEL_SERVICE_ID),
                     [],
                     new Reference($this->buildContainerId('test.client.history')),
