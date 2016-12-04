@@ -170,7 +170,6 @@ class KernelSubExtension extends AbstractExtension
 
         $container->getDefinition(self::KERNEL_SERVICE_ID)
             ->setFile($kernelPath);
-
     }
 
     /**

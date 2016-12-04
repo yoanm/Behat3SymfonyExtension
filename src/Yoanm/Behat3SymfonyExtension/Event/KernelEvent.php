@@ -13,7 +13,6 @@ class KernelEvent extends Event
 
     /**
      * @param Kernel $kernel
-     * @param string $name
      */
     public function __construct(Kernel $kernel)
     {
