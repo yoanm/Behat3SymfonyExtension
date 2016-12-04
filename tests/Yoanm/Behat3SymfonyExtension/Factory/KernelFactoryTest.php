@@ -80,7 +80,7 @@ class KernelFactoryTest extends \PHPUnit_Framework_TestCase
 
         MockYoanmBehat3SymfonyKernelBridge::$throwExceptionOnStartup = true;
         try {
-            $this->setExpectedException(\Exception::class, 'my-custom-message');
+            $this->setExpectedException(\Exception::class, 'An exception occured during Kernel decoration : my-custom-message');
             $this->factory->load();
         } catch (\Exception $e) {
             $this->assertKernelBridgeFileHasBeenDeleted();
