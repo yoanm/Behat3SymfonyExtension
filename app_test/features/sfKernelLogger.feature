@@ -15,7 +15,7 @@ Feature: SfKernelLogger
     And I listen for symfony kernel event
     When I call my symfony app with an exception route
     # Check that kernel has been rebooted has we have already made a request in previous scenario
-    Then I should have caugh 4 symfony kernel events
+    Then I should have caught 4 symfony kernel events
     And I should have caught events for symfony kernel shutdown
     And I should have caught events for symfony kernel boot
     And A log entry for request event to exception route must exists
