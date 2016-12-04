@@ -1,6 +1,7 @@
 <?php
-namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\Driver;
+namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory;
 
+use Behat\Mink\Driver\BrowserKitDriver;
 use Behat\MinkExtension\ServiceContainer\Driver\DriverFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
@@ -8,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 
-class Behat3SymfonyDriverFactory implements DriverFactory
+class Behat3SymfonyFactory implements DriverFactory
 {
     /**
      * {@inheritdoc}
@@ -45,14 +46,10 @@ class Behat3SymfonyDriverFactory implements DriverFactory
         }
 
         return new Definition(
-            KernelDriver::class,
+            BrowserKitDriver::class,
             [
-                new Reference(Behat3SymfonyExtension::KERNEL_SERVICE_ID),
+                new Reference(Behat3SymfonyExtension::TEST_CLIENT_SERVICE_ID),
                 '%mink.base_url%',
-                sprintf(
-                    '%%%s.kernel.reboot%%',
-                    Behat3SymfonyExtension::BASE_CONTAINER_ID
-                )
             ]
         );
     }
