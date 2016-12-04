@@ -8,5 +8,6 @@
     <arg name="extensions" value="php"/>
 
     <rule ref="PSR2"/>
+    <!-- it's just a template -->
     <exclude-pattern>src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php</exclude-pattern>
 </ruleset>

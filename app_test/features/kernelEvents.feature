@@ -1,7 +1,7 @@
 Feature: kernelEvents
   In order to be aware of symfony app kernel life cycle
   As behat context
-  I need to receive events
+  I need to receive symfony app kernel events
 
   Scenario: Shutdown and then boot Kernel
     Given I listen for symfony kernel event

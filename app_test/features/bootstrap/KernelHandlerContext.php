@@ -10,8 +10,6 @@ class KernelHandlerContext implements Context, KernelHandlerAwareInterface
     /** @var KernelHandler */
     private $kernelHandler;
 
-    
-
     /**
      * @inheritDoc
      */
