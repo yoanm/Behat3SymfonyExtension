@@ -24,7 +24,7 @@ class BehatContextSubscriberContext implements Context, BehatContextSubscriberIn
     }
 
     /**
-     * @Then /^I should have caugh (?P<num>\d+) symfony kernel events?$/
+     * @Then /^I should have caught (?P<num>\d+) symfony kernel events?$/
      */
     public function IShouldHaveCaughtXSymfonyKernelEvent($num)
     {
