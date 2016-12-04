@@ -44,7 +44,7 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
                 'debug' => $debug,
             ],
             'logger' => [
-                'path' => 'path',
+                'path' => __DIR__.'../LoggerSubExtensionTest.php',
                 'level' => 'level',
             ],
         ];
@@ -55,23 +55,13 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
 
         $this->subExtension->load($container->reveal(), $config);
 
-        $logFilePath = $config['logger']['path'];
-        $logFilePathUnderBasePath = sprintf(
-            '%s/%s',
-            '%paths.base%',
-            $config['logger']['path']
-        );
-        if (file_exists($logFilePathUnderBasePath)) {
-            $logFilePath = $logFilePathUnderBasePath;
-        }
-
         // Handler
         $this->assertCreateServiceCalls(
             $container,
             $handlerService,
             StreamHandler::class,
             [
-                $logFilePath,
+                $config['logger']['path'],
                 $config['logger']['level'],
             ]
         );

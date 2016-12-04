@@ -70,22 +70,13 @@ class LoggerSubExtension extends AbstractExtension
             $container->setParameter($this->buildContainerId(sprintf('logger.%s', $key)), $value);
         }
         $baseHandlerServiceId = 'logger.handler';
-        $logFilePath = $loggerConfig['path'];
-        $logFilePathUnderBasePath = sprintf(
-            '%s/%s',
-            '%paths.base%',
-            $loggerConfig['path']
-        );
-        if (file_exists($logFilePathUnderBasePath)) {
-            $logFilePath = $logFilePathUnderBasePath;
-        }
         // Handler
         $this->createService(
             $container,
             $baseHandlerServiceId,
             StreamHandler::class,
             [
-                $logFilePath,
+                $loggerConfig['path'],
                 $loggerConfig['level'],
             ]
         );
