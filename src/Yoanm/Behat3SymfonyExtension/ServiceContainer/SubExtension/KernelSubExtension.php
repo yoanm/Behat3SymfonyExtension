@@ -112,7 +112,7 @@ class KernelSubExtension extends AbstractExtension
                     new Reference($this->buildContainerId('test.client.history')),
                     new Reference($this->buildContainerId('test.client.cookiejar'))
                 ]
-            );
+        );
         $this->createService(
             $container,
             'test.client.history',
