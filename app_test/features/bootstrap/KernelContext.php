@@ -41,7 +41,6 @@ class KernelContext implements Context, KernelAwareInterface
         );
     }
 
-
     /**
      * @Given /^kernel param "(?P<property>[^"]+)" is "(?P<value>[^"]+)"$/
      */
@@ -94,7 +93,6 @@ class KernelContext implements Context, KernelAwareInterface
     {
         $this->kernel->boot();
     }
-
 
     /**
      * @inheritDoc
