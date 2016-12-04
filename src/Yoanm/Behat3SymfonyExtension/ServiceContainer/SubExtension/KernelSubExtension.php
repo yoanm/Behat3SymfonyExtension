@@ -101,34 +101,28 @@ class KernelSubExtension extends AbstractExtension
         $this->loadContainerParameter($container, $kernelConfig);
         $this->loadInitializer($container);
         $this->loadSubscriber($container, $kernelConfig);
-        $this
-            ->createService(
-                $container,
-                'test.client',
-                Client::class,
-                [
+        $this->createService(
+            $container,
+            'test.client',
+            Client::class,
+            [
                     new Reference($this->buildContainerId('handler.kernel')),
                     new Reference(self::KERNEL_SERVICE_ID),
                     [],
                     new Reference($this->buildContainerId('test.client.history')),
                     new Reference($this->buildContainerId('test.client.cookiejar'))
                 ]
-            )
-            ->setShared(false);
-        $this
-            ->createService(
-                $container,
-                'test.client.history',
-                History::class
-            )
-            ->setShared(false);
-        $this
-            ->createService(
-                $container,
-                'test.client.cookiejar',
-                CookieJar::class
-            )
-            ->setShared(false);
+            );
+        $this->createService(
+            $container,
+            'test.client.history',
+            History::class
+        );
+        $this->createService(
+            $container,
+            'test.client.cookiejar',
+            CookieJar::class
+        );
         $this->createService(
             $container,
             'kernel',
