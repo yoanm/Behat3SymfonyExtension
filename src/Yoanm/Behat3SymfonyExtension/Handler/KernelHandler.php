@@ -3,8 +3,6 @@ namespace Yoanm\Behat3SymfonyExtension\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Kernel;
-use Yoanm\Behat3SymfonyExtension\Event\Events;
-use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 
 /**
  * Handler to shutdown/boot sf kernel

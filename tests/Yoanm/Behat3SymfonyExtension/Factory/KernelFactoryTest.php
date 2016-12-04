@@ -2,7 +2,6 @@
 namespace Tests\Yoanm\Behat3SymfonyExtension\Factory;
 
 use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\Yoanm\Behat3SymfonyExtension\Bridge\MockYoanmBehat3SymfonyKernelBridge;
 use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;

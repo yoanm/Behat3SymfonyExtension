@@ -2,7 +2,6 @@
 namespace Yoanm\Behat3SymfonyExtension\Dispatcher;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Yoanm\Behat3SymfonyExtension\Event\Events;
 use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;

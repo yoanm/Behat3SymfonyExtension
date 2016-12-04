@@ -5,8 +5,6 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Kernel;
-use Yoanm\Behat3SymfonyExtension\Event\Events;
-use Yoanm\Behat3SymfonyExtension\Event\KernelEvent;
 use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 
 /**
