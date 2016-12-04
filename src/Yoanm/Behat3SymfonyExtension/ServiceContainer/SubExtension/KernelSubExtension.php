@@ -9,10 +9,13 @@ use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\BrowserKit\History;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Client\Client;
 use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
 use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelHandlerAwareInitializer;
+use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
+use Yoanm\Behat3SymfonyExtension\Factory\KernelFactory;
 use Yoanm\Behat3SymfonyExtension\Handler\KernelHandler;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
@@ -107,7 +110,6 @@ class KernelSubExtension extends AbstractExtension
             'test.client',
             Client::class,
             [
-                    new Reference($this->buildContainerId('handler.kernel')),
                     new Reference(self::KERNEL_SERVICE_ID),
                     [],
                     new Reference($this->buildContainerId('test.client.history')),
@@ -126,19 +128,38 @@ class KernelSubExtension extends AbstractExtension
         );
         $this->createService(
             $container,
-            'kernel',
-            $kernelConfig['class'],
-            [$kernelConfig['env'], $kernelConfig['debug']],
-            [],
-            [['boot']]
-        );
-        $this->createService(
-            $container,
             'handler.kernel',
             KernelHandler::class,
             [
                 new Reference('event_dispatcher'),
                 new Reference(self::KERNEL_SERVICE_ID),
+            ]
+        );
+        $this->createService(
+            $container,
+            'dispatcher.kernel_event',
+            BehatKernelEventDispatcher::class,
+            [new Reference('event_dispatcher')]
+        );
+        // Load Kernel thanks to the factory
+        $this
+            ->createService(
+                $container,
+                'kernel',
+                $kernelConfig['class']
+            )
+            ->setFactory([new Reference($this->buildContainerId('factory.kernel')), 'load']);
+
+        $this->createService(
+            $container,
+            'factory.kernel',
+            KernelFactory::class,
+            [
+                new Reference($this->buildContainerId('dispatcher.kernel_event')),
+                '%'.$this->buildContainerId('kernel.path').'%',
+                '%'.$this->buildContainerId('kernel.class').'%',
+                '%'.$this->buildContainerId('kernel.env').'%',
+                '%'.$this->buildContainerId('kernel.debug').'%'
             ]
         );
     }

@@ -54,12 +54,15 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
                 function (Definition $definition) use ($expectedDefinitionArgumentList) {
                     $argList = $definition->getArguments();
                     foreach ($expectedDefinitionArgumentList as $key => $expected) {
-                        $actual = $argList[$key];
-                        if ($expected instanceof Token\TokenInterface) {
-                            if ($expected->scoreArgument($actual) === false) {
-                                return false;
+                        if (isset($argList[$key])) {
+                            $actual = $argList[$key];
+                            if ($expected instanceof Token\TokenInterface) {
+                                return $expected->scoreArgument($actual);
+                            } elseif ($expected == $actual) {
+                                return true;
                             }
-                        } elseif ($expected != $actual) {
+                        } else {
+                            // Argument expected but not set
                             return false;
                         }
                     }

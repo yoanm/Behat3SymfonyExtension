@@ -50,15 +50,7 @@ class KernelHandler
      */
     public function shutdownSfKernel()
     {
-        $this->behatEventDispatcher->dispatch(
-            Events::BEFORE_KERNEL_SHUTDOWN,
-            new KernelEvent($this->sfKernel)
-        );
         $this->sfKernel->shutdown();
-        $this->behatEventDispatcher->dispatch(
-            Events::AFTER_KERNEL_SHUTDOWN,
-            new KernelEvent($this->sfKernel)
-        );
     }
 
     /**
@@ -66,14 +58,6 @@ class KernelHandler
      */
     public function bootSfKernel()
     {
-        $this->behatEventDispatcher->dispatch(
-            Events::BEFORE_KERNEL_BOOT,
-            new KernelEvent($this->sfKernel)
-        );
         $this->sfKernel->boot();
-        $this->behatEventDispatcher->dispatch(
-            Events::AFTER_KERNEL_BOOT,
-            new KernelEvent($this->sfKernel)
-        );
     }
 }

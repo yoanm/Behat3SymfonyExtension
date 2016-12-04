@@ -10,29 +10,7 @@ class KernelHandlerContext implements Context, KernelHandlerAwareInterface
     /** @var KernelHandler */
     private $kernelHandler;
 
-    /**
-     * @Then I shutdown symfony kernel
-     */
-    public function iCanShutdownSymfonyKernel()
-    {
-        $this->kernelHandler->shutdownSfKernel();
-    }
-
-    /**
-     * @When I reboot symfony kernel
-     */
-    public function iRebootSymfonyKernel()
-    {
-        $this->kernelHandler->rebootSfKernel();
-    }
-
-    /**
-     * @Then I boot symfony kernel
-     */
-    public function iCanBootSymfonyKernel()
-    {
-        $this->kernelHandler->bootSfKernel();
-    }
+    
 
     /**
      * @inheritDoc

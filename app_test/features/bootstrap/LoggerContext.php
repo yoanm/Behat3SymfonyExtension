@@ -64,14 +64,20 @@ class LoggerContext implements Context, LoggerAwareInterface
     }
 
     /**
-     * @Then A log entry for request event to valid route must exists
+     * @Then /^A log entry for request event to (?P<type>valid|exception) route must exists$/
      */
-    public function aLogEntryForRequestEventToValidRouteMustExists()
+    public function aLogEntryForRequestEventToRouteTypeMustExists($type)
     {
         \PHPUnit_Framework_Assert::assertRegExp(
             sprintf(
                 '/^.*behat3Symfony\.DEBUG: \[SfKernelEventLogger\] \- \[REQUEST\].*%s.*$/m',
-                preg_quote(MinkContext::VALID_TEST_ROUTE, '/')
+                preg_quote(
+                    'exception' === $type
+                        ? MinkContext::EXCEPTION_TEST_ROUTE
+                        : MinkContext::VALID_TEST_ROUTE
+                    ,
+                    '/'
+                )
             ),
             file_get_contents($this->logFile)
         );

@@ -79,6 +79,22 @@ class KernelContext implements Context, KernelAwareInterface
         self::$lastContainerInstance = null;
     }
 
+    /**
+     * @When I shutdown symfony kernel
+     */
+    public function iCanShutdownSymfonyKernel()
+    {
+        $this->kernel->shutdown();
+    }
+
+    /**
+     * @When I boot symfony kernel
+     */
+    public function iCanBootSymfonyKernel()
+    {
+        $this->kernel->boot();
+    }
+
 
     /**
      * @inheritDoc
