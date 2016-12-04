@@ -1,2 +1,6 @@
 vendor
 composer.lock
+app_test/app/cache
+app_test/app/logs
+app_test/var
+
