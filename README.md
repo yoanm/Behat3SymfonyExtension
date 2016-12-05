@@ -46,7 +46,7 @@ default:
         Behat\MinkExtension:
             sessions:
                 my_session:
-                    symfony2: ~
+                    behat3Symfony: ~
 ```
 Be sure that symfony framework test mode is enabled in your application : 
 ```yaml
