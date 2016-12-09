@@ -2,9 +2,8 @@
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class KernelConfiguration implements ConfigurationInterface
+class KernelConfiguration
 {
     public function getConfigTreeBuilder()
     {

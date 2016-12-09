@@ -3,9 +3,8 @@ namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration;
 
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class LoggerConfiguration implements ConfigurationInterface
+class LoggerConfiguration
 {
     public function getConfigTreeBuilder()
     {
