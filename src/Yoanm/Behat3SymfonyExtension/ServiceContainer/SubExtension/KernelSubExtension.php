@@ -21,6 +21,7 @@ class KernelSubExtension extends AbstractExtension
 
     // @codeCoverageIgnoreStart
     // Not possible to cover this because ExtensionManager is a final class
+    // Will be covered by FT
     /**
      * @inheritDoc
      */
