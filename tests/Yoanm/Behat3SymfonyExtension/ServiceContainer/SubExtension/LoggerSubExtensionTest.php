@@ -47,7 +47,7 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->subExtension->load($container->reveal(), $config);
+        $this->assertNull($this->subExtension->load($container->reveal(), $config));
     }
 
     public function testProcess()

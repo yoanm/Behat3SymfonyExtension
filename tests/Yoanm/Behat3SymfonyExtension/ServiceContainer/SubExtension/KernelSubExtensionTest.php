@@ -74,7 +74,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
 
         $this->prophesizeProcessKernelFile($container, $pathBase, $kernelPath);
 
-        $this->subExtension->process($container->reveal());
+        $this->assertNull($this->subExtension->process($container->reveal()));
     }
 
     public function testProcessWithoutPath()
