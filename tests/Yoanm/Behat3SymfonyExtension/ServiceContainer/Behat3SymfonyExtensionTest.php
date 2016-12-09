@@ -103,29 +103,29 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
         $this->assertNull($this->extension->load($container->reveal(), $config));
 
         foreach ($config['kernel'] as $key => $value) {
-            $this->assertSetContainerParameter(
+            $this->assertSetContainerParameterCalls(
                 $container,
                 $this->buildContainerId(sprintf('kernel.%s', $key)),
                 $value
             );
         }
         foreach ($config['logger'] as $key => $value) {
-            $this->assertSetContainerParameter(
+            $this->assertSetContainerParameterCalls(
                 $container,
                 $this->buildContainerId(sprintf('logger.%s', $key)),
                 $value
             );
         }
 
-        $this->assertContainerAddResource($container, 'client.xml');
-        $this->assertContainerAddResource($container, 'kernel.xml');
-        $this->assertContainerAddResource($container, 'initializer.xml');
-        $this->assertContainerAddResource($container, 'logger.xml');
+        $this->assertContainerAddResourceCalls($container, 'client.xml');
+        $this->assertContainerAddResourceCalls($container, 'kernel.xml');
+        $this->assertContainerAddResourceCalls($container, 'initializer.xml');
+        $this->assertContainerAddResourceCalls($container, 'logger.xml');
         if (true === $config['kernel']['reboot']) {
-            $this->assertContainerAddResource($container, 'kernel_auto_reboot.xml');
+            $this->assertContainerAddResourceCalls($container, 'kernel_auto_reboot.xml');
         }
         if (true === $config['kernel']['debug']) {
-            $this->assertContainerAddResource($container, 'kernel_debug_mode.xml');
+            $this->assertContainerAddResourceCalls($container, 'kernel_debug_mode.xml');
         }
     }
 

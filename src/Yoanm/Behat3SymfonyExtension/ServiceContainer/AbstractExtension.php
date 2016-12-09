@@ -26,19 +26,6 @@ abstract class AbstractExtension implements Extension
     }
 
     /**
-     * @param string $key
-     *
-     * @return string
-     */
-    protected function buildContainerParameterReference($key)
-    {
-        return sprintf(
-            '%%%s%%',
-            $this->buildContainerId($key)
-        );
-    }
-
-    /**
      * @param ContainerBuilder $container
      * @param string           $id
      * @param string           $class

@@ -29,7 +29,7 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
      * @param ObjectProphecy|ContainerBuilder $container
      * @param string                          $fileName
      */
-    protected function assertContainerAddResource(ObjectProphecy $container, $fileName)
+    protected function assertContainerAddResourceCalls(ObjectProphecy $container, $fileName)
     {
         $filePath = realpath(sprintf(
             '%s/%s/%s',
@@ -45,7 +45,7 @@ abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
      * @param ObjectProphecy|ContainerBuilder $container
      * @param string                          $filePath
      */
-    protected function assertSetContainerParameter(ObjectProphecy $container, $key, $value)
+    protected function assertSetContainerParameterCalls(ObjectProphecy $container, $key, $value)
     {
         $container->setParameter($key, $value)
             ->shouldHaveBeenCalledTimes(1);
