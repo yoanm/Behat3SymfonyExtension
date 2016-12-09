@@ -2,7 +2,6 @@
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
 use Behat\MinkExtension\ServiceContainer\MinkExtension;
-use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -84,28 +83,35 @@ class Behat3SymfonyExtension implements Extension
      */
     public function process(ContainerBuilder $container)
     {
-        $basePath = $container->getParameter('paths.base');
         $bootstrapPath = $container->getParameter('behat3_symfony_extension.kernel.bootstrap');
         if ($bootstrapPath) {
-            $bootstrapPathUnderBasePath = sprintf('%s/%s', $basePath, $bootstrapPath);
-            if (file_exists($bootstrapPathUnderBasePath)) {
-                $bootstrapPath = $bootstrapPathUnderBasePath;
-            }
-            if (file_exists($bootstrapPath)) {
-                require_once($bootstrapPath);
-            } else {
-                throw new ProcessingException('Could not find bootstrap file !');
-            }
+            require_once($this->normalizePath($container, $bootstrapPath));
         }
 
         // load kernel
-        $kernelPath = $container->getParameter('behat3_symfony_extension.kernel.path');
-        $kernelPathUnderBasePath = sprintf('%s/%s', $basePath, $kernelPath);
-        if (file_exists($kernelPathUnderBasePath)) {
-            $kernelPath = $kernelPathUnderBasePath;
+        $container->getDefinition(self::KERNEL_SERVICE_ID)
+            ->setFile(
+                $this->normalizePath(
+                    $container,
+                    $container->getParameter('behat3_symfony_extension.kernel.path')
+                )
+            );
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param string           $path
+     *
+     * @return string
+     */
+    protected function normalizePath(ContainerBuilder $container, $path)
+    {
+        $basePath = $container->getParameter('paths.base');
+        $pathUnderBasePath = sprintf('%s/%s', $basePath, $path);
+        if (file_exists($pathUnderBasePath)) {
+            $path = $pathUnderBasePath;
         }
 
-        $container->getDefinition(self::KERNEL_SERVICE_ID)
-            ->setFile($kernelPath);
+        return $path;
     }
 }

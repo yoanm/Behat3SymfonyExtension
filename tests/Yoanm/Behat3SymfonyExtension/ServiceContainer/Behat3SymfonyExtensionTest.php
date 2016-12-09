@@ -101,7 +101,7 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->getParameter('paths.base')
             ->willReturn($basePath)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
 
@@ -122,7 +122,7 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
         $container->getParameter('paths.base')
             ->willReturn($basePath)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
 
@@ -143,30 +143,10 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
 
         $container->getParameter('paths.base')
-            ->shouldNotBeCalled();
-
-        $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
-
-        $this->extension->process($container->reveal());
-    }
-
-    public function testProcessWithInvalidFile()
-    {
-        $basePath = __DIR__;
-        $bootstrap = 'invalid.php';
-
-        /** @var ContainerBuilder|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerBuilder::class);
-
-        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
-            ->willReturn($bootstrap)
-            ->shouldBeCalledTimes(1);
-
-        $container->getParameter('paths.base')
             ->willReturn($basePath)
             ->shouldBeCalledTimes(1);
 
-        $this->setExpectedException(ProcessingException::class, 'Could not find bootstrap file !');
+        $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
 
         $this->extension->process($container->reveal());
     }
@@ -274,9 +254,6 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->getDefinition(Behat3SymfonyExtension::KERNEL_SERVICE_ID)
             ->willReturn($definition->reveal())
-            ->shouldBeCalledTimes(1);
-        $container->getParameter('paths.base')
-            ->willReturn($basePath)
             ->shouldBeCalledTimes(1);
         $container->getParameter('behat3_symfony_extension.kernel.path')
             ->willReturn($kernelPath)
