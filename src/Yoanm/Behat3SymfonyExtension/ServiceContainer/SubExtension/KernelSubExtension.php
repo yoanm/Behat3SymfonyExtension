@@ -2,18 +2,12 @@
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
 use Behat\MinkExtension\ServiceContainer\MinkExtension;
-use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
-use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 class KernelSubExtension extends AbstractExtension
 {

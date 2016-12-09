@@ -3,7 +3,6 @@ namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;

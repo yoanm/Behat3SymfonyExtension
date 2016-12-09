@@ -1,15 +1,10 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
-use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
 class LoggerSubExtensionTest extends AbstractExtensionTest
 {

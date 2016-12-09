@@ -6,7 +6,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;

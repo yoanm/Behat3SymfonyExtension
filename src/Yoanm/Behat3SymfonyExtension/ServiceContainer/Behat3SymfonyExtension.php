@@ -7,8 +7,6 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
 

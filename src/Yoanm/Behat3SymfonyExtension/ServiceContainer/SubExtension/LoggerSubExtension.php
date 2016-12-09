@@ -1,17 +1,11 @@
 <?php
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
-use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
-use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\LoggerAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
-use Yoanm\Behat3SymfonyExtension\Subscriber\SfKernelLoggerSubscriber;
 
 class LoggerSubExtension extends AbstractExtension
 {

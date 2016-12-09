@@ -1,7 +1,6 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
-use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
@@ -9,12 +8,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
-use Yoanm\Behat3SymfonyExtension\Factory\KernelFactory;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
-use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 class KernelSubExtensionTest extends AbstractExtensionTest
 {
