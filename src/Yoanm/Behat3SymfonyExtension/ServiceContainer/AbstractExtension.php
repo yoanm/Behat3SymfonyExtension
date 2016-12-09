@@ -24,44 +24,4 @@ abstract class AbstractExtension implements Extension
             $key
         );
     }
-
-    /**
-     * @param ContainerBuilder $container
-     * @param string           $id
-     * @param string           $class
-     * @param array            $argumentList
-     * @param array            $tagList
-     * @param array            $addMethodCallList
-     * @param array|null       $factory
-     *
-     * @return Definition
-     */
-    protected function createService(
-        ContainerBuilder $container,
-        $id,
-        $class,
-        $argumentList = [],
-        $tagList = [],
-        $addMethodCallList = [],
-        $factory = null
-    ) {
-        $definition = new Definition($class, $argumentList);
-
-        foreach ($tagList as $tag) {
-            $definition->addTag($tag);
-        }
-
-        foreach ($addMethodCallList as $methodCall) {
-            $args = isset($methodCall[1]) ? $methodCall[1] : [];
-            $definition->addMethodCall($methodCall[0], $args);
-        }
-
-        if (null !== $factory) {
-            $definition->setFactory($factory);
-        }
-
-        $container->setDefinition($this->buildContainerId($id), $definition);
-
-        return $definition;
-    }
 }

@@ -62,10 +62,10 @@ class Behat3SymfonyExtension extends AbstractExtension
     public function load(ContainerBuilder $container, array $config)
     {
         foreach ($config['kernel'] as $key => $value) {
-            $container->setParameter($this->buildContainerId(sprintf('kernel.%s', $key)), $value);
+            $container->setParameter(sprintf('behat3_symfony_extension.kernel.%s', $key), $value);
         }
         foreach ($config['logger'] as $key => $value) {
-            $container->setParameter($this->buildContainerId(sprintf('logger.%s', $key)), $value);
+            $container->setParameter(sprintf('behat3_symfony_extension.logger.%s', $key), $value);
         }
         $loader = new XmlFileLoader(
             $container,

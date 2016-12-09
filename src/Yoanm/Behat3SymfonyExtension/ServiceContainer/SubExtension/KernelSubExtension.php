@@ -97,7 +97,7 @@ class KernelSubExtension extends AbstractExtension
     public function process(ContainerBuilder $container)
     {
         $basePath = $container->getParameter('paths.base');
-        $bootstrapPath = $container->getParameter($this->buildContainerId('kernel.bootstrap'));
+        $bootstrapPath = $container->getParameter('behat3_symfony_extension.kernel.bootstrap');
         if ($bootstrapPath) {
             $bootstrapPathUnderBasePath = sprintf('%s/%s', $basePath, $bootstrapPath);
             if (file_exists($bootstrapPathUnderBasePath)) {
@@ -111,7 +111,7 @@ class KernelSubExtension extends AbstractExtension
         }
 
         // load kernel
-        $kernelPath = $container->getParameter($this->buildContainerId('kernel.path'));
+        $kernelPath = $container->getParameter('behat3_symfony_extension.kernel.path');
         $kernelPathUnderBasePath = sprintf('%s/%s', $basePath, $kernelPath);
         if (file_exists($kernelPathUnderBasePath)) {
             $kernelPath = $kernelPathUnderBasePath;
