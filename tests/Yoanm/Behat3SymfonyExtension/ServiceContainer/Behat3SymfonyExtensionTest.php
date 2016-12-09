@@ -108,7 +108,28 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->process($container->reveal());
     }
 
-    public function testProcessWithoutPath()
+    public function testProcessWithFileUnderBasePath()
+    {
+        $basePath = __DIR__;
+        $bootstrap = 'Behat3SymfonyExtensionTest.php';
+        $kernelPath = 'Behat3SymfonyExtensionTest.php';
+
+        /** @var ContainerBuilder|ObjectProphecy $container */
+        $container = $this->prophesize(ContainerBuilder::class);
+
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
+            ->willReturn($bootstrap)
+            ->shouldBeCalledTimes(1);
+        $container->getParameter('paths.base')
+            ->willReturn($basePath)
+            ->shouldBeCalledTimes(1);
+
+        $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
+
+        $this->extension->process($container->reveal());
+    }
+
+    public function testProcessWithoutBootstrap()
     {
         $basePath = __DIR__;
         $bootstrap = null;
@@ -260,6 +281,11 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
         $container->getParameter('behat3_symfony_extension.kernel.path')
             ->willReturn($kernelPath)
             ->shouldBeCalledTimes(1);
+
+        $kernelPathUnderBasePath = sprintf('%s/%s', $basePath, $kernelPath);
+        if (file_exists($kernelPathUnderBasePath)) {
+            $kernelPath = $kernelPathUnderBasePath;
+        }
 
         $definition->setFile($kernelPath)
             ->shouldBeCalledTimes(1);
