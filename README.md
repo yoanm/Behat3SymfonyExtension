@@ -48,12 +48,6 @@ default:
                 my_session:
                     behat3Symfony: ~
 ```
-Be sure that symfony framework test mode is enabled in your application : 
-```yaml
-# app/config/config_test.yml
-framework:
-    test: true
-```
 
 ## Default configuration
 ```yaml
