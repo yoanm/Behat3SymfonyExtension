@@ -7,19 +7,19 @@ default:
         - FunctionalTest\ExtensionContext:
             extensionConfig:
               debug_mode: %behat3_symfony_extension.debug_mode%
+              logger:
+                path: %behat3_symfony_extension.logger.path%
+                level: %behat3_symfony_extension.logger.level%
+              kernel:
+                bootstrap: %behat3_symfony_extension.kernel.bootstrap%
+                path: %behat3_symfony_extension.kernel.path%
+                class: %behat3_symfony_extension.kernel.class%
+                env: %behat3_symfony_extension.kernel.env%
+                debug: %behat3_symfony_extension.kernel.debug%
+                reboot: %behat3_symfony_extension.kernel.reboot%
         - FunctionalTest\LoggerContext:
-            pathBase: %paths.base%
-            loggerConfig:
-              path: %behat3_symfony_extension.logger.path%
-              level: %behat3_symfony_extension.logger.level%
-        - FunctionalTest\KernelContext:
-            kernelConfig:
-              bootstrap: %behat3_symfony_extension.kernel.bootstrap%
-              path: %behat3_symfony_extension.kernel.path%
-              class: %behat3_symfony_extension.kernel.class%
-              env: %behat3_symfony_extension.kernel.env%
-              debug: %behat3_symfony_extension.kernel.debug%
-              reboot: %behat3_symfony_extension.kernel.reboot%
+          - %paths.base%/%behat3_symfony_extension.logger.path%
+        - FunctionalTest\KernelContext: ~
         - FunctionalTest\MinkContext: ~
         - FunctionalTest\BehatContextSubscriberContext: ~
 

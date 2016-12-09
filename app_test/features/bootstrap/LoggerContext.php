@@ -11,18 +11,14 @@ class LoggerContext implements Context, LoggerAwareInterface
 
     /** @var Logger */
     private $logger;
-    /** @var array */
-    private $loggerConfig;
 
 
     /**
-     * @param string $pathBase
-     * @param array $loggerConfig
+     * @param string $logFile
      */
-    public function __construct($pathBase, array $loggerConfig)
+    public function __construct($logFile)
     {
-        $this->loggerConfig = $loggerConfig;
-        $this->logFile = $pathBase.'/'.$loggerConfig['path'];
+        $this->logFile = $logFile;
     }
 
     /**
@@ -104,14 +100,6 @@ class LoggerContext implements Context, LoggerAwareInterface
         $this->assertLogFileMatch(
             '/^.*behat3Symfony\.ERROR: \[SfKernelEventLogger\] \- \[EXCEPTION_THROWN\].*my_exception.*$/m'
         );
-    }
-
-    /**
-     * @Given logger param :property is :value
-     */
-    public function loggerIs($property, $value)
-    {
-        \PHPUnit_Framework_Assert::assertSame($value, (string)$this->loggerConfig[$property]);
     }
 
     /**
