@@ -4,6 +4,9 @@ default:
       filters:
         tags: "@nothing"
       contexts:
+        - FunctionalTest\ExtensionContext:
+            extensionConfig:
+              debug_mode: %behat3_symfony_extension.debug_mode%
         - FunctionalTest\LoggerContext:
             pathBase: %paths.base%
             loggerConfig:
@@ -35,6 +38,7 @@ custom-config:
         tags: "@custom-config-check"
   extensions:
     Yoanm\Behat3SymfonyExtension:
+      debug_mode: true
       kernel:
         bootstrap: app/custom-autoload.php
         path: app/CustomAppKernel.php

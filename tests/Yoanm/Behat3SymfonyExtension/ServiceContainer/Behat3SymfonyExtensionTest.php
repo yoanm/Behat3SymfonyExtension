@@ -264,4 +264,28 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
         $definition->setFile($kernelPath)
             ->shouldBeCalledTimes(1);
     }
+
+    /**
+     * @param ContainerBuilder|ObjectProphecy $container
+     * @param array                           $config
+     * @param string                          $baseId
+     */
+    protected function prophesizeBindConfigToContainer(
+        ObjectProphecy $container,
+        array $config,
+        $baseId = 'behat3_symfony_extension'
+    ) {
+        foreach ($config as $configKey => $configValue) {
+            if (is_array($configValue)) {
+                $this->prophesizeBindConfigToContainer(
+                    $container,
+                    $configValue,
+                    sprintf('%s.%s', $baseId, $configKey)
+                );
+            } else {
+                $container->setParameter(sprintf('%s.%s', $baseId, $configKey), $configValue)
+                    ->shouldBeCalledTimes(1);
+            }
+        }
+    }
 }

@@ -45,6 +45,24 @@ class Behat3SymfonyExtension implements Extension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
+        $castToBool = function ($value) {
+            $filtered = filter_var(
+                $value,
+                FILTER_VALIDATE_BOOLEAN,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            return (null === $filtered) ? (bool) $value : $filtered;
+        };
+        $builder->children()
+            ->booleanNode('debug_mode')
+                ->beforeNormalization()
+                ->always()
+                    ->then($castToBool)
+                ->end()
+                ->defaultFalse()
+            ->end()
+            ->end();
         $builder->append((new KernelConfiguration())->getConfigTreeBuilder());
         $builder->append((new LoggerConfiguration())->getConfigTreeBuilder());
     }
@@ -55,12 +73,8 @@ class Behat3SymfonyExtension implements Extension
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        foreach ($config['kernel'] as $key => $value) {
-            $container->setParameter(sprintf('behat3_symfony_extension.kernel.%s', $key), $value);
-        }
-        foreach ($config['logger'] as $key => $value) {
-            $container->setParameter(sprintf('behat3_symfony_extension.logger.%s', $key), $value);
-        }
+        $this->bindConfigToContainer($container, $config);
+
         $loader = new XmlFileLoader(
             $container,
             new FileLocator(__DIR__.'/../Resources/config')
@@ -113,5 +127,28 @@ class Behat3SymfonyExtension implements Extension
         }
 
         return $path;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param array            $config
+     * @param string           $baseId
+     */
+    protected function bindConfigToContainer(
+        ContainerBuilder $container,
+        array $config,
+        $baseId = 'behat3_symfony_extension'
+    ) {
+        foreach ($config as $configKey => $configValue) {
+            if (is_array($configValue)) {
+                $this->bindConfigToContainer(
+                    $container,
+                    $configValue,
+                    sprintf('%s.%s', $baseId, $configKey)
+                );
+            } else {
+                $container->setParameter(sprintf('%s.%s', $baseId, $configKey), $configValue);
+            }
+        }
     }
 }
