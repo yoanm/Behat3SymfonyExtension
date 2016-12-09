@@ -65,3 +65,9 @@ default:
                 path: var/log/behat.log
                 level: DEBUG
 ```
+
+## Tests
+```bash
+$ ./vendor/bin/phpunit
+$ composer run-script behat
+```
