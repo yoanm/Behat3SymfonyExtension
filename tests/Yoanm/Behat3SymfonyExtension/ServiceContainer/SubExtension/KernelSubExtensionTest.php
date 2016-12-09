@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 
 class KernelSubExtensionTest extends AbstractExtensionTest
@@ -63,7 +64,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -85,7 +86,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -105,7 +106,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -138,13 +139,13 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var Definition|ObjectProphecy $definition */
         $definition = $this->prophesize(Definition::class);
 
-        $container->getDefinition(AbstractExtension::KERNEL_SERVICE_ID)
+        $container->getDefinition(KernelSubExtension::KERNEL_SERVICE_ID)
             ->willReturn($definition->reveal())
             ->shouldBeCalledTimes(1);
         $container->getParameter('paths.base')
             ->willReturn($basePath)
             ->shouldBeCalledTimes(1);
-        $container->getParameter($this->buildContainerId('kernel.path'))
+        $container->getParameter('behat3_symfony_extension.kernel.path')
             ->willReturn($kernelPath)
             ->shouldBeCalledTimes(1);
 

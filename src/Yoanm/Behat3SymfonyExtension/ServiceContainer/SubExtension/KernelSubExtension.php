@@ -3,14 +3,17 @@ namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
 use Behat\MinkExtension\ServiceContainer\MinkExtension;
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
+use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
 
-class KernelSubExtension extends AbstractExtension
+class KernelSubExtension implements Extension
 {
+    const KERNEL_SERVICE_ID = 'behat3_symfony_extension.kernel';
+
     /**
      * @inheritDoc
      */

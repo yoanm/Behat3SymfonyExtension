@@ -12,20 +12,6 @@ use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @param string $key
-     *
-     * @return string
-     */
-    protected function buildContainerId($key)
-    {
-        return sprintf(
-            '%s.%s',
-            Behat3SymfonyExtension::BASE_CONTAINER_ID,
-            $key
-        );
-    }
-
-    /**
      * @param ObjectProphecy|ContainerBuilder $container
      * @param string                          $fileName
      */

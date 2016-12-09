@@ -10,8 +10,10 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
 
-class Behat3SymfonyExtension extends AbstractExtension
+class Behat3SymfonyExtension implements Extension
 {
+    const TEST_CLIENT_SERVICE_ID = 'behat3_symfony_extension.test.client';
+
     /** @var Extension[] */
     private $subExtensionList = [];
 

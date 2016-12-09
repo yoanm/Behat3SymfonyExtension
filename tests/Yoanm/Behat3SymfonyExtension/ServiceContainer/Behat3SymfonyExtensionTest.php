@@ -105,14 +105,14 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
         foreach ($config['kernel'] as $key => $value) {
             $this->assertSetContainerParameterCalls(
                 $container,
-                $this->buildContainerId(sprintf('kernel.%s', $key)),
+                sprintf('behat3_symfony_extension.kernel.%s', $key),
                 $value
             );
         }
         foreach ($config['logger'] as $key => $value) {
             $this->assertSetContainerParameterCalls(
                 $container,
-                $this->buildContainerId(sprintf('logger.%s', $key)),
+                sprintf('behat3_symfony_extension.logger.%s', $key),
                 $value
             );
         }

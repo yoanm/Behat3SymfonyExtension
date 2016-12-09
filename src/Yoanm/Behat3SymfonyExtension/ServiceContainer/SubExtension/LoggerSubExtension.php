@@ -1,13 +1,14 @@
 <?php
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
+use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Monolog\Logger;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 
-class LoggerSubExtension extends AbstractExtension
+class LoggerSubExtension implements Extension
 {
     /**
      * @inheritDoc
