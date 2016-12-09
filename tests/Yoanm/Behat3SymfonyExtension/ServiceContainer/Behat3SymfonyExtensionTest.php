@@ -1,21 +1,19 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
+use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Prophecy\Argument;
+use Prophecy\Argument\Token;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\LoggerSubExtension;
 
-class Behat3SymfonyExtensionTest extends AbstractExtensionTest
+class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var KernelSubExtension|ObjectProphecy */
-    private $kernelSubExtension;
-    /** @var LoggerSubExtension|ObjectProphecy */
-    private $loggerSubExtension;
     /** @var Behat3SymfonyExtension */
     private $extension;
 
@@ -24,12 +22,7 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
      */
     protected function setUp()
     {
-        $this->kernelSubExtension = $this->prophesize(KernelSubExtension::class);
-        $this->loggerSubExtension = $this->prophesize(LoggerSubExtension::class);
-        $this->extension = new Behat3SymfonyExtension(
-            $this->kernelSubExtension->reveal(),
-            $this->loggerSubExtension->reveal()
-        );
+        $this->extension = new Behat3SymfonyExtension();
     }
 
     public function testGetConfigKey()
@@ -38,42 +31,6 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
             'behat3_symfony',
             $this->extension->getConfigKey()
         );
-    }
-
-    public function testConfigure()
-    {
-        $kernelSubExtensionConfigKey = 'kernel';
-        $loggerSubExtensionConfigKey = 'logger';
-        /** @var ArrayNodeDefinition|ObjectProphecy $subExtensionBuilder */
-        $subExtensionBuilder = $this->prophesize(ArrayNodeDefinition::class);
-        /** @var ArrayNodeDefinition|ObjectProphecy $extensionBuilder */
-        $extensionBuilder = $this->prophesize(ArrayNodeDefinition::class);
-        /** @var NodeBuilder|ObjectProphecy $nodeBuilder */
-        $nodeBuilder = $this->prophesize(NodeBuilder::class);
-
-        $extensionBuilder->children()
-            ->willReturn($nodeBuilder->reveal())
-            ->shouldBeCalled();
-        $nodeBuilder->arrayNode($kernelSubExtensionConfigKey)
-            ->willReturn($subExtensionBuilder->reveal())
-            ->shouldBeCalledTimes(1);
-        $nodeBuilder->arrayNode($loggerSubExtensionConfigKey)
-            ->willReturn($subExtensionBuilder->reveal())
-            ->shouldBeCalledTimes(1);
-
-        $this->kernelSubExtension->configure($subExtensionBuilder->reveal())
-            ->shouldBeCalledTimes(1);
-        $this->loggerSubExtension->configure($subExtensionBuilder->reveal())
-            ->shouldBeCalledTimes(1);
-
-        $this->kernelSubExtension->getConfigKey()
-            ->willReturn($kernelSubExtensionConfigKey)
-            ->shouldBeCalledTimes(1);
-        $this->loggerSubExtension->getConfigKey()
-            ->willReturn($loggerSubExtensionConfigKey)
-            ->shouldBeCalledTimes(1);
-
-        $this->extension->configure($extensionBuilder->reveal());
     }
 
     /**
@@ -131,15 +88,66 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
 
     public function testProcess()
     {
+        $basePath = __DIR__;
+        $bootstrap = 'Behat3SymfonyExtensionTest.php';
+        $kernelPath = 'plop.html';
+
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->kernelSubExtension->process($container->reveal())
-            ->shouldBeCalledTimes(1);
-        $this->loggerSubExtension->process($container->reveal())
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
+            ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
-        $this->assertNull($this->extension->process($container->reveal()));
+        $container->getParameter('paths.base')
+            ->willReturn($basePath)
+            ->shouldBeCalledTimes(1);
+
+        $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
+
+        $this->extension->process($container->reveal());
+    }
+
+    public function testProcessWithoutPath()
+    {
+        $basePath = __DIR__;
+        $bootstrap = null;
+        $kernelPath = 'plop.html';
+
+        /** @var ContainerBuilder|ObjectProphecy $container */
+        $container = $this->prophesize(ContainerBuilder::class);
+
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
+            ->willReturn($bootstrap)
+            ->shouldBeCalledTimes(1);
+
+        $container->getParameter('paths.base')
+            ->shouldNotBeCalled();
+
+        $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
+
+        $this->extension->process($container->reveal());
+    }
+
+    public function testProcessWithInvalidFile()
+    {
+        $basePath = __DIR__;
+        $bootstrap = 'invalid.php';
+
+        /** @var ContainerBuilder|ObjectProphecy $container */
+        $container = $this->prophesize(ContainerBuilder::class);
+
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
+            ->willReturn($bootstrap)
+            ->shouldBeCalledTimes(1);
+
+        $container->getParameter('paths.base')
+            ->willReturn($basePath)
+            ->shouldBeCalledTimes(1);
+
+        $this->setExpectedException(ProcessingException::class, 'Could not find bootstrap file !');
+
+        $this->extension->process($container->reveal());
     }
 
     /**
@@ -165,5 +173,95 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
                 'debug' => true,
             ],
         ];
+    }
+
+    /**
+     * @param ObjectProphecy|ContainerBuilder $container
+     * @param string                          $fileName
+     */
+    protected function assertContainerAddResourceCalls(ObjectProphecy $container, $fileName)
+    {
+        $filePath = realpath(sprintf(
+            '%s/%s/%s',
+            __DIR__,
+            '../../../../src/Yoanm/Behat3SymfonyExtension/Resources/config',
+            $fileName
+        ));
+        $container->addResource(Argument::which('getResource', $filePath))
+            ->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @param ObjectProphecy|ContainerBuilder $container
+     * @param string                          $filePath
+     */
+    protected function assertSetContainerParameterCalls(ObjectProphecy $container, $key, $value)
+    {
+        $container->setParameter($key, $value)
+            ->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @param string $serviceId
+     *
+     * @return Token\TokenInterface
+     */
+    protected function getReferenceAssertion($serviceId)
+    {
+        return Argument::allOf(
+            Argument::type(Reference::class),
+            Argument::which('__toString', $serviceId)
+        );
+    }
+
+    /**
+     * @param string $factoryServiceId
+     * @param string $methodName
+     *
+     * @return Token\TokenInterface
+     */
+    protected function getFactoryServiceAssertion($factoryServiceId, $methodName)
+    {
+        return Argument::that(function (Definition $definition) use ($factoryServiceId, $methodName) {
+            $factory = $definition->getFactory();
+            $assertion = Argument::allOf(
+                Argument::type('array'),
+                // Check reference
+                Argument::withEntry(
+                    '0',
+                    Argument::allOf(
+                        Argument::type(Reference::class),
+                        Argument::which('__toString', $factoryServiceId)
+                    )
+                ),
+                // Check method name
+                Argument::withEntry('1', $methodName)
+            );
+            return $assertion->scoreArgument($factory) === false ? false : true;
+        });
+    }
+
+    /**
+     * @param ObjectProphecy|ContainerBuilder $container
+     * @param string                          $basePath
+     * @param string                          $kernelPath
+     */
+    protected function prophesizeProcessKernelFile(ObjectProphecy $container, $basePath, $kernelPath)
+    {
+        /** @var Definition|ObjectProphecy $definition */
+        $definition = $this->prophesize(Definition::class);
+
+        $container->getDefinition(Behat3SymfonyExtension::KERNEL_SERVICE_ID)
+            ->willReturn($definition->reveal())
+            ->shouldBeCalledTimes(1);
+        $container->getParameter('paths.base')
+            ->willReturn($basePath)
+            ->shouldBeCalledTimes(1);
+        $container->getParameter('behat3_symfony_extension.kernel.path')
+            ->willReturn($kernelPath)
+            ->shouldBeCalledTimes(1);
+
+        $definition->setFile($kernelPath)
+            ->shouldBeCalledTimes(1);
     }
 }
