@@ -48,67 +48,11 @@ class LoggerSubExtensionTest extends AbstractExtensionTest
                 'level' => 'level',
             ],
         ];
-        $handlerService = 'logger.handler';
 
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
         $this->subExtension->load($container->reveal(), $config);
-
-        // Handler
-        $this->assertCreateServiceCalls(
-            $container,
-            $handlerService,
-            StreamHandler::class,
-            [
-                $config['logger']['path'],
-                $config['logger']['level'],
-            ]
-        );
-        // Logger
-        $expectedCallArgumentList = [
-            [
-                'pushHandler',
-                [$this->getReferenceAssertion($this->buildContainerId($handlerService))]
-            ]
-        ];
-        $this->assertCreateServiceCalls(
-            $container,
-            'logger',
-            Logger::class,
-            ['behat3Symfony'],
-            [],
-            $expectedCallArgumentList
-        );
-        // SfKernelEventLogger
-        $this->assertCreateServiceCalls(
-            $container,
-            'subscriber.sf_kernel_logger',
-            SfKernelLoggerSubscriber::class,
-            [$this->getReferenceAssertion($this->buildContainerId('logger.sf_kernel_logger'))],
-            [],
-            null,
-            null,
-            true === $debug
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'logger.sf_kernel_logger',
-            SfKernelEventLogger::class,
-            [$this->getReferenceAssertion($this->buildContainerId('logger'))],
-            [],
-            null,
-            null,
-            true === $debug
-        );
-        // LoggerAware
-        $this->assertCreateServiceCalls(
-            $container,
-            'initializer.logger_aware',
-            LoggerAwareInitializer::class,
-            [$this->getReferenceAssertion($this->buildContainerId('logger'))],
-            ['context.initializer']
-        );
     }
 
     public function testProcess()

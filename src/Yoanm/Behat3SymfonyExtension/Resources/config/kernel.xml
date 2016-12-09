@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- Load Kernel thanks to the factory / behat3_symfony_extension.kernel.class will be defined by Behat3SymfonyExtension -->
+        <service id="behat3_symfony_extension.kernel" class="%behat3_symfony_extension.kernel.class%">
+            <factory service="behat3_symfony_extension.factory.kernel" method="load" />
+        </service>
+        <service id="behat3_symfony_extension.factory.kernel" class="Yoanm\Behat3SymfonyExtension\Factory\KernelFactory">
+            <argument type="service" id="behat3_symfony_extension.dispatcher.kernel_event" />
+            <argument>%behat3_symfony_extension.kernel.path%</argument>
+            <argument>%behat3_symfony_extension.kernel.class%</argument>
+            <argument>%behat3_symfony_extension.kernel.env%</argument>
+            <argument>%behat3_symfony_extension.kernel.debug'</argument>
+        </service>
+        <service id="behat3_symfony_extension.dispatcher.kernel_event" class="Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher">
+            <argument type="service" id="event_dispatcher" />
+        </service>
+    </services>
+</container>

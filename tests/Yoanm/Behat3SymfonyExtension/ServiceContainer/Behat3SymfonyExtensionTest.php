@@ -81,14 +81,15 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
      * @dataProvider getTestLoadData
      *
      * @param bool $reboot
+     * @param bool $debug
      */
-    public function testLoad($reboot)
+    public function testLoad($reboot, $debug)
     {
         $config = [
             'kernel' => [
                 'class' => 'class',
                 'env' => 'test',
-                'debug' => false,
+                'debug' => $debug,
                 'reboot' => $reboot,
                 'bootstrap' => null,
             ],
@@ -100,22 +101,33 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $this->kernelSubExtension->load($container->reveal(), $config)
-            ->shouldBeCalledTimes(1);
-        $this->loggerSubExtension->load($container->reveal(), $config)
-            ->shouldBeCalledTimes(1);
-
         $this->assertNull($this->extension->load($container->reveal(), $config));
 
+        foreach ($config['kernel'] as $key => $value) {
+            $this->assertSetContainerParameter(
+                $container,
+                $this->buildContainerId(sprintf('kernel.%s', $key)),
+                $value
+            );
+        }
+        foreach ($config['logger'] as $key => $value) {
+            $this->assertSetContainerParameter(
+                $container,
+                $this->buildContainerId(sprintf('logger.%s', $key)),
+                $value
+            );
+        }
 
-        // BehatSubscriber
-        $this->assertCreateServiceCalls(
-            $container,
-            'initializer.behat_subscriber',
-            BehatContextSubscriberInitializer::class,
-            [$this->getReferenceAssertion('event_dispatcher')],
-            ['context.initializer']
-        );
+        $this->assertContainerAddResource($container, 'client.xml');
+        $this->assertContainerAddResource($container, 'kernel.xml');
+        $this->assertContainerAddResource($container, 'initializer.xml');
+        $this->assertContainerAddResource($container, 'logger.xml');
+        if (true === $config['kernel']['reboot']) {
+            $this->assertContainerAddResource($container, 'kernel_auto_reboot.xml');
+        }
+        if (true === $config['kernel']['debug']) {
+            $this->assertContainerAddResource($container, 'kernel_debug_mode.xml');
+        }
     }
 
     public function testProcess()
@@ -137,11 +149,21 @@ class Behat3SymfonyExtensionTest extends AbstractExtensionTest
     public function getTestLoadData()
     {
         return [
-            'with reboot' => [
+            'with reboot / debug mode off' => [
                 'reboot' => true,
+                'debug' => false,
             ],
-            'without reboot' => [
+            'without reboot / debug mode off' => [
                 'reboot' => false,
+                'debug' => false,
+            ],
+            'with reboot / debug mode on' => [
+                'reboot' => true,
+                'debug' => true,
+            ],
+            'without reboot / debug mode on' => [
+                'reboot' => false,
+                'debug' => true,
             ],
         ];
     }

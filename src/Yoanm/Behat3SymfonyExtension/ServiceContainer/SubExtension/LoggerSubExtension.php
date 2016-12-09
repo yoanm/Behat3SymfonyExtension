@@ -65,59 +65,6 @@ class LoggerSubExtension extends AbstractExtension
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        $loggerConfig = $config[$this->getConfigKey()];
-        foreach ($loggerConfig as $key => $value) {
-            $container->setParameter($this->buildContainerId(sprintf('logger.%s', $key)), $value);
-        }
-        $baseHandlerServiceId = 'logger.handler';
-        // Handler
-        $this->createService(
-            $container,
-            $baseHandlerServiceId,
-            StreamHandler::class,
-            [
-                $loggerConfig['path'],
-                $loggerConfig['level'],
-            ]
-        );
-        // Logger
-        $this->createService(
-            $container,
-            'logger',
-            Logger::class,
-            ['behat3Symfony'],
-            [],
-            [
-                [
-                    'pushHandler',
-                    [new Reference($this->buildContainerId($baseHandlerServiceId))]
-                ]
-            ]
-        );
-
-        $this->createService(
-            $container,
-            'initializer.logger_aware',
-            LoggerAwareInitializer::class,
-            [new Reference($this->buildContainerId('logger'))],
-            ['context.initializer']
-        );
-        // SfKernelEventLogger
-        if (true === $config['kernel']['debug']) {
-            $this->createService(
-                $container,
-                'subscriber.sf_kernel_logger',
-                SfKernelLoggerSubscriber::class,
-                [new Reference($this->buildContainerId('logger.sf_kernel_logger'))],
-                [EventDispatcherExtension::SUBSCRIBER_TAG]
-            );
-            $this->createService(
-                $container,
-                'logger.sf_kernel_logger',
-                SfKernelEventLogger::class,
-                [new Reference($this->buildContainerId('logger'))]
-            );
-        }
     }
 
     /**

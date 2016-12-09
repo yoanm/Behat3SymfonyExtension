@@ -57,58 +57,6 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         $container = $this->prophesize(ContainerBuilder::class);
 
         $this->subExtension->load($container->reveal(), [$this->subExtension->getConfigKey() => $kernelConfig]);
-
-        $container->setParameter($this->buildContainerId('kernel.reboot'), $kernelConfig['reboot'])
-            ->shouldHaveBeenCalledTimes(1);
-        $container->setParameter($this->buildContainerId('kernel.bootstrap'), $kernelConfig['bootstrap'])
-            ->shouldHaveBeenCalledTimes(1);
-        $container->setParameter($this->buildContainerId('kernel.path'), $kernelConfig['path'])
-            ->shouldHaveBeenCalledTimes(1);
-        $this->assertCreateServiceCalls(
-            $container,
-            'kernel',
-            $kernelConfig['class'],
-            null,
-            [],
-            null,
-            $this->getFactoryServiceAssertion($this->buildContainerId('factory.kernel'), 'load')
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'dispatcher.kernel_event',
-            BehatKernelEventDispatcher::class,
-            [$this->getReferenceAssertion('event_dispatcher')]
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'factory.kernel',
-            KernelFactory::class,
-            [
-                $this->getReferenceAssertion($this->buildContainerId('dispatcher.kernel_event')),
-                '%'.$this->buildContainerId('kernel.path').'%',
-                '%'.$this->buildContainerId('kernel.class').'%',
-                '%'.$this->buildContainerId('kernel.env').'%',
-                '%'.$this->buildContainerId('kernel.debug').'%'
-            ]
-        );
-        // KernelAware
-        $this->assertCreateServiceCalls(
-            $container,
-            'initializer.kernel_aware',
-            KernelAwareInitializer::class,
-            [$this->getReferenceAssertion(AbstractExtension::KERNEL_SERVICE_ID)],
-            ['context.initializer']
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'subscriber.reboot_kernel',
-            RebootKernelSubscriber::class,
-            [$this->getReferenceAssertion(AbstractExtension::KERNEL_SERVICE_ID)],
-            [EventDispatcherExtension::SUBSCRIBER_TAG],
-            null,
-            null,
-            true === $reboot
-        );
     }
 
     public function testProcess()

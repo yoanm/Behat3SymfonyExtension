@@ -4,7 +4,9 @@ namespace Yoanm\Behat3SymfonyExtension\ServiceContainer;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Yoanm\Behat3SymfonyExtension\Context\Initializer\BehatContextSubscriberInitializer;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
@@ -60,16 +62,27 @@ class Behat3SymfonyExtension extends AbstractExtension
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        foreach ($this->subExtensionList as $subExtension) {
-            $subExtension->load($container, $config);
+        foreach ($config['kernel'] as $key => $value) {
+            $container->setParameter($this->buildContainerId(sprintf('kernel.%s', $key)), $value);
         }
-        $this->createService(
+        foreach ($config['logger'] as $key => $value) {
+            $container->setParameter($this->buildContainerId(sprintf('logger.%s', $key)), $value);
+        }
+        $loader = new XmlFileLoader(
             $container,
-            'initializer.behat_subscriber',
-            BehatContextSubscriberInitializer::class,
-            [new Reference('event_dispatcher')],
-            ['context.initializer']
+            new FileLocator(__DIR__.'/../Resources/config')
         );
+
+        $loader->load('client.xml');
+        $loader->load('kernel.xml');
+        $loader->load('initializer.xml');
+        $loader->load('logger.xml');
+        if (true === $config['kernel']['reboot']) {
+            $loader->load('kernel_auto_reboot.xml');
+        }
+        if (true === $config['kernel']['debug']) {
+            $loader->load('kernel_debug_mode.xml');
+        }
     }
 
     /**
