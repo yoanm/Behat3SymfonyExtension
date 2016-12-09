@@ -1,12 +1,9 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
-use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
 use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
