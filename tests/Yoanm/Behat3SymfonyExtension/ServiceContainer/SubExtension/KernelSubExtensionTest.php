@@ -1,7 +1,6 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
-use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
@@ -9,12 +8,9 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtensionTest;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
-use Yoanm\Behat3SymfonyExtension\Factory\KernelFactory;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension\KernelSubExtension;
-use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 class KernelSubExtensionTest extends AbstractExtensionTest
 {
@@ -57,58 +53,6 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         $container = $this->prophesize(ContainerBuilder::class);
 
         $this->subExtension->load($container->reveal(), [$this->subExtension->getConfigKey() => $kernelConfig]);
-
-        $container->setParameter($this->buildContainerId('kernel.reboot'), $kernelConfig['reboot'])
-            ->shouldHaveBeenCalledTimes(1);
-        $container->setParameter($this->buildContainerId('kernel.bootstrap'), $kernelConfig['bootstrap'])
-            ->shouldHaveBeenCalledTimes(1);
-        $container->setParameter($this->buildContainerId('kernel.path'), $kernelConfig['path'])
-            ->shouldHaveBeenCalledTimes(1);
-        $this->assertCreateServiceCalls(
-            $container,
-            'kernel',
-            $kernelConfig['class'],
-            null,
-            [],
-            null,
-            $this->getFactoryServiceAssertion($this->buildContainerId('factory.kernel'), 'load')
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'dispatcher.kernel_event',
-            BehatKernelEventDispatcher::class,
-            [$this->getReferenceAssertion('event_dispatcher')]
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'factory.kernel',
-            KernelFactory::class,
-            [
-                $this->getReferenceAssertion($this->buildContainerId('dispatcher.kernel_event')),
-                '%'.$this->buildContainerId('kernel.path').'%',
-                '%'.$this->buildContainerId('kernel.class').'%',
-                '%'.$this->buildContainerId('kernel.env').'%',
-                '%'.$this->buildContainerId('kernel.debug').'%'
-            ]
-        );
-        // KernelAware
-        $this->assertCreateServiceCalls(
-            $container,
-            'initializer.kernel_aware',
-            KernelAwareInitializer::class,
-            [$this->getReferenceAssertion(AbstractExtension::KERNEL_SERVICE_ID)],
-            ['context.initializer']
-        );
-        $this->assertCreateServiceCalls(
-            $container,
-            'subscriber.reboot_kernel',
-            RebootKernelSubscriber::class,
-            [$this->getReferenceAssertion(AbstractExtension::KERNEL_SERVICE_ID)],
-            [EventDispatcherExtension::SUBSCRIBER_TAG],
-            null,
-            null,
-            true === $reboot
-        );
     }
 
     public function testProcess()
@@ -120,7 +64,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -130,7 +74,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
 
         $this->prophesizeProcessKernelFile($container, $pathBase, $kernelPath);
 
-        $this->subExtension->process($container->reveal());
+        $this->assertNull($this->subExtension->process($container->reveal()));
     }
 
     public function testProcessWithoutPath()
@@ -142,7 +86,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -162,7 +106,7 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
-        $container->getParameter($this->buildContainerId('kernel.bootstrap'))
+        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
             ->willReturn($bootstrap)
             ->shouldBeCalledTimes(1);
 
@@ -195,13 +139,13 @@ class KernelSubExtensionTest extends AbstractExtensionTest
         /** @var Definition|ObjectProphecy $definition */
         $definition = $this->prophesize(Definition::class);
 
-        $container->getDefinition(AbstractExtension::KERNEL_SERVICE_ID)
+        $container->getDefinition(KernelSubExtension::KERNEL_SERVICE_ID)
             ->willReturn($definition->reveal())
             ->shouldBeCalledTimes(1);
         $container->getParameter('paths.base')
             ->willReturn($basePath)
             ->shouldBeCalledTimes(1);
-        $container->getParameter($this->buildContainerId('kernel.path'))
+        $container->getParameter('behat3_symfony_extension.kernel.path')
             ->willReturn($kernelPath)
             ->shouldBeCalledTimes(1);
 

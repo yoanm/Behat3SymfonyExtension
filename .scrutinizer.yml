@@ -24,12 +24,8 @@ build:
     environment:
         mysql: false
         postgresql: false
-        mongodb: false
         elasticsearch: false
         redis: false
-        memcached: false
-        neo4j: false
-        rabbitmq: false
         variables:
             SYMFONY_ENV: 'test'
     tests:

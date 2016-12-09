@@ -3,7 +3,6 @@ namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
-use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -13,114 +12,29 @@ use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 abstract class AbstractExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @param string $key
-     *
-     * @return string
+     * @param ObjectProphecy|ContainerBuilder $container
+     * @param string                          $fileName
      */
-    protected function buildContainerId($key)
+    protected function assertContainerAddResourceCalls(ObjectProphecy $container, $fileName)
     {
-        return sprintf(
-            '%s.%s',
-            Behat3SymfonyExtension::BASE_CONTAINER_ID,
-            $key
-        );
+        $filePath = realpath(sprintf(
+            '%s/%s/%s',
+            __DIR__,
+            '../../../../src/Yoanm/Behat3SymfonyExtension/Resources/config',
+            $fileName
+        ));
+        $container->addResource(Argument::which('getResource', $filePath))
+            ->shouldHaveBeenCalledTimes(1);
     }
 
     /**
      * @param ObjectProphecy|ContainerBuilder $container
-     * @param string                          $id
-     * @param string                          $class
-     * @param array|null                      $expectedDefinitionArgumentList
-     * @param array                           $tagList
-     * @param array|null                      $expectedCallArgumentList
-     * @param Token\TokenInterface|null      $factory
-     * @param bool                            $called
+     * @param string                          $filePath
      */
-    protected function assertCreateServiceCalls(
-        ObjectProphecy $container,
-        $id,
-        $class,
-        array $expectedDefinitionArgumentList = null,
-        $tagList = [],
-        array $expectedCallArgumentList = null,
-        Token\TokenInterface $factoryAssertion = null,
-        $called = true
-    ) {
-
-        $globalSetDefinitionArgumentCheckList = [
-            Argument::type(Definition::class),
-            Argument::which('getClass', $class)
-        ];
-        if (null !== $expectedDefinitionArgumentList) {
-            $globalSetDefinitionArgumentCheckList[] = Argument::that(
-                function (Definition $definition) use ($expectedDefinitionArgumentList) {
-                    $argList = $definition->getArguments();
-                    foreach ($expectedDefinitionArgumentList as $key => $expected) {
-                        if (isset($argList[$key])) {
-                            $actual = $argList[$key];
-                            if ($expected instanceof Token\TokenInterface) {
-                                return $expected->scoreArgument($actual);
-                            } elseif ($expected == $actual) {
-                                return true;
-                            }
-                        } else {
-                            // Argument expected but not set
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            );
-        }
-        if (null !== $expectedCallArgumentList) {
-            $globalSetDefinitionArgumentCheckList[] = Argument::that(
-                function (Definition $definition) use ($expectedCallArgumentList) {
-                    $callList = $definition->getMethodCalls();
-                    foreach ($expectedCallArgumentList as $key => $data) {
-                        if ($callList[$key][0] !== $data[0]) {
-                            return false;
-                        }
-                        if (isset($data[1])) {
-                            foreach ($data[1] as $subKey => $expected) {
-                                $actual = $callList[$key][1][$subKey];
-                                if ($expected instanceof Token\TokenInterface) {
-                                    if ($expected->scoreArgument($actual) === false) {
-                                        return false;
-                                    }
-                                } elseif ($expected != $actual) {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    return true;
-                }
-            );
-        }
-
-        foreach ($tagList as $tag) {
-            // Assert tag is defined
-            $globalSetDefinitionArgumentCheckList[] = Argument::that(
-                function (Definition $definition) use ($tag) {
-                    return $definition->hasTag($tag);
-                }
-            );
-        }
-
-        if (null !== $factoryAssertion) {
-            $globalSetDefinitionArgumentCheckList[] = $factoryAssertion;
-        }
-
-        /** @var MethodProphecy $setDefinitionProphecy */
-        $setDefinitionProphecy = $container->setDefinition(
-            $this->buildContainerId($id),
-            new Token\LogicalAndToken($globalSetDefinitionArgumentCheckList)
-        );
-        if (true === $called) {
-            $setDefinitionProphecy->shouldHaveBeenCalled();
-        } else {
-            $setDefinitionProphecy->shouldNotHaveBeenCalled();
-        }
+    protected function assertSetContainerParameterCalls(ObjectProphecy $container, $key, $value)
+    {
+        $container->setParameter($key, $value)
+            ->shouldHaveBeenCalledTimes(1);
     }
 
     /**

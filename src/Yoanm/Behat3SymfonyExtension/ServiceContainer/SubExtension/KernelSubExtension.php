@@ -2,24 +2,18 @@
 namespace Yoanm\Behat3SymfonyExtension\ServiceContainer\SubExtension;
 
 use Behat\MinkExtension\ServiceContainer\MinkExtension;
-use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
+use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
-use Symfony\Component\BrowserKit\CookieJar;
-use Symfony\Component\BrowserKit\History;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-use Yoanm\Behat3SymfonyExtension\Client\Client;
-use Yoanm\Behat3SymfonyExtension\Context\Initializer\KernelAwareInitializer;
-use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
-use Yoanm\Behat3SymfonyExtension\Factory\KernelFactory;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\AbstractExtension;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
-use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
-class KernelSubExtension extends AbstractExtension
+class KernelSubExtension implements Extension
 {
+    const KERNEL_SERVICE_ID = 'behat3_symfony_extension.kernel';
+
     /**
      * @inheritDoc
      */
@@ -30,6 +24,7 @@ class KernelSubExtension extends AbstractExtension
 
     // @codeCoverageIgnoreStart
     // Not possible to cover this because ExtensionManager is a final class
+    // Will be covered by FT
     /**
      * @inheritDoc
      */
@@ -97,61 +92,6 @@ class KernelSubExtension extends AbstractExtension
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        $kernelConfig = $config[$this->getConfigKey()];
-
-        $this->loadContainerParameter($container, $kernelConfig);
-        $this->loadInitializer($container);
-        $this->loadSubscriber($container, $kernelConfig);
-        $this->createService(
-            $container,
-            'test.client',
-            Client::class,
-            [
-                    new Reference(self::KERNEL_SERVICE_ID),
-                    [],
-                    new Reference($this->buildContainerId('test.client.history')),
-                    new Reference($this->buildContainerId('test.client.cookiejar'))
-                ]
-        );
-        $this->createService(
-            $container,
-            'test.client.history',
-            History::class
-        );
-        $this->createService(
-            $container,
-            'test.client.cookiejar',
-            CookieJar::class
-        );
-        $this->createService(
-            $container,
-            'dispatcher.kernel_event',
-            BehatKernelEventDispatcher::class,
-            [new Reference('event_dispatcher')]
-        );
-        // Load Kernel thanks to the factory
-        $this->createService(
-            $container,
-            'kernel',
-            $kernelConfig['class'],
-            [],
-            [],
-            [],
-            [new Reference($this->buildContainerId('factory.kernel')), 'load']
-        );
-
-        $this->createService(
-            $container,
-            'factory.kernel',
-            KernelFactory::class,
-            [
-                new Reference($this->buildContainerId('dispatcher.kernel_event')),
-                '%'.$this->buildContainerId('kernel.path').'%',
-                '%'.$this->buildContainerId('kernel.class').'%',
-                '%'.$this->buildContainerId('kernel.env').'%',
-                '%'.$this->buildContainerId('kernel.debug').'%'
-            ]
-        );
     }
 
     /**
@@ -160,7 +100,7 @@ class KernelSubExtension extends AbstractExtension
     public function process(ContainerBuilder $container)
     {
         $basePath = $container->getParameter('paths.base');
-        $bootstrapPath = $container->getParameter($this->buildContainerId('kernel.bootstrap'));
+        $bootstrapPath = $container->getParameter('behat3_symfony_extension.kernel.bootstrap');
         if ($bootstrapPath) {
             $bootstrapPathUnderBasePath = sprintf('%s/%s', $basePath, $bootstrapPath);
             if (file_exists($bootstrapPathUnderBasePath)) {
@@ -174,7 +114,7 @@ class KernelSubExtension extends AbstractExtension
         }
 
         // load kernel
-        $kernelPath = $container->getParameter($this->buildContainerId('kernel.path'));
+        $kernelPath = $container->getParameter('behat3_symfony_extension.kernel.path');
         $kernelPathUnderBasePath = sprintf('%s/%s', $basePath, $kernelPath);
         if (file_exists($kernelPathUnderBasePath)) {
             $kernelPath = $kernelPathUnderBasePath;
@@ -182,47 +122,5 @@ class KernelSubExtension extends AbstractExtension
 
         $container->getDefinition(self::KERNEL_SERVICE_ID)
             ->setFile($kernelPath);
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     */
-    protected function loadInitializer(ContainerBuilder $container)
-    {
-        $this->createService(
-            $container,
-            'initializer.kernel_aware',
-            KernelAwareInitializer::class,
-            [new Reference(self::KERNEL_SERVICE_ID)],
-            ['context.initializer']
-        );
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     * @param $kernelConfig
-     */
-    protected function loadSubscriber(ContainerBuilder $container, $kernelConfig)
-    {
-        if (true === $kernelConfig['reboot']) {
-            $this->createService(
-                $container,
-                'subscriber.reboot_kernel',
-                RebootKernelSubscriber::class,
-                [new Reference(self::KERNEL_SERVICE_ID)],
-                [EventDispatcherExtension::SUBSCRIBER_TAG]
-            );
-        }
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     * @param $kernelConfig
-     */
-    protected function loadContainerParameter(ContainerBuilder $container, $kernelConfig)
-    {
-        foreach ($kernelConfig as $key => $value) {
-            $container->setParameter($this->buildContainerId(sprintf('kernel.%s', $key)), $value);
-        }
     }
 }
