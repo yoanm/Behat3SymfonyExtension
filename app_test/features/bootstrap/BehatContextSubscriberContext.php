@@ -60,9 +60,7 @@ class BehatContextSubscriberContext implements Context, BehatContextSubscriberIn
      */
     public function IShouldHaveCaughtAnEventForClientRequest($beforeOnly = false)
     {
-        var_dump($beforeOnly);
         $beforeOnly = $beforeOnly ? '' !== trim($beforeOnly) : false;
-        var_dump($beforeOnly);
         \PHPUnit_Framework_Assert::assertSame(
             Events::BEFORE_REQUEST,
             $this->shiftEvent()->getName()
