@@ -62,7 +62,7 @@ class MinkContext implements Context, MinkAwareContext
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setMink(Mink $mink)
     {
@@ -70,7 +70,7 @@ class MinkContext implements Context, MinkAwareContext
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setMinkParameters(array $parameters)
     {

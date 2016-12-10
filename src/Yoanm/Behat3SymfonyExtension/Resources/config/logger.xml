@@ -10,9 +10,13 @@
         </service>
         <service id="behat3_symfony_extension.logger" class="Monolog\Logger">
             <argument>behat3Symfony</argument>
-            <call method="pushHandler">
+            <argument type="collection">
                 <argument type="service" id="behat3_symfony_extension.logger.handler"/>
-            </call>
+            </argument>
+            <argument type="collection">
+                <argument type="service" id="behat3_symfony_extension.logger.processor.class_header"/>
+            </argument>
         </service>
+        <service id="behat3_symfony_extension.logger.processor.class_header" class="Yoanm\Behat3SymfonyExtension\Logger\Processor\ClassHeaderProcessor"/>
     </services>
 </container>

@@ -10,10 +10,14 @@
         </service>
         <service id="behat3_symfony_extension.factory.kernel" class="Yoanm\Behat3SymfonyExtension\Factory\KernelFactory">
             <argument type="service" id="behat3_symfony_extension.dispatcher.kernel_event" />
-            <argument>%behat3_symfony_extension.kernel.path%</argument>
-            <argument>%behat3_symfony_extension.kernel.class%</argument>
-            <argument>%behat3_symfony_extension.kernel.env%</argument>
-            <argument>%behat3_symfony_extension.kernel.debug'</argument>
+            <argument type="service" id="behat3_symfony_extension.logger" />
+            <argument type="collection">
+                <argument key="path">%behat3_symfony_extension.kernel.path%</argument>
+                <argument key="class">%behat3_symfony_extension.kernel.class%</argument>
+                <argument key="env">%behat3_symfony_extension.kernel.env%</argument>
+                <argument key="debug">%behat3_symfony_extension.kernel.debug%</argument>
+            </argument>
+            <argument>%behat3_symfony_extension.debug_mode%</argument>
         </service>
         <service id="behat3_symfony_extension.dispatcher.kernel_event" class="Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher">
             <argument type="service" id="event_dispatcher" />

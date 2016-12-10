@@ -74,7 +74,7 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($uri)
             ->shouldBeCalledTimes(1);
 
-        $this->prophesizeLog(
+        $this->logger->debug(
             '[REQUEST]',
             [
                 'type' => ($requestType == HttpKernelInterface::MASTER_REQUEST
@@ -101,11 +101,12 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($exception)
             ->shouldBeCalledTimes(1);
 
-        $this->prophesizeLog(
-            '[EXCEPTION_THROWN]',
-            ['message' => $message],
-            Logger::ERROR
-        );
+        $this->logger
+            ->error(
+                '[EXCEPTION_THROWN]',
+                ['message' => $message]
+            )
+            ->shouldBeCalledTimes(1);
 
         $this->sfKernelLogger->onKernelException($event->reveal());
     }
@@ -120,24 +121,5 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
                 'requestType' => HttpKernelInterface::SUB_REQUEST
             ],
         ];
-    }
-
-    /**
-     * @param string $message
-     * @param array  $context
-     * @param int    $level
-     */
-    private function prophesizeLog($message, array $context = [], $level = Logger::DEBUG)
-    {
-        $this->logger
-            ->addRecord(
-                $level,
-                sprintf(
-                    '[SfKernelEventLogger] - %s',
-                    $message
-                ),
-                $context
-            )
-            ->shouldBeCalledTimes(1);
     }
 }

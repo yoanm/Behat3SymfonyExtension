@@ -1,7 +1,7 @@
 <?php
 namespace Yoanm\Behat3SymfonyExtension\Logger;
 
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -17,14 +17,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class SfKernelEventLogger implements EventSubscriberInterface
 {
-    /** @var Logger */
+    /** @var LoggerInterface */
     private $logger;
 
     /**
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      * @throws \Exception
      */
-    public function __construct(Logger $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
@@ -45,7 +45,7 @@ class SfKernelEventLogger implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        $this->log(
+        $this->logger->info(
             '[REQUEST]',
             [
                 'type' => ($event->getRequestType() == HttpKernelInterface::MASTER_REQUEST
@@ -63,29 +63,11 @@ class SfKernelEventLogger implements EventSubscriberInterface
      */
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
-        $this->log(
+        $this->logger->error(
             '[EXCEPTION_THROWN]',
             [
                 'message' => $event->getException()->getMessage(),
-            ],
-            Logger::ERROR
-        );
-    }
-
-    /**
-     * @param string $message
-     * @param array  $context
-     * @param int    $level
-     */
-    private function log($message, array $context = [], $level = Logger::DEBUG)
-    {
-        $this->logger->addRecord(
-            $level,
-            sprintf(
-                '[SfKernelEventLogger] - %s',
-                $message
-            ),
-            $context
+            ]
         );
     }
 }

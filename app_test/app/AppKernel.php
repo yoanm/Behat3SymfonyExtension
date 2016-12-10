@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Kernel;
 class AppKernel extends Kernel
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct($environment, $debug)
     {

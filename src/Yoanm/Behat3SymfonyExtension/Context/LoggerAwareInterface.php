@@ -2,7 +2,7 @@
 namespace Yoanm\Behat3SymfonyExtension\Context;
 
 use Behat\Behat\Context\Context;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Want to log something in a context, for debug purpose for instance ?
@@ -11,7 +11,7 @@ use Monolog\Logger;
 interface LoggerAwareInterface extends Context
 {
     /**
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      */
-    public function setBehatLogger(Logger $logger);
+    public function setBehatLogger(LoggerInterface $logger);
 }

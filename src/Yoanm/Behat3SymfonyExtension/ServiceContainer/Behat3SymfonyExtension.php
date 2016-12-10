@@ -4,6 +4,7 @@ namespace Yoanm\Behat3SymfonyExtension\ServiceContainer;
 use Behat\MinkExtension\ServiceContainer\MinkExtension;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
+use Monolog\Logger;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -73,6 +74,7 @@ class Behat3SymfonyExtension implements Extension
      */
     public function load(ContainerBuilder $container, array $config)
     {
+        $config = $this->normalizeConfig($config);
         $this->bindConfigToContainer($container, $config);
 
         $loader = new XmlFileLoader(
@@ -150,5 +152,19 @@ class Behat3SymfonyExtension implements Extension
                 $container->setParameter(sprintf('%s.%s', $baseId, $configKey), $configValue);
             }
         }
+    }
+
+    /**
+     * @param array $config
+     * @return array
+     */
+    protected function normalizeConfig(array $config)
+    {
+        if (true === $config['debug_mode']) {
+            $config['kernel']['debug'] = true;
+            $config['logger']['level'] = Logger::DEBUG;
+        }
+
+        return $config;
     }
 }
