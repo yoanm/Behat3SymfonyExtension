@@ -3,23 +3,29 @@ namespace Yoanm\Behat3SymfonyExtension\Subscriber;
 
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Yoanm\Behat3SymfonyExtension\Client\Client;
 
 /**
  * Class RebootKernelSubscriber
  */
 class RebootKernelSubscriber implements EventSubscriberInterface
 {
-    /** @var KernelInterface */
-    private $kernel;
+    /** @var Client */
+    private $client;
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
-     * @param KernelInterface $kernel
+     * @param Client $client
      */
-    public function __construct(KernelInterface $kernel)
-    {
-        $this->kernel = $kernel;
+    public function __construct(
+        Client $client,
+        LoggerInterface $logger
+    ) {
+        $this->client = $client;
+        $this->logger = $logger;
     }
 
     /**
@@ -28,14 +34,15 @@ class RebootKernelSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ScenarioTested::BEFORE => 'rebootKernel',
-            ExampleTested::BEFORE => 'rebootKernel',
+            ScenarioTested::BEFORE => 'reset',
+            ExampleTested::BEFORE => 'reset',
         ];
     }
 
-    public function rebootKernel()
+    public function reset()
     {
-        $this->kernel->shutdown();
-        $this->kernel->boot();
+        // Resetting the client will also reboot the kernel
+        $this->logger->debug('Resetting mink driver client');
+        $this->client->resetClient();
     }
 }
