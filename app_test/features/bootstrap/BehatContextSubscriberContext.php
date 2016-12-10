@@ -14,16 +14,6 @@ class BehatContextSubscriberContext implements Context, BehatContextSubscriberIn
     private $listenEvent = false;
 
     /**
-     * @BeforeScenario
-     */
-    public function beforeScenario()
-    {
-        $this->resetEventList();
-        $this->listenEvent = false;
-    }
-
-
-    /**
      * @Given I listen for symfony kernel event
      */
     public function iListenForSymfonyEvent()
