@@ -52,7 +52,7 @@ custom-config:
 
 debug-mode:
   suites:
-    default:w
+    default:
       filters:
         tags: "@debug-mode"
   extensions:
