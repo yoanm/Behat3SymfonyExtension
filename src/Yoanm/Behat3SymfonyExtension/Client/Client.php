@@ -5,7 +5,11 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Client as BaseClient;
 use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\BrowserKit\History;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Yoanm\Behat3SymfonyExtension\Event\AfterRequestEvent;
+use Yoanm\Behat3SymfonyExtension\Event\BeforeRequestEvent;
+use Yoanm\Behat3SymfonyExtension\Event\Events;
 
 class Client extends BaseClient
 {
@@ -13,6 +17,8 @@ class Client extends BaseClient
     private $requestPerformed = false;
     /** @var LoggerInterface */
     private $logger;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
 
     /**
      * {@inheritdoc}
@@ -20,11 +26,13 @@ class Client extends BaseClient
     public function __construct(
         KernelInterface $kernel,
         LoggerInterface $logger,
+        EventDispatcherInterface $dispatcher,
         array $server,
         History $history,
         CookieJar $cookieJar
     ) {
         $this->logger = $logger;
+        $this->dispatcher = $dispatcher;
         parent::__construct($kernel, $server, $history, $cookieJar);
         $this->disableReboot();
     }
@@ -52,6 +60,16 @@ class Client extends BaseClient
             $this->requestPerformed = true;
         }
 
-        return parent::doRequest($request);
+        $this->dispatcher->dispatch(
+            Events::BEFORE_REQUEST,
+            new BeforeRequestEvent($request)
+        );
+        $response = parent::doRequest($request);
+        $this->dispatcher->dispatch(
+            Events::AFTER_REQUEST,
+            new AfterRequestEvent($response)
+        );
+
+        return $response;
     }
 }

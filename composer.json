@@ -40,7 +40,8 @@
       "behat": [
         "cd app_test && ../vendor/bin/behat --colors --format progress --profile default-config",
         "cd app_test && ../vendor/bin/behat --colors --format progress --profile custom-config",
-        "cd app_test && ../vendor/bin/behat --colors --format progress --profile with-mink"
+        "cd app_test && ../vendor/bin/behat --colors --format progress --profile with-mink",
+          "cd app_test && ../vendor/bin/behat --colors --format progress --profile debug-mode"
       ]
     }
 }
