@@ -41,7 +41,7 @@ default:
         Yoanm\Behat3SymfonyExtension: ~
 ```
 
-To use the `behat3Symfony` driver (created thanks to [`Behat3SymfonyFactory`](./src/Yoanm/Behat3SymfonyExtension/ServiceContainer/DriverFactory/Behat3SymfonyFactory.php)) for mink, install and configure [behat/mink-extension](https://github.com/Behat/MinkExtension) and [behat/mink-browserkit-driver](https://github.com/Behat/MinkBrowserKitDriver).
+To use the `behat3Symfony` driver for mink (created thanks to [`Behat3SymfonyFactory`](./src/Yoanm/Behat3SymfonyExtension/ServiceContainer/DriverFactory/Behat3SymfonyFactory.php)), install and configure [behat/mink-extension](https://github.com/Behat/MinkExtension) and [behat/mink-browserkit-driver](https://github.com/Behat/MinkBrowserKitDriver).
 Then, add the following in your behat configuration file : 
 ```yaml
 default:
