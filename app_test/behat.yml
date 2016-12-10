@@ -48,23 +48,26 @@ custom-config:
       logger:
         path: var/log/behat2.log
         level: DEBUG
-with-mink:
-  suites:
-    default:
-      filters:
-        tags: "~@default-config-check&&~@custom-config-check&&~debug-mode"
-  extensions:
-    Yoanm\Behat3SymfonyExtension: ~
-    Behat\MinkExtension:
-      sessions:
-        my_session:
-            behat3Symfony: ~
+
 
 debug-mode:
   suites:
     default:
       filters:
         tags: "@debug-mode"
+  extensions:
+    Yoanm\Behat3SymfonyExtension:
+      debug_mode: true
+    Behat\MinkExtension:
+      sessions:
+        my_session:
+            behat3Symfony: ~
+
+with-mink:
+  suites:
+    default:
+      filters:
+        tags: "~@default-config-check&&~@custom-config-check&&~debug-mode"
   extensions:
     Yoanm\Behat3SymfonyExtension: ~
     Behat\MinkExtension:
