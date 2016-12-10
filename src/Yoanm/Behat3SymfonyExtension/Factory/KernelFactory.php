@@ -17,6 +17,8 @@ COMMENT;
     private $behatKernelEventDispatcher;
     /** @var LoggerInterface */
     private $logger;
+    /** @var array */
+    private $kernelConfig;
     /** @var bool */
     private $debugMode;
 
