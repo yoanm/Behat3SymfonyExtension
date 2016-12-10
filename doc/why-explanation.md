@@ -12,18 +12,18 @@ The main issue with Symfony2Extension is that it's not possible to dinamically i
 That's not totally true in fact, it's possible but only in one specific case : when you launch behat with only one scenario that call your application only one time !
 
 **Summary**
-* [Not really a Symfony2Extension issue](./doc/why-explanation.md#not-really-a-symfony2extension-issue-)
-  * [Explanation by example](./doc/why-explanation.md#explanation-by-example )
-    * [:information_source: To know](./doc/why-explanation.md#information_source-to-know)
-    * [:ok_hand: Working use-case](./doc/why-explanation.md#ok_hand-working-use-case)
-    * [:heavy_exclamation_mark: Not handled use-case](./doc/why-explanation.md#heavy_exclamation_mark-not-handled-use-case)
-* [Why client reboot the kernel before a request ?](./doc/why-explanation.md#why-client-reboot-the-kernel-before-a-request-)
-* [How to inject data into service container with behat](./doc/why-explanation.md#how-to-inject-data-into-service-container-with-behat)
-  * [Implementation](./doc/why-explanation.md#implementation)
-    * [`features/bootstrap/MyThirdPartyApiContext.php`](./doc/why-explanation.md##featuresbootstrapmythirdpartyapicontextphp)
-    * [`features/bootstrap/App/Client/ThirdPartyClientMock.php`](./doc/why-explanation.md##featuresbootstrapappclientthirdpartyclientmockphp)
-    * [Side stuffs](./doc/why-explanation.md##side-stuffs)
-* [Kernel reboot events](./doc/why-explanation.md#kernel-reboot-events)
+* [Not really a Symfony2Extension issue](#not-really-a-symfony2extension-issue-)
+  * [Explanation by example](#explanation-by-example )
+    * [:information_source: To know](#information_source-to-know)
+    * [:ok_hand: Working use-case](#ok_hand-working-use-case)
+    * [:heavy_exclamation_mark: Not handled use-case](#heavy_exclamation_mark-not-handled-use-case)
+* [Why client reboot the kernel before a request ?](#why-client-reboot-the-kernel-before-a-request-)
+* [How to inject data into service container with behat](#how-to-inject-data-into-service-container-with-behat)
+  * [Implementation](#implementation)
+    * [`features/bootstrap/MyThirdPartyApiContext.php`](#featuresbootstrapmythirdpartyapicontextphp)
+    * [`features/bootstrap/App/Client/ThirdPartyClientMock.php`](#featuresbootstrapappclientthirdpartyclientmockphp)
+    * [Side stuffs](#side-stuffs)
+* [Kernel reboot events](#kernel-reboot-events)
 
 ## Not really a Symfony2Extension issue !
 Issue is not really on Symfony2Extension but mainly on two points that result to a bigger :collision: points : 
@@ -33,13 +33,13 @@ Issue is not really on Symfony2Extension but mainly on two points that result to
 
    Client do not really "reboot" the kernel, it shutdow it. And then when `Kernel::hande` is called, in case the kernel is not booted, it automatically boot itself (see [there](https://github.com/symfony/http-kernel/blob/c355df9479a065d243d17f708c8b65690ead4a9f/Kernel.php#L164-L166)).
    
-   See ["Explanation by example"](./doc/why-explanation.md#explanation-by-example ) and ["Why client reboot the kernel before a request ?"](./doc/why-explanation.md#why-client-reboot-the-kernel-before-a-request-) below for deeper explanations.
+   See ["Explanation by example"](#explanation-by-example ) and ["Why client reboot the kernel before a request ?"](#why-client-reboot-the-kernel-before-a-request-) below for deeper explanations.
 
  * **Second :collision: point**
    
    It's not possible to be notified when the kernel reboot (no event exists on symfony side).
 
-   See ["Kernel reboot event workaround"](./doc/why-explanation.md#kernel-reboot-event-workaround) below for deeper explanations.
+   See [Kernel reboot events](#kernel-reboot-events) below for deeper explanations.
 
 Because of this two :collision: points, it's not possible to know **when** injecting mock data.
  * For the first request to the kernel made over all the behat command execution (so first request of the first scenario executed), the container will be the one created at kernel startup.
@@ -142,19 +142,19 @@ Sadly, it create the issue described just above.
 
 ## How to inject data into service container with behat
 The workaround rely on thwo things : 
- * Instead of resetting the kernel **after** each scenario, the [Behat3Symfony `Client`](./src/Yoanm/Behat3SymfonyExtension/Client/Client.php) will be reseted **before** each scenario (see [there](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Subscriber/RebootKernelSubscriber.php#L46)).
+ * Instead of resetting the kernel **after** each scenario, the [Behat3Symfony `Client`](../src/Yoanm/Behat3SymfonyExtension/Client/Client.php) will be reseted **before** each scenario (see [there](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Subscriber/RebootKernelSubscriber.php#L46)).
    And resetting the client will (re)boot the kernel (see [there](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Client/Client.php#L55))
  * An event is sent when a request will be sent (see [there](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Client/Client.php#L70-L73)).
 
-Thanks to this new behavior, injecting data into service container could be easily managed by listening the [`Events::BEFORE_REQUEST`](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Event/Events.php) event 
+Thanks to this new behavior, injecting data into service container could be easily managed by listening the [`Events::BEFORE_REQUEST`](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Event/Events.php#L8) event 
 and injecting mock data when event is dispatched. 
 
 Because, with the new behavior, it's sure that the container used by the kernel 
-when the [`Events::BEFORE_REQUEST`](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Event/Events.php) event is dispatched, will be the same than the one used during the request to the kernel (if it was required, the client has already rebooted the kernel).
+when the [`Events::BEFORE_REQUEST`](https://github.com/yoanm/Behat3SymfonyExtension/blob/545cd20417a0e49eb7b8c53c237d7a122aaee092/src/Yoanm/Behat3SymfonyExtension/Event/Events.php#L8) event is dispatched, will be the same than the one used during the request to the kernel (if it was required, the client has already rebooted the kernel).
 
 
 ### Implementation
-*based on the [:heavy_exclamation_mark: Not handled use-case](./doc/why-explanation.md#heavy_exclamation_mark-not-handled-use-case) example (feature, `config_dev.yml` and `services.yml` files)*
+*based on the [:heavy_exclamation_mark: Not handled use-case](#heavy_exclamation_mark-not-handled-use-case) example (feature, `config_dev.yml` and `services.yml` files)*
 
 #### `features/bootstrap/MyThirdPartyApiContext.php`
 ```php
