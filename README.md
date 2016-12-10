@@ -8,29 +8,32 @@
 
 Behat3SymfonyExtension is a layer between Behat 3.0+ and Symfony2.7+|3+, strongly inspired by [Symfony2Extension](https://github.com/Behat/Symfony2Extension).
 
-It provide :
- * [`Client`](./src/Yoanm/Behat3SymfonyExtension/Client/Client.php) : It will be used by the mink driver. Like FrameworkBundle::Client do, this client will reboot kernel before a request in case a request has already been performed.
- * Context aware interfaces : 
-    * [`KernelAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/KernelAwareInterface.php) : Will inject your symfony app kernel instance in your behat contexts
-    * [`LoggerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/LoggerAwareInterface.php) : Will inject a monolog logger instance in your behat contexts
- * [`BehatContextSubscriberInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/BehatContextSubscriberInterface.php) : Will allow your behat contexts to be aware of behat events (including [those](./src/Yoanm/Behat3SymfonyExtension/Event/Events.php) dispatched by this extension)
- * [`SfKernelEventLogger`](./src/Yoanm/Behat3SymfonyExtension/Logger/SfKernelEventLogger.php) : **Only in case where `kernel.debug` is set to true** (see kernel configuration below). 
+* [Why](#why)
+* [How to use](#how-to-use)
+   * [Installation](#installation)
+   * [Configuration](#configuration)
+* [In the box](#in-the-box)
+   * [`Client`](#client)
+   * [`KernelAwareInterface`](#kernelawareinterface)
+   * [`LoggerAwareInterface`](#loggerawareinterface)
+   * [`BehatContextSubscriberInterface`](#behatcontextsubscriberinterface)
+   * [`SfKernelEventLogger`](#sfkerneleventlogger)
+   * [Debug mode](#debug-mode)
+* [Default configuration reference](#default-configuration-reference)
+* [Tests](#tests)
+
+## Why
+See [Why ? Or rather, why not Symfony2Extension ?](./doc/why-explanation.md#why--or-rather-why-not-symfony2extension-)
  
- Produce a log entry each time that your symfony application kernel will : 
-    - handle a request
-    - catch an exception
-    
- All data are loggued in the configured file (see logger configuration below)
- 
- 
-## Installation
+## How to use
+### Installation
 ```bash
 > composer require --dev yoanm/behat3-symfony-extension
 ```
 
 Behat3SymfonyExtension require [behat/behat](https://github.com/Behat/Behat), [monolog/monolog](https://github.com/Seldaek/monolog), [symfony/browser-kit](https://github.com/symfony/browser-kit) and [symfony/framework-bundle](https://github.com/symfony/framework-bundle)
 
-## Configuration
+### Configuration
 Add the following in your behat configuration file (usually `behat.yml`) : 
 ```yaml
 default:
@@ -38,7 +41,7 @@ default:
         Yoanm\Behat3SymfonyExtension: ~
 ```
 
-To use the [`KernelDriver`](./src/Yoanm/Behat3SymfonyExtension/Driver/KernelDriver.php) for mink, install and configure [behat/mink-extension](https://github.com/Behat/MinkExtension)and [behat/mink-browserkit-driver](https://github.com/Behat/MinkBrowserKitDriver).
+To use the `behat3Symfony` driver (created thanks to [`Behat3SymfonyFactory`](./src/Yoanm/Behat3SymfonyExtension/ServiceContainer/DriverFactory/Behat3SymfonyFactory.php)) for mink, install and configure [behat/mink-extension](https://github.com/Behat/MinkExtension) and [behat/mink-browserkit-driver](https://github.com/Behat/MinkBrowserKitDriver).
 Then, add the following in your behat configuration file : 
 ```yaml
 default:
@@ -48,8 +51,49 @@ default:
                 my_session:
                     behat3Symfony: ~
 ```
+## In the box
 
-## Default configuration
+### [`Client`](./src/Yoanm/Behat3SymfonyExtension/Client/Client.php)
+It will be used by the mink driver if mink installed and configured to use the `behat3Symfony` driver
+
+### [`KernelAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/KernelAwareInterface.php)
+Will inject your symfony app kernel instance in your behat contexts
+
+### [`LoggerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/LoggerAwareInterface.php)
+Will inject a monolog logger instance in your behat contexts
+
+### [`BehatContextSubscriberInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/BehatContextSubscriberInterface.php)
+Will allow your behat contexts to be aware of behat events (including [those](./src/Yoanm/Behat3SymfonyExtension/Event/Events.php) dispatched by this extension)
+
+### [`SfKernelEventLogger`](./src/Yoanm/Behat3SymfonyExtension/Logger/SfKernelEventLogger.php) 
+**Only in case where `kernel.debug` is set to true** (see default kernel configuration below). 
+Produce a log entry each time that your symfony application kernel will : 
+   - handle a request
+   - catch an exception
+    
+All data are loggued in the configured file (see default logger configuration below)
+
+### Debug mode
+To enable extension debug mode, add the following in your behat configuration file :
+```yaml
+default:
+    extensions:
+        Yoanm\Behat3SymfonyExtension: 
+            debug_mode: true
+```
+This mode allow two things : 
+ * Kernel bridge class file is not deleted. If you have some errors related to the bridge, it will be easier for debug.
+ * Some new log entry are added, regarding Kernel bridge and Client behavior
+ 
+ In case you just want the log entry, just add the following in your behat configuration file : 
+ ```yaml
+ default:
+     extensions:
+         Yoanm\Behat3SymfonyExtension: 
+                 level: DEBUG
+ ```
+
+## Default configuration reference
 ```yaml
 default:
     extensions:
@@ -66,26 +110,6 @@ default:
                 path: var/log/behat.log
                 level: INFO
 ```
-
-## Debug mode
-To enable extension debug mode, add the following in your behat configuration file :
-```yaml
-default:
-    extensions:
-        Yoanm\Behat3SymfonyExtension: 
-            debug_mode: true
-```
-This mode allow two things : 
- * Kernel bridge class file is not deleted. If you have some errors related to the bridge, it will be easier for debug.
- * Some new log entry are added, regarding Kernel bridge and Client behavior
- 
- If you only want the new log entry, just add the following in your behat configuration file : 
- ```yaml
- default:
-     extensions:
-         Yoanm\Behat3SymfonyExtension: 
-                 level: DEBUG
- ```
  
 ## Tests
 ```bash
