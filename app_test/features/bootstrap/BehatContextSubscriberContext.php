@@ -82,7 +82,7 @@ class BehatContextSubscriberContext implements Context, BehatContextSubscriberIn
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

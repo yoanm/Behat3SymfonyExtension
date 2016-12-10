@@ -7,6 +7,6 @@ Feature: Debug mode
   Scenario: Default false
     Given extension config "debug_mode" is false
 
-   @custom-config-check
+   @debug-mode
   Scenario: check true
      Given extension config "debug_mode" is true

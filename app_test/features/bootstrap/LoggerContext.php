@@ -3,13 +3,14 @@ namespace FunctionalTest;
 
 use Behat\Behat\Context\Context;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
 
 class LoggerContext implements Context, LoggerAwareInterface
 {
     const TEST_LOG_MESSAGE = 'LOG TEST : i can log something';
 
-    /** @var Logger */
+    /** @var LoggerInterface */
     private $logger;
 
 
@@ -46,7 +47,7 @@ class LoggerContext implements Context, LoggerAwareInterface
     public function iLogSomething()
     {
         $this->assertLogFileMatch(sprintf(
-            '/^.*behat3Symfony\.INFO: %s \[\] \[\]$/m',
+            '/^.*behat3Symfony\.INFO: \[LoggerContext\] %s \[\] \[\]$/m',
             preg_quote(self::TEST_LOG_MESSAGE, '/')
         ));
     }
@@ -66,7 +67,7 @@ class LoggerContext implements Context, LoggerAwareInterface
     {
         \PHPUnit_Framework_Assert::assertRegExp(
             sprintf(
-                '/^.*behat3Symfony\.DEBUG: \[SfKernelEventLogger\] \- \[REQUEST\].*%s.*$/m',
+                '/^.*behat3Symfony\.INFO: \[SfKernelEventLogger\] \[REQUEST\].*%s.*$/m',
                 preg_quote(
                     'exception' === $type
                         ? MinkContext::EXCEPTION_TEST_ROUTE
@@ -80,32 +81,19 @@ class LoggerContext implements Context, LoggerAwareInterface
     }
 
     /**
-     * @Then A log entry for kernel terminate event to valid route must exists
-     */
-    public function aLogEntryForKernelTerminateEventToInvalidRouteMustExists()
-    {
-        $this->assertLogFileMatch(
-            sprintf(
-                '/^.*behat3Symfony\.DEBUG: \[SfKernelEventLogger\] \- \[TERMINATE\].*%s.*$/m',
-                preg_quote(MinkContext::VALID_TEST_ROUTE, '/')
-            )
-        );
-    }
-
-    /**
      * @Then A log entry for exception event must exists
      */
     public function aLogEntryForExceptionEventMustExists()
     {
         $this->assertLogFileMatch(
-            '/^.*behat3Symfony\.ERROR: \[SfKernelEventLogger\] \- \[EXCEPTION_THROWN\].*my_exception.*$/m'
+            '/^.*behat3Symfony\.ERROR: \[SfKernelEventLogger\] \[EXCEPTION_THROWN\].*my_exception.*$/m'
         );
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function setBehatLogger(Logger $logger)
+    public function setBehatLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

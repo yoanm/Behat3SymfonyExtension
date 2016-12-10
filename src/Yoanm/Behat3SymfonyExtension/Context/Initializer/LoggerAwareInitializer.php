@@ -3,7 +3,7 @@ namespace Yoanm\Behat3SymfonyExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
 
 /**
@@ -11,13 +11,13 @@ use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
  */
 class LoggerAwareInitializer implements ContextInitializer
 {
-    /** @var Logger */
+    /** @var LoggerInterface */
     private $logger;
 
     /**
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct(Logger $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

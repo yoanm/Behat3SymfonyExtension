@@ -1,6 +1,7 @@
 <?php
 namespace Yoanm\Behat3SymfonyExtension\Client;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Client as BaseClient;
 use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\BrowserKit\History;
@@ -10,16 +11,20 @@ class Client extends BaseClient
 {
     /** @var bool */
     private $requestPerformed = false;
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(
         KernelInterface $kernel,
+        LoggerInterface $logger,
         array $server,
         History $history,
         CookieJar $cookieJar
     ) {
+        $this->logger = $logger;
         parent::__construct($kernel, $server, $history, $cookieJar);
         $this->disableReboot();
     }
@@ -38,6 +43,7 @@ class Client extends BaseClient
     protected function doRequest($request)
     {
         if ($this->requestPerformed) {
+            $this->logger->debug('A request has already been performed => reboot kernel');
             // Reboot sfKernel to avoid parent::doRequest to shutdown it and from Kernel::handle to boot it
             // This behavior will allow mocking symfony app container service for instance
             $this->getKernel()->shutdown();

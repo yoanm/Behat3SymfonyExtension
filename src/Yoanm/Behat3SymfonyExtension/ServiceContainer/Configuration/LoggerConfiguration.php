@@ -23,7 +23,7 @@ class LoggerConfiguration
                         return Logger::toMonologLevel($value);
                     })
                     ->end()
-                    ->defaultValue(Logger::DEBUG)
+                    ->defaultValue(Logger::INFO)
                 ->end()
             ->end();
 

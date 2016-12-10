@@ -15,7 +15,7 @@ class Behat3SymfonyFactoryTest extends \PHPUnit_Framework_TestCase
     private $factory;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp()
     {

@@ -54,6 +54,7 @@ default:
 default:
     extensions:
         Yoanm\Behat3SymfonyExtension: 
+            debug_mode: false
             kernel:
                 bootstrap: app/autoload.php
                 path: app/AppKernel.php
@@ -63,9 +64,29 @@ default:
                 reboot: true # If true symfony kernel will be rebooted after each scenario/example
             logger:
                 path: var/log/behat.log
-                level: DEBUG
+                level: INFO
 ```
 
+## Debug mode
+To enable extension debug mode, add the following in your behat configuration file :
+```yaml
+default:
+    extensions:
+        Yoanm\Behat3SymfonyExtension: 
+            debug_mode: true
+```
+This mode allow two things : 
+ * Kernel bridge class file is not deleted. If you have some errors related to the bridge, it will be easier for debug.
+ * Some new log entry are added, regarding Kernel bridge and Client behavior
+ 
+ If you only want the new log entry, just add the following in your behat configuration file : 
+ ```yaml
+ default:
+     extensions:
+         Yoanm\Behat3SymfonyExtension: 
+                 level: DEBUG
+ ```
+ 
 ## Tests
 ```bash
 $ ./vendor/bin/phpunit

@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
+use Monolog\Logger;
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -15,7 +16,7 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
     private $extension;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -33,28 +34,33 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getTestLoadData
      *
-     * @param bool $reboot
+     * @param bool $kernelReboot
      * @param bool $debug
      */
-    public function testLoad($reboot, $debug)
+    public function testLoad($kernelReboot, $debug)
     {
         $config = [
+            'debug_mode' => $debug,
             'kernel' => [
                 'class' => 'class',
                 'env' => 'test',
                 'debug' => $debug,
-                'reboot' => $reboot,
+                'reboot' => $kernelReboot,
                 'bootstrap' => null,
             ],
             'logger' => [
                 'path' => 'path',
-                'level' => 'level'
+                'level' => Logger::EMERGENCY
             ],
         ];
         /** @var ContainerBuilder|ObjectProphecy $container */
         $container = $this->prophesize(ContainerBuilder::class);
 
         $this->assertNull($this->extension->load($container->reveal(), $config));
+
+        if (true === $debug) {
+            $config['logger']['level'] = Logger::DEBUG;
+        }
 
         foreach ($config['kernel'] as $key => $value) {
             $this->assertSetContainerParameterCalls(

@@ -72,7 +72,7 @@ class KernelContext implements Context, KernelAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setKernel(KernelInterface $kernel)
     {

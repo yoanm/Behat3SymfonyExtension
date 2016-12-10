@@ -12,9 +12,9 @@ Feature: Logger
     @default-config-check
   Scenario: Assert default configuration
     Given extension logger config "path" is "var/log/behat.log"
-    And extension logger config "level" is 100
+    And extension logger config "level" is 200
 
     @custom-config-check
   Scenario: Assert custom configuration
     Given extension logger config "path" is "var/log/behat2.log"
-    And extension logger config "level" is 200
+    And extension logger config "level" is 100
