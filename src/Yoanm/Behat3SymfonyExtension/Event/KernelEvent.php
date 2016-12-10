@@ -3,7 +3,7 @@ namespace Yoanm\Behat3SymfonyExtension\Event;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class KernelEvent extends Event
+class KernelEvent extends AbstractEvent
 {
     /** @var KernelInterface */
     private $kernel;

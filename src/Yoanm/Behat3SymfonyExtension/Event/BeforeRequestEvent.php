@@ -3,7 +3,7 @@ namespace Yoanm\Behat3SymfonyExtension\Event;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class BeforeRequestEvent extends Event
+class BeforeRequestEvent extends AbstractEvent
 {
     /** @var Request */
     private $request;

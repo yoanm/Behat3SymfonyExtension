@@ -3,7 +3,7 @@ namespace Yoanm\Behat3SymfonyExtension\Event;
 
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
-abstract class Event extends BaseEvent
+abstract class AbstractEvent extends BaseEvent
 {
     /** @var string */
     private $name;
