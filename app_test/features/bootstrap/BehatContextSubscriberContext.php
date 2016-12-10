@@ -3,12 +3,12 @@ namespace FunctionalTest;
 
 use Behat\Behat\Context\Context;
 use Yoanm\Behat3SymfonyExtension\Context\BehatContextSubscriberInterface;
-use Yoanm\Behat3SymfonyExtension\Event\Event;
+use Yoanm\Behat3SymfonyExtension\Event\AbstractEvent;
 use Yoanm\Behat3SymfonyExtension\Event\Events;
 
 class BehatContextSubscriberContext implements Context, BehatContextSubscriberInterface
 {
-    /** @var Event[] */
+    /** @var AbstractEvent[] */
     private $kernelEventList = [];
     /** @var bool */
     private $listenEvent = false;
@@ -91,19 +91,9 @@ class BehatContextSubscriberContext implements Context, BehatContextSubscriberIn
     }
 
     /**
-     * @return Event|null
+     * @param AbstractEvent $event
      */
-    protected function shiftEvent()
-    {
-        return array_shift($this->kernelEventList);
-    }
-
-    protected function resetEventList()
-    {
-        $this->kernelEventList = [];
-    }
-
-    public function catchEvent(Event $event)
+    public function catchEvent(AbstractEvent $event)
     {
         if (true === $this->listenEvent) {
             $this->kernelEventList[] = $event;
@@ -123,5 +113,18 @@ class BehatContextSubscriberContext implements Context, BehatContextSubscriberIn
             Events::AFTER_KERNEL_SHUTDOWN => 'catchEvent',
             Events::AFTER_REQUEST => 'catchEvent',
         ];
+    }
+
+    /**
+     * @return AbstractEvent|null
+     */
+    protected function shiftEvent()
+    {
+        return array_shift($this->kernelEventList);
+    }
+
+    protected function resetEventList()
+    {
+        $this->kernelEventList = [];
     }
 }
