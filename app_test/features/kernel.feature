@@ -9,18 +9,18 @@ Feature: kernel
 
     @default-config-check
   Scenario: Assert default configuration
-    Given kernel param "bootstrap" is "app/autoload.php"
-    And kernel param "path" is "app/AppKernel.php"
-    And kernel param "class" is "AppKernel"
-    And kernel param "env" is "test"
-    And kernel param "debug" is true
-    And kernel param "reboot" is true
+    Given extension kernel config "bootstrap" is "app/autoload.php"
+    And extension kernel config "path" is "app/AppKernel.php"
+    And extension kernel config "class" is "AppKernel"
+    And extension kernel config "env" is "test"
+    And extension kernel config "debug" is true
+    And extension kernel config "reboot" is true
 
     @custom-config-check
   Scenario: Assert custom configuration
-    Given kernel param "bootstrap" is "app/custom-autoload.php"
-    And kernel param "path" is "app/CustomAppKernel.php"
-    And kernel param "class" is "CustomAppKernel"
-    And kernel param "env" is "dev"
-    And kernel param "debug" is false
-    And kernel param "reboot" is false
+    Given extension kernel config "bootstrap" is "app/custom-autoload.php"
+    And extension kernel config "path" is "app/CustomAppKernel.php"
+    And extension kernel config "class" is "CustomAppKernel"
+    And extension kernel config "env" is "dev"
+    And extension kernel config "debug" is false
+    And extension kernel config "reboot" is false

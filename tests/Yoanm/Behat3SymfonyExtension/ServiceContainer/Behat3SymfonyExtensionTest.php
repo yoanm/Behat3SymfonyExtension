@@ -1,12 +1,9 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
-use Behat\Testwork\ServiceContainer\Exception\ProcessingException;
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
 use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -101,7 +98,7 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container->getParameter('paths.base')
             ->willReturn($basePath)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
 
@@ -122,7 +119,7 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
         $container->getParameter('paths.base')
             ->willReturn($basePath)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
 
@@ -143,30 +140,10 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
 
         $container->getParameter('paths.base')
-            ->shouldNotBeCalled();
-
-        $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
-
-        $this->extension->process($container->reveal());
-    }
-
-    public function testProcessWithInvalidFile()
-    {
-        $basePath = __DIR__;
-        $bootstrap = 'invalid.php';
-
-        /** @var ContainerBuilder|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerBuilder::class);
-
-        $container->getParameter('behat3_symfony_extension.kernel.bootstrap')
-            ->willReturn($bootstrap)
-            ->shouldBeCalledTimes(1);
-
-        $container->getParameter('paths.base')
             ->willReturn($basePath)
             ->shouldBeCalledTimes(1);
 
-        $this->setExpectedException(ProcessingException::class, 'Could not find bootstrap file !');
+        $this->prophesizeProcessKernelFile($container, $basePath, $kernelPath);
 
         $this->extension->process($container->reveal());
     }
@@ -275,9 +252,6 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
         $container->getDefinition(Behat3SymfonyExtension::KERNEL_SERVICE_ID)
             ->willReturn($definition->reveal())
             ->shouldBeCalledTimes(1);
-        $container->getParameter('paths.base')
-            ->willReturn($basePath)
-            ->shouldBeCalledTimes(1);
         $container->getParameter('behat3_symfony_extension.kernel.path')
             ->willReturn($kernelPath)
             ->shouldBeCalledTimes(1);
@@ -289,5 +263,29 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
 
         $definition->setFile($kernelPath)
             ->shouldBeCalledTimes(1);
+    }
+
+    /**
+     * @param ContainerBuilder|ObjectProphecy $container
+     * @param array                           $config
+     * @param string                          $baseId
+     */
+    protected function prophesizeBindConfigToContainer(
+        ObjectProphecy $container,
+        array $config,
+        $baseId = 'behat3_symfony_extension'
+    ) {
+        foreach ($config as $configKey => $configValue) {
+            if (is_array($configValue)) {
+                $this->prophesizeBindConfigToContainer(
+                    $container,
+                    $configValue,
+                    sprintf('%s.%s', $baseId, $configKey)
+                );
+            } else {
+                $container->setParameter(sprintf('%s.%s', $baseId, $configKey), $configValue)
+                    ->shouldBeCalledTimes(1);
+            }
+        }
     }
 }

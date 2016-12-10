@@ -9,15 +9,8 @@ class KernelContext implements Context, KernelAwareInterface
 {
     /** @var KernelInterface */
     private $kernel;
-    /** @var array */
-    private $kernelConfig;
     /** @var string|null */
     private static $lastContainerInstance = null;
-
-    public function __construct(array $kernelConfig)
-    {
-        $this->kernelConfig = $kernelConfig;
-    }
 
     /**
      * @Given I have access to symfony app container
@@ -39,22 +32,6 @@ class KernelContext implements Context, KernelAwareInterface
             'my-container-test-parameter',
             $this->kernel->getContainer()->getParameter('container_test_parameter')
         );
-    }
-
-    /**
-     * @Given /^kernel param "(?P<property>[^"]+)" is "(?P<value>[^"]+)"$/
-     */
-    public function kernelPropertyIs($property, $value)
-    {
-        \PHPUnit_Framework_Assert::assertSame($value, (string)$this->kernelConfig[$property]);
-    }
-
-    /**
-     * @Given /^kernel param "(?P<property>[^"]+)" is (?P<value>true|false+)$/
-     */
-    public function kernelPropertyIsBoold($property, $value)
-    {
-        \PHPUnit_Framework_Assert::assertSame('true' === $value, $this->kernelConfig[$property]);
     }
 
     /**

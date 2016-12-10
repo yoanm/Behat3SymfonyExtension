@@ -11,10 +11,10 @@ Feature: Logger
 
     @default-config-check
   Scenario: Assert default configuration
-    Given logger param "path" is "var/log/behat.log"
-    And logger param "level" is "100"
+    Given extension logger config "path" is "var/log/behat.log"
+    And extension logger config "level" is 100
 
     @custom-config-check
   Scenario: Assert custom configuration
-    Given logger param "path" is "var/log/behat2.log"
-    And logger param "level" is "200"
+    Given extension logger config "path" is "var/log/behat2.log"
+    And extension logger config "level" is 200
