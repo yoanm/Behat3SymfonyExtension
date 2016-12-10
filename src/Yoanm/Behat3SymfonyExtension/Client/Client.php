@@ -46,16 +46,23 @@ class Client extends BaseClient
     }
 
     /**
+     * @return boolean
+     */
+    public function resetClient()
+    {
+        $this->logger->debug('Resetting client');
+        $this->requestPerformed = false;
+        $this->rebootKernel();
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doRequest($request)
     {
-        if ($this->requestPerformed) {
+        if (true === $this->requestPerformed) {
             $this->logger->debug('A request has already been performed => reboot kernel');
-            // Reboot sfKernel to avoid parent::doRequest to shutdown it and from Kernel::handle to boot it
-            // This behavior will allow mocking symfony app container service for instance
-            $this->getKernel()->shutdown();
-            $this->getKernel()->boot();
+            $this->rebootKernel();
         } else {
             $this->requestPerformed = true;
         }
@@ -71,5 +78,13 @@ class Client extends BaseClient
         );
 
         return $response;
+    }
+
+    protected function rebootKernel()
+    {
+        // Reboot sfKernel to avoid parent::doRequest to shutdown it and from Kernel::handle to boot it
+        // This behavior will allow mocking symfony app container service for instance
+        $this->getKernel()->shutdown();
+        $this->getKernel()->boot();
     }
 }

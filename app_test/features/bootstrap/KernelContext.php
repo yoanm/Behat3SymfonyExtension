@@ -43,12 +43,25 @@ class KernelContext implements Context, KernelAwareInterface
     }
 
     /**
-     * @Given Current container instance has changed
+     * @Given current container instance has changed
      */
     public function currentContainerInstanceHasChanged()
     {
         \PHPUnit_Framework_Assert::assertNotNull(self::$lastContainerInstance);
         \PHPUnit_Framework_Assert::assertNotEquals(
+            self::$lastContainerInstance,
+            spl_object_hash($this->kernel->getContainer())
+        );
+        self::$lastContainerInstance = null;
+    }
+
+    /**
+     * @Given current container instance must not have changed
+     */
+    public function currentContainerInstanceMustNotHaveChanged()
+    {
+        \PHPUnit_Framework_Assert::assertNotNull(self::$lastContainerInstance);
+        \PHPUnit_Framework_Assert::assertEquals(
             self::$lastContainerInstance,
             spl_object_hash($this->kernel->getContainer())
         );

@@ -5,7 +5,8 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="behat3_symfony_extension.subscriber.reboot_kernel" class="Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber">
-            <argument type="service" id="behat3_symfony_extension.kernel" />
+            <argument type="service" id="behat3_symfony_extension.test.client" />
+            <argument type="service" id="behat3_symfony_extension.logger" />
             <tag name="event_dispatcher.subscriber" />
         </service>
     </services>

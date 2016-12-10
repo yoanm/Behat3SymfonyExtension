@@ -69,7 +69,9 @@ with-mink:
       filters:
         tags: "~@default-config-check&&~@custom-config-check&&~debug-mode"
   extensions:
-    Yoanm\Behat3SymfonyExtension: ~
+    Yoanm\Behat3SymfonyExtension:
+      logger:
+        level: DEBUG
     Behat\MinkExtension:
       sessions:
         my_session:

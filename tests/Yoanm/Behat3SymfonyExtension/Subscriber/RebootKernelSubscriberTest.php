@@ -4,7 +4,8 @@ namespace Tests\Yoanm\Behat3SymfonyExtension\Subscriber;
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Psr\Log\LoggerInterface;
+use Yoanm\Behat3SymfonyExtension\Client\Client;
 use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
 
 /**
@@ -12,8 +13,10 @@ use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
  */
 class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var KernelInterface|ObjectProphecy */
-    private $kernel;
+    /** @var Client|ObjectProphecy */
+    private $client;
+    /** @var LoggerInterface|ObjectProphecy */
+    private $logger;
     /** @var RebootKernelSubscriber */
     private $subscriber;
 
@@ -22,10 +25,12 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->kernel = $this->prophesize(KernelInterface::class);
+        $this->client = $this->prophesize(Client::class);
+        $this->logger = $this->prophesize(LoggerInterface::class);
 
         $this->subscriber = new RebootKernelSubscriber(
-            $this->kernel->reveal()
+            $this->client->reveal(),
+            $this->logger->reveal()
         );
     }
 
@@ -33,20 +38,17 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             [
-                ScenarioTested::BEFORE => 'rebootKernel',
-                ExampleTested::BEFORE => 'rebootKernel',
+                ScenarioTested::BEFORE => 'reset',
+                ExampleTested::BEFORE => 'reset',
             ],
             RebootKernelSubscriber::getSubscribedEvents()
         );
     }
 
-    public function testRebootKernel()
+    public function testReset()
     {
-        $this->kernel->shutdown()
+        $this->client->resetClient()
             ->shouldBeCalledTimes(1);
-        $this->kernel->boot()
-            ->shouldBeCalledTimes(1);
-
-        $this->subscriber->rebootKernel();
+        $this->subscriber->reset();
     }
 }
