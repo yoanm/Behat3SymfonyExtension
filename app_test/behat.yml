@@ -22,7 +22,8 @@ default:
         - FunctionalTest\KernelContext: ~
         - FunctionalTest\MinkContext: ~
         - FunctionalTest\BehatContextSubscriberContext: ~
-        - FunctionalTest\BehatStepLoggerContext:
+        - FunctionalTest\BehatStepLoggerEventContext:
+        - FunctionalTest\BehatStepLoggerLogEntryContext:
           - %paths.base%/%behat3_symfony_extension.logger.path%
 
 default-config:

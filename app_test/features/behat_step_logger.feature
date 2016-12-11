@@ -12,7 +12,7 @@ Feature: Behat steps logger
     And A log entry must exist for current step start event and I will have the one regarding end event
     Then I truncate log file
     And I listen for behat steps event
-    And I will caught event regarding current example end event using var "<var>"
+    And I will caught event regarding current example end event
     And I will have a log entry regarding current example end event
     Examples:
     | var   |
