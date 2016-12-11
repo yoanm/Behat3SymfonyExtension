@@ -3,7 +3,8 @@ namespace Yoanm\Behat3SymfonyExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
-use Behat\Behat\EventDispatcher\Event\FeatureTested;
+use Behat\Behat\EventDispatcher\Event\ExampleTested;
+use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Yoanm\Behat3SymfonyExtension\Context\BehatContextSubscriberInterface;
@@ -47,7 +48,10 @@ class BehatContextSubscriberInitializer implements ContextInitializer, EventSubs
      */
     public static function getSubscribedEvents()
     {
-        return [FeatureTested::AFTER => 'clearBehatContextSubscriber'];
+        return [
+            ScenarioTested::AFTER => 'clearBehatContextSubscriber',
+            ExampleTested::AFTER => 'clearBehatContextSubscriber',
+        ];
     }
 
     /**

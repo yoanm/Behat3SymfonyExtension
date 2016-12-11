@@ -92,6 +92,9 @@ class Behat3SymfonyExtension implements Extension
         if (true === $config['kernel']['debug']) {
             $loader->load('kernel_debug_mode.xml');
         }
+        if (true === $config['debug_mode']) {
+            $loader->load('extension_debug_mode.xml');
+        }
     }
 
     /**

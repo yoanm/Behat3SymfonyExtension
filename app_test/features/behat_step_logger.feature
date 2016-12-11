@@ -1,26 +1,16 @@
- @debug-mode @enable-behat-step-listener
+ @debug-mode @enable-behat-step-listener @truncate-log-file
 Feature: Behat steps logger
   In order to understand what happens behind the scene
   As dev
-  I need to have a log entry for each feature/Background/example/scenario/step executed
+  I need to catch events for each example/scenarios/steps executed
 
-  Background: check background logs entry
-    Given I have a log entry regarding current feature start
-    And I have a log entry regarding current background start
-    Then I will have a log entry regarding current background end
-
-  Scenario: check logs entry
-     And I have a log entry regarding current scenario start
-     And I have a log entry regarding current step start and end
-     Then I will have a log entry regarding current scenario end
-     And I will have a log entry regarding current feature end
-
-  Scenario Outline: check logs entry
-    Given I have a log entry regarding current scenario outline start
-    And I have a log entry regarding current example start using var "<var>"
-    And I have a log entry regarding current step start and end
-    Then I will have a log entry regarding current example end using var "<var>"
-    And I will have a log entry regarding current scenario outline end
-  Examples:
+  Scenario Outline: check logs entry and event catch
+    Given A log entry must exist for current example start event using var "<var>"
+    Then I should have caught event regarding current step start event and will have the end event
+    And A log entry must exist for current step start event and I will have the one regarding end event
+    Then I will caught event regarding current example end event using var "<var>"
+    And I will have a log entry regarding current example end event using var "<var>"
+    And I will have a log entry regarding current background end event
+    Examples:
     | var   |
     | value |
