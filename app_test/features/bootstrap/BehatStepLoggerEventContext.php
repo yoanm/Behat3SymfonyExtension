@@ -13,7 +13,6 @@ use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\GherkinNodeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Behat\Behat\EventDispatcher\Event\StepTested;
-use Behat\Behat\Hook\Call\BeforeStep;
 use Behat\Gherkin\Node\BackgroundNode;
 use Behat\Gherkin\Node\ExampleNode;
 use Behat\Gherkin\Node\ScenarioNode;
@@ -63,7 +62,7 @@ class BehatStepLoggerEventContext implements Context, BehatContextSubscriberInte
     {
         $eventData = $this->shiftEvent();
         $this->assertStartEventInstanceOf($eventData, $type);
-        $this->assertStartEventArgs($eventData, $type);
+        $this->assertEventArgs($eventData, $type, true);
     }
 
     /**
@@ -96,11 +95,7 @@ class BehatStepLoggerEventContext implements Context, BehatContextSubscriberInte
         /** @var BeforeStepTested $event */
         $eventData = $this->shiftEvent();
         $this->assertStartEventInstanceOf($eventData, 'step');
-        \PHPUnit_Framework_Assert::assertSame(
-            'I should have caught event regarding current step start event and will have the end event',
-            $eventData[0]->getStep()->getText(),
-            'Failed asserting that start step event is the right one !'
-        );
+        $this->assertEventArgs($eventData, 'step', true);
         $this->expectStepEndEvent = true;
     }
 
@@ -162,22 +157,28 @@ class BehatStepLoggerEventContext implements Context, BehatContextSubscriberInte
     public function checkEndEventExpectation(GherkinNodeTested $event, $name)
     {
         if ($this->listenEvent) {
+            /* if event received, disable expectation */
             if ($event instanceof StepTested) {
-                $this->expectStepEndEvent = false; /* event received so assertion ok */
+                if (true === $this->expectStepEndEvent) {
+                    $this->assertEventArgs([$event, $name], 'step', false);
+                }
+                $this->expectStepEndEvent = false;
             } elseif ($event instanceof BackgroundTested) {
-                $this->expectBackgroundEndEvent = false; /* event received so assertion ok */
+                if (true === $this->expectBackgroundEndEvent) {
+                    $this->assertEventArgs([$event, $name], 'background', false);
+                }
+                $this->expectBackgroundEndEvent = false;
             } else {
                 if (ExampleTested::AFTER === $name) {
                     if (true === $this->expectExampleEndEvent) {
-                        \PHPUnit_Framework_Assert::assertSame(
-                            $this->currentScenario->getTokens(),
-                            $event->getNode()->getTokens(),
-                            'End example tokens are not the expected ones !'
-                        );
+                        $this->assertEventArgs([$event, $name], 'example', false);
                     }
-                    $this->expectExampleEndEvent = false; /* event received and checked so assertion ok */
+                    $this->expectExampleEndEvent = false;
                 } else {
-                    $this->expectScenarioEndEvent = false; /* event received so assertion ok */
+                    if (true === $this->expectScenarioEndEvent) {
+                        $this->assertEventArgs([$event, $name], 'scenario', false);
+                    }
+                    $this->expectScenarioEndEvent = false;
                 }
             }
         }
@@ -309,7 +310,7 @@ class BehatStepLoggerEventContext implements Context, BehatContextSubscriberInte
         );
     }
 
-    protected function assertStartEventArgs(array $eventData, $type)
+    protected function assertEventArgs(array $eventData, $type, $isStart)
     {
         switch ($type) {
             case 'background':
@@ -324,6 +325,10 @@ class BehatStepLoggerEventContext implements Context, BehatContextSubscriberInte
                 $expected = $this->currentScenario->getTokens();
                 $current = $eventData[0]->getNode()->getTokens();
                 break;
+            case 'step':
+                $expected = $this->currentStep->getText();
+                $current = $eventData[0]->getNode()->getText();
+                break;
             default:
                 throw new \Exception(sprintf('"%s" not handled !', $type));
         }
@@ -331,7 +336,11 @@ class BehatStepLoggerEventContext implements Context, BehatContextSubscriberInte
         \PHPUnit_Framework_Assert::assertSame(
             $expected,
             $current,
-            sprintf('Failed asserting that start %s event is the right one !', $type)
+            sprintf(
+                'Failed asserting that %s %s event is the right one !',
+                $isStart ? 'start' : 'end',
+                $type
+            )
         );
 
     }
