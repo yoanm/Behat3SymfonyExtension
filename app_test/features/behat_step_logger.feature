@@ -6,11 +6,15 @@ Feature: Behat steps logger
 
   Scenario Outline: check logs entry and event catch
     Given A log entry must exist for current example start event using var "<var>"
-    Then I should have caught event regarding current step start event and will have the end event
+    Then I truncate log file
+    And I listen for behat steps event
+    And I should have caught event regarding current step start event and will have the end event
     And A log entry must exist for current step start event and I will have the one regarding end event
-    Then I will caught event regarding current example end event using var "<var>"
+    Then I truncate log file
+    And I listen for behat steps event
+    And I will caught event regarding current example end event using var "<var>"
     And I will have a log entry regarding current example end event using var "<var>"
-    And I will have a log entry regarding current background end event
     Examples:
     | var   |
     | value |
+    | valu2 |

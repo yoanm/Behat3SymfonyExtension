@@ -36,19 +36,21 @@ class BehatStepLoggerSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
+        // Set hight priority to log it at beginning
+        $hightPriority = 9999999999999;
         return [
-            FeatureTested::BEFORE => 'featureEvents',
-            FeatureTested::AFTER => 'featureEvents',
-            BackgroundTested::BEFORE => 'backgroundEvents',
-            BackgroundTested::AFTER => 'backgroundEvents',
-            ScenarioTested::BEFORE => 'scenarioEvents',
-            ScenarioTested::AFTER => 'scenarioEvents',
-            OutlineTested::BEFORE => 'outlineEvents',
-            OutlineTested::AFTER => 'outlineEvents',
-            ExampleTested::BEFORE => 'exampleEvents',
-            ExampleTested::AFTER => 'exampleEvents',
-            StepTested::BEFORE => 'stepEvents',
-            StepTested::AFTER => 'stepEvents',
+            FeatureTested::BEFORE => ['featureEvents', $hightPriority],
+            BackgroundTested::BEFORE => ['backgroundEvents', $hightPriority],
+            ScenarioTested::BEFORE => ['scenarioEvents', $hightPriority],
+            OutlineTested::BEFORE => ['outlineEvents', $hightPriority],
+            ExampleTested::BEFORE => ['exampleEvents', $hightPriority],
+            StepTested::BEFORE => ['stepEvents', $hightPriority],
+            FeatureTested::AFTER => ['featureEvents', $hightPriority],
+            BackgroundTested::AFTER => ['backgroundEvents', $hightPriority],
+            ScenarioTested::AFTER => ['scenarioEvents', $hightPriority],
+            OutlineTested::AFTER => ['outlineEvents', $hightPriority],
+            ExampleTested::AFTER => ['exampleEvents', $hightPriority],
+            StepTested::AFTER => ['stepEvents', $hightPriority],
         ];
     }
 

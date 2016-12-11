@@ -11,6 +11,48 @@ use Yoanm\Behat3SymfonyExtension\Context\BehatContextSubscriberInterface;
 
 /**
  * Class BehatContextSubscriberInitializer
+ * /!\ /!\ Contexts will be aware of behat event only from ScenarioTested::BEFORE to ScenarioTested::AFTER only /!\ /!\
+ *
+ * This is due to the fact that context are (re)-created for each scenario or example
+ * So contexts will have access to the followings event workflow (depending of the type of the scenario) :
+ *
+ * - Basic scenario :
+ *      - ScenarioTested
+ *          - BEFORE
+ *          - AFTER_SETUP
+ *      - BackgroundTested
+ *          - BEFORE
+ *          - AFTER_SETUP
+ *      - StepTested
+ *          - BEFORE
+ *          - AFTER_SETUP
+ *          - BEFORE_TEARDOWN
+ *          - AFTER
+ *      - BackgroundTested
+ *          - BEFORE_TEARDOWN
+ *          - AFTER
+ *      - ScenarioTested
+ *          - BEFORE_TEARDOWN
+ *          - AFTER
+ *
+ * - Scenario outline :
+ *      - ExampleTested
+ *          - BEFORE
+ *          - AFTER_SETUP
+ *      - BackgroundTested
+ *          - BEFORE
+ *          - AFTER_SETUP
+ *      - StepTested
+ *          - BEFORE
+ *          - AFTER_SETUP
+ *          - BEFORE_TEARDOWN
+ *          - AFTER
+ *      - BackgroundTested
+ *          - BEFORE_TEARDOWN
+ *          - AFTER
+ *      - ExampleTested
+ *          - BEFORE_TEARDOWN
+ *          - AFTER
  */
 class BehatContextSubscriberInitializer implements ContextInitializer, EventSubscriberInterface
 {
@@ -55,7 +97,7 @@ class BehatContextSubscriberInitializer implements ContextInitializer, EventSubs
     }
 
     /**
-     * Clear contexts subscriber after each feature
+     * Clear contexts subscriber after each scenario/example
      */
     public function clearBehatContextSubscriber()
     {

@@ -2,9 +2,7 @@
 namespace FunctionalTest;
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\EventDispatcher\Event\GherkinNodeTested;
-use Behat\Behat\EventDispatcher\Event\StepTested;
-use Behat\Testwork\EventDispatcher\Event\AfterTested;
+use Behat\Behat\Hook\Scope\FeatureScope;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
@@ -18,17 +16,16 @@ class LoggerContext implements Context, LoggerAwareInterface
     private $logger;
     /** @var string */
     private $logFile;
-    /** @var string */
-    private static $lastLogFile;
 
     /**
      * @param string $logFile
      */
     public function __construct($logFile)
     {
-        self::$lastLogFile = $this->logFile = $logFile;
+        $this->logFile = $logFile;
     }
 
+    /** LOGGER AWARE STEPS */
     /**
      * @Given I have access to a logger
      */
@@ -59,6 +56,7 @@ class LoggerContext implements Context, LoggerAwareInterface
             'Test log sentence not found !'
         ));
     }
+    /** END - LOGGER AWARE STEPS */
 
     /**
      * @Given I truncate log file
@@ -69,24 +67,37 @@ class LoggerContext implements Context, LoggerAwareInterface
     }
 
     /**
-     * @AfterFeature
      * @param string|null $file
      */
     public static function truncateLogFile($file = null)
     {
-        if (null !== $file) {
-            if (is_file(self::$lastLogFile)) {
-                file_put_contents(self::$lastLogFile, '');
-            }
-        } else {
-            file_put_contents($file, '');
+        if (null === $file) {
+            // Tricks => clean log file before all features
+            file_put_contents(__DIR__.'/../../var/log/behat.log', '');
+            file_put_contents(__DIR__.'/../../var/log/behat2.log', '');
+
+            return;
+        }
+        file_put_contents($file, '');
+    }
+
+    /**
+     * @BeforeFeature
+     */
+    public static function cleanBeforeFeature(FeatureScope $scope)
+    {
+        if (in_array(
+            self::TRUNCATE_LOGGER_FEATURE_TAG,
+            $scope->getFeature()->getTags()
+        )) {
+            self::truncateLogFile();
         }
     }
 
     /**
-     * @Then /^A log entry must exist for symfony app request event to (?P<type>valid|exception) route$/
+     * @Then /^A log entry must exist for symfony app request to (?P<type>valid|exception) route$/
      */
-    public function aLogEntryForRequestEventToRouteTypeMustExists($type)
+    public function aLogEntryForRequestToRouteTypeMustExists($type)
     {
         $this->assertLogFileMatch(
             sprintf(
@@ -99,44 +110,18 @@ class LoggerContext implements Context, LoggerAwareInterface
                     '/'
                 )
             ),
-            'Request event log entry not found !'
+            'Symfony app request log entry not found !'
         );
     }
 
     /**
-     * @Then A log entry must exist for symfony app exception event
+     * @Then A log entry must exist for symfony app exception
      */
     public function aLogEntryForExceptionEventMustExists()
     {
         $this->assertLogFileMatch(
             '/^.*behat3Symfony\.ERROR: \[SfKernelEventLogger\] \[EXCEPTION_THROWN\].*my_exception.*$/m',
-            'Exception event log entry not found !'
-        );
-    }
-
-    /**
-     * @Given A log entry must exist for current step start event and I will have the one regarding end event
-     */
-    public function aLogEntryMustExistForCurrentStepNodeStartEndEvent()
-    {
-        $this->assertLogFileMatch(
-            '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[STEP\]\[IN\].*$/m',
-            'Start step event log entry not found !'
-        );
-        $this->expectStepEndEventEntry = true;
-    }
-
-    /**
-     * @Given A log entry must exist for current example start event using var :arg1
-     */
-    public function aLogEntryMustExistForCurrentExampleStartEvent($arg1)
-    {
-        $this->assertLogFileMatch(
-            sprintf(
-                '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[SCENARIO EXAMPLE\]\[IN\] \{"tokens":%s.*$/m',
-                preg_quote(json_encode(['var' => $arg1]), '/')
-            ),
-            'Start example event log entry not found !'
+            'Symfony app exception log entry not found !'
         );
     }
 
@@ -158,26 +143,5 @@ class LoggerContext implements Context, LoggerAwareInterface
             file_get_contents($this->logFile),
             $message
         );
-    }
-
-
-    /**
-     * @param GherkinNodeTested $event
-     */
-    private function checkStepEventAssertionIfNeeded(GherkinNodeTested $event)
-    {
-        if ($event instanceof StepTested) {
-            if ($event instanceof AfterTested) { // AFTER
-                $this->expectStepEndEvent = false;
-            } else { // BEFORE
-                // Check if previous step had an expectation on step end event
-                $expectStepEndEventEntryBackup = $this->expectStepEndEventEntry;
-                $this->expectStepEndEventEntry = false;
-                \PHPUnit_Framework_Assert::assertFalse(
-                    $expectStepEndEventEntryBackup,
-                    'Step end event expected but not catched !'
-                );
-            }
-        }
     }
 }

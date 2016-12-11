@@ -1,4 +1,4 @@
- @debug-mode @enable-behat-step-listener
+ @debug-mode @enable-behat-step-listener @truncate-log-file
 Feature: Behat steps logger
   In order to understand what happens behind the scene
   As dev
@@ -7,11 +7,17 @@ Feature: Behat steps logger
   Background: check background logs entry and event catch
     Given I should have caught event regarding current scenario start event
     And A log entry must exist for current scenario start event
-    Then I will caught event regarding current background end event
-    And I will have a log entry regarding current background end event
+    Then I truncate log file
+    And I listen for behat steps event
+    Then I will have a log entry regarding current background end event
+    And I will caught event regarding current background end event
 
   Scenario: check logs entry and event catch
-     Given I should have caught event regarding current step start event and will have the end event
+     Given I truncate log file
+     And I listen for behat steps event
+     And I should have caught event regarding current step start event and will have the end event
      And A log entry must exist for current step start event and I will have the one regarding end event
-     Then I will caught event regarding current scenario end event
-     And I will have a log entry regarding current scenario end event
+     Then I truncate log file
+     And I listen for behat steps event
+     Then I will have a log entry regarding current scenario end event
+     And I will caught event regarding current scenario end event
