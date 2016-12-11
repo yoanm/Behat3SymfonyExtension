@@ -39,123 +39,50 @@ class BehatStepLoggerSubscriber implements EventSubscriberInterface
         // Set hight priority to log it at beginning
         $hightPriority = 9999999999999;
         return [
-            FeatureTested::BEFORE => ['featureEvents', $hightPriority],
-            BackgroundTested::BEFORE => ['backgroundEvents', $hightPriority],
-            ScenarioTested::BEFORE => ['scenarioEvents', $hightPriority],
-            OutlineTested::BEFORE => ['outlineEvents', $hightPriority],
-            ExampleTested::BEFORE => ['exampleEvents', $hightPriority],
-            StepTested::BEFORE => ['stepEvents', $hightPriority],
-            FeatureTested::AFTER => ['featureEvents', $hightPriority],
-            BackgroundTested::AFTER => ['backgroundEvents', $hightPriority],
-            ScenarioTested::AFTER => ['scenarioEvents', $hightPriority],
-            OutlineTested::AFTER => ['outlineEvents', $hightPriority],
-            ExampleTested::AFTER => ['exampleEvents', $hightPriority],
-            StepTested::AFTER => ['stepEvents', $hightPriority],
+            FeatureTested::BEFORE => ['logEvent', $hightPriority],
+            BackgroundTested::BEFORE => ['logEvent', $hightPriority],
+            ScenarioTested::BEFORE => ['logEvent', $hightPriority],
+            OutlineTested::BEFORE => ['logEvent', $hightPriority],
+            ExampleTested::BEFORE => ['logEvent', $hightPriority],
+            StepTested::BEFORE => ['logEvent', $hightPriority],
+            FeatureTested::AFTER => ['logEvent', $hightPriority],
+            BackgroundTested::AFTER => ['logEvent', $hightPriority],
+            ScenarioTested::AFTER => ['logEvent', $hightPriority],
+            OutlineTested::AFTER => ['logEvent', $hightPriority],
+            ExampleTested::AFTER => ['logEvent', $hightPriority],
+            StepTested::AFTER => ['logEvent', $hightPriority],
         ];
     }
 
     /**
-     * @param FeatureTested $event
-     */
-    public function featureEvents(FeatureTested $event)
-    {
-        list($header,) = $this->getNodeContext('FEATURE', $event);
-        $this->logger->debug(
-            $header,
-            [
-                'title' => $event->getFeature()->getTitle(),
-                'file' => $event->getFeature()->getFile(),
-            ]
-        );
-    }
-
-    /**
-     * @param BackgroundTested $event
-     */
-    public function backgroundEvents(BackgroundTested $event)
-    {
-        list($header, $line) = $this->getNodeContext('BACKGROUND', $event);
-        $this->logger->debug(
-            $header,
-            [
-                'title' => $event->getBackground()->getTitle(),
-                'line' => $line,
-            ]
-        );
-    }
-
-    /**
-     * @param ScenarioTested $event
-     */
-    public function scenarioEvents(ScenarioTested $event)
-    {
-        list($header, $line) = $this->getNodeContext('SCENARIO', $event);
-        $this->logger->debug(
-            $header,
-            [
-                'title' => $event->getScenario()->getTitle(),
-                'line' => $line,
-            ]
-        );
-    }
-
-    /**
-     * @param OutlineTested $event
-     */
-    public function outlineEvents(OutlineTested $event)
-    {
-        list($header, $line) = $this->getNodeContext('SCENARIO OUTLINE', $event);
-        $this->logger->debug(
-            $header,
-            [
-                'title' => $event->getOutline()->getTitle(),
-                'line' => $line,
-            ]
-        );
-    }
-
-    /**
-     * @param ScenarioTested $event
-     */
-    public function exampleEvents(ScenarioTested $event)
-    {
-        list($header, $line) = $this->getNodeContext('SCENARIO EXAMPLE', $event);
-        $tokens = [];
-        $scenario = $event->getScenario();
-        if ($scenario instanceof ExampleNode) {
-            $tokens = $scenario->getTokens();
-        }
-        $this->logger->debug(
-            $header,
-            [
-                'tokens' => $tokens,
-                'line' => $line,
-            ]
-        );
-    }
-
-    /**
-     * @param StepTested $event
-     */
-    public function stepEvents(StepTested $event)
-    {
-        list($header, $line) = $this->getNodeContext('STEP', $event);
-        $this->logger->debug(
-            $header,
-            [
-                'text' => $event->getStep()->getText(),
-                'line' => $line,
-            ]
-        );
-    }
-
-    /**
-     * @param string            $eventId
      * @param GherkinNodeTested $event
-     *
-     * @return array the action text as first value and the node start line as second value
      */
-    protected function getNodeContext($eventId, GherkinNodeTested $event)
+    public function logEvent(GherkinNodeTested $event)
+    {
+        list($header, $context) = $this->getNodeContext($event);
+        $this->logger->debug($header, $context);
+    }
+
+    /**
+     * @param GherkinNodeTested $event
+     * @return array
+     */
+    protected function getNodeContext(GherkinNodeTested $event)
+    {
+        list($action, $line) = $this->extractLineAndAction($event);
+        list($eventId, $context) = $this->extractTypeAndContext($event, $line);
+
+        return [
+            sprintf('[%s][%s]', $eventId, $action),
+            $context
+        ];
+    }
+
+    /**
+     * @param GherkinNodeTested $event
+     * @return array
+     */
+    protected function extractLineAndAction(GherkinNodeTested $event)
     {
         $action = 'IN';
         $line = $event->getNode()->getLine();
@@ -168,11 +95,51 @@ class BehatStepLoggerSubscriber implements EventSubscriberInterface
                 // Check if StepContainer is not empty
                 if ($lastStep instanceof StepNode) {
                     $line = $lastStep->getLine();
+                    return array($action, $line);
                 }
+                return array($action, $line);
             }
+            return array($action, $line);
         }
-        $header = sprintf('[%s][%s]', $eventId, $action);
+        return array($action, $line);
+    }
 
-        return [$header, $line];
+    /**
+     * @param GherkinNodeTested $event
+     * @param int            $line
+     *
+     * @return array
+     */
+    protected function extractTypeAndContext(GherkinNodeTested $event, $line)
+    {
+        $context = [];
+        if ($event instanceof StepTested) {
+            $eventId = 'STEP';
+            $context['text'] = $event->getStep()->getText();
+        } elseif ($event instanceof BackgroundTested) {
+            $eventId = 'BACKGROUND';
+            $context['title'] = $event->getBackground()->getTitle();
+        } elseif ($event instanceof ScenarioTested) {
+            $scenario = $event->getScenario();
+            $eventId = 'SCENARIO';
+            if ($scenario instanceof ExampleNode) {
+                $eventId .= ' EXAMPLE';
+                $context['tokens'] = $scenario->getTokens();
+            }
+            $context['title'] = $event->getScenario()->getTitle();
+        } elseif ($event instanceof OutlineTested) {
+            $eventId = 'SCENARIO OUTLINE';
+            $context['title'] = $event->getOutline()->getTitle();
+        } elseif ($event instanceof FeatureTested) {
+            $eventId = 'FEATURE';
+            $context['title'] = $event->getFeature()->getTitle();
+            $context['file'] = $event->getFeature()->getFile();
+        }
+
+        if (!$event instanceof FeatureTested) {
+            $context['line'] = $line;
+            return array($eventId, $context);
+        }
+        return array($eventId, $context);
     }
 }
