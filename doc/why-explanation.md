@@ -24,6 +24,7 @@ That's not totally true in fact, it's possible but only in one specific case : w
     * [`features/bootstrap/App/Client/ThirdPartyClientMock.php`](#featuresbootstrapappclientthirdpartyclientmockphp)
     * [Side stuffs](#side-stuffs)
 * [Kernel reboot events](#kernel-reboot-events)
+  * [Use-case](#use-case)
 
 ## Not really a Symfony2Extension issue !
 Issue is not really on Symfony2Extension but mainly on two points that result to a bigger :collision: points : 
@@ -287,5 +288,17 @@ default:
 ```
 
 ## Kernel reboot events
+As previously said, Symfony kernel does not provide events when it is booted or shutdown.
 
-TODO : Kernel bridge documentation
+In order to have those events, a bridge is created between behat instance and your Symfony app kernel.
+
+This bridge is created thanks to [KernelFactory](../src/Yoanm/Behat3SymfonyExtension/Factory/KernelFactory.php).
+
+The factory take a [kernel template](https://github.com/yoanm/Behat3SymfonyExtension/blob/master/src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php) and [generate a random id](https://github.com/yoanm/Behat3SymfonyExtension/blob/8b8e0591927b919ab548841d9d22c7a7092ffe63/src/Yoanm/Behat3SymfonyExtension/Factory/KernelFactory.php#L53) to avoid name collisions. This kernel template [will extends your symfony app kernel](https://github.com/yoanm/Behat3SymfonyExtension/blob/8b8e0591927b919ab548841d9d22c7a7092ffe63/src/Yoanm/Behat3SymfonyExtension/Factory/KernelFactory.php#L71-L72) (see `__OriginalKernelClassNameToReplace__`) in order to be the most inconspicuous for you symfony app. 
+
+In the reality, it's not an instance of your app kernel that is injected by [KernelAwareInitializer](https://github.com/yoanm/Behat3SymfonyExtension/blob/8b8e0591927b919ab548841d9d22c7a7092ffe63/src/Yoanm/Behat3SymfonyExtension/Context/Initializer/KernelAwareInitializer.php#L34), it's an instance of [YoanmBehat3SymfonyKernelBridgeXXXXXXXXXXXXX](https://github.com/yoanm/Behat3SymfonyExtension/blob/master/src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php) (the class file is [generated on the fly and deleted just after loading](https://github.com/yoanm/Behat3SymfonyExtension/blob/8b8e0591927b919ab548841d9d22c7a7092ffe63/src/Yoanm/Behat3SymfonyExtension/Factory/KernelFactory.php#L60-L81)) that **extends** your symfony app kernel.
+
+Thanks to that, the bridge is transparent for you and your code but allow to implements events dispatch on [boot](https://github.com/yoanm/Behat3SymfonyExtension/blob/8b8e0591927b919ab548841d9d22c7a7092ffe63/src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php#L34-L39) and [shutdown](https://github.com/yoanm/Behat3SymfonyExtension/blob/8b8e0591927b919ab548841d9d22c7a7092ffe63/src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php#L47-L52) methods (see also [BehatKernelEventDispatcher](https://github.com/yoanm/Behat3SymfonyExtension/blob/master/src/Yoanm/Behat3SymfonyExtension/Dispatcher/BehatKernelEventDispatcher.php))
+
+### Use-case
+As an example, this extension use [Events::AFTER_KERNEL_BOOT](../src/Yoanm/Behat3SymfonyExtension/Event/Events.php) event to initialize [SfKernelEventLogger](https://github.com/yoanm/Behat3SymfonyExtension/blob/master/src/Yoanm/Behat3SymfonyExtension/Logger/SfKernelEventLogger.php) [when the container is created](https://github.com/yoanm/Behat3SymfonyExtension/blob/8b8e0591927b919ab548841d9d22c7a7092ffe63/src/Yoanm/Behat3SymfonyExtension/Subscriber/SfKernelLoggerSubscriber.php#L29-L45)
