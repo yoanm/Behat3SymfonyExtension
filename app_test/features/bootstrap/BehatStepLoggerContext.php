@@ -3,9 +3,7 @@ namespace FunctionalTest;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\EventDispatcher\Event\AfterBackgroundTested;
-use Behat\Behat\EventDispatcher\Event\AfterOutlineTested;
 use Behat\Behat\EventDispatcher\Event\AfterScenarioTested;
-use Behat\Behat\EventDispatcher\Event\AfterStepTested;
 use Behat\Behat\EventDispatcher\Event\BackgroundTested;
 use Behat\Behat\EventDispatcher\Event\BeforeBackgroundTested;
 use Behat\Behat\EventDispatcher\Event\BeforeOutlineTested;
@@ -55,8 +53,8 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
     private $expectScenarioEndEventEntry = false;
     /** @var array|bool */
     private $expectExampleEndEventTokenList = false;
-    /** @var array|bool */
-    private $expectExampleEndEventEntryTokenList = false;
+    /** @var bool */
+    private $expectExampleEndEventEntry = false;
     /** @var bool */
     private $expectBackgroundEndEvent = false;
     /** @var bool */
@@ -112,36 +110,19 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
     }
 
     /**
-     * @Given /^A log entry must exist for current (?P<type>(?:|background|scenario)) start event$/
+     * @Given /^A log entry must exist for current (?P<type>(?:|background|scenario|example)) start event$/
      */
     public function aLogEntryMustHaveExistedForCurrentSpecialNodeStartEvent($type)
     {
-        switch ($type) {
-            case 'background':
-                $logEntryType = 'BACKGROUND';
-                $nodeTitle = $this->currentBackground->getTitle();
-                break;
-            case 'scenario':
-                $logEntryType = 'SCENARIO';
-                $nodeTitle = $this->currentScenario->getTitle();
-                break;
-            default:
-                throw new \Exception(sprintf('"%s" not handled !', $type));
+        if ($type == 'background') {
+            $this->assertLogFileMatchBackground(true);
+        } elseif ($type == 'scenario') {
+            $this->assertLogFileMatchScenario(true);
+        } elseif ($type == 'example') {
+            $this->assertLogFileMatchExample(true);
+        } else {
+            throw new \Exception(sprintf('"%s" not handled !', $type));
         }
-        $this->assertLogFileMatch(
-            sprintf(
-                '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\]%s.*$/m',
-                preg_quote(
-                    sprintf(
-                        ' [%s][IN] {"title":"%s",',
-                        $logEntryType,
-                        $nodeTitle
-                    ),
-                    '/'
-                )
-            ),
-            sprintf('Start %s event log entry not found !', $type)
-        );
     }
         /** END - BACKGROUND/SCENARIO */
 
@@ -172,20 +153,6 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
         );
     }
 
-    /**
-     * @Given A log entry must exist for current example start event using var :arg1
-     */
-    public function aLogEntryMustExistForCurrentExampleStartEvent($arg1)
-    {
-        $this->assertLogFileMatch(
-            sprintf(
-                '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[SCENARIO EXAMPLE\]\[IN\] \{"tokens":%s.*$/m',
-                preg_quote(json_encode(['var' => $arg1]), '/')
-            ),
-            'Start example event log entry not found !'
-        );
-    }
-
         /** END - EXAMPLE */
 
     /** END - START EVENT */
@@ -213,7 +180,7 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
 
 
     /**
-     * @Then /^I will have a log entry regarding current (?P<type>(?:background|scenario)) end event$/
+     * @Then /^I will have a log entry regarding current (?P<type>(?:background|scenario|example)) end event$/
      */
     public function iWillHaveALogEntryRegardingNodeEndEvent($type)
     {
@@ -224,6 +191,8 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
             case 'scenario':
                 $this->expectScenarioEndEventEntry = true;
                 break;
+            case 'example':
+                $this->expectExampleEndEventEntry = true;
                 break;
             default:
                 throw new \Exception(sprintf('"%s" not handled !', $type));
@@ -239,13 +208,6 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
     public function iWillCaughtEventRegardingCurrentExampleEndUsingVar($arg1)
     {
         $this->expectExampleEndEventTokenList = ['var' => $arg1];
-    }
-    /**
-     * @Then I will have a log entry regarding current example end event using var :arg1
-     */
-    public function iWillHaveALogEntryRegardingExampleEndEvent($arg1)
-    {
-        $this->expectExampleEndEventEntryTokenList = ['var' => $arg1];
     }
         /** END - EXAMPLE */
 
@@ -280,16 +242,7 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
      */
     public function aLogEntryMustExistForCurrentStepNodeStartEndEvent()
     {
-        $this->assertLogFileMatch(
-            sprintf(
-                '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[STEP\]\[IN\] \{"text":"%s".*$/m',
-                preg_quote(
-                    'A log entry must exist for current step start event and I will have the one regarding end event',
-                    '/'
-                )
-            ),
-            'Start step event log entry not found !'
-        );
+        $this->assertLogFileMatchStep(true);
         $this->expectStepEndEventEntry = true;
     }
 
@@ -302,7 +255,6 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
      */
     public function setUp(BeforeTested $event, $name)
     {
-        //var_dump("SET UP(".get_class($event).'{'.$name.'})');
         if (in_array(
             self::BEHAT_STEP_LISTENER_SCENARIO_TAG,
             array_merge(
@@ -323,7 +275,6 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
     public function storeEvent(GherkinNodeTested $event, $name)
     {
         if (true === $this->listenEvent) {
-            //var_dump("storeEvent(".get_class($event)." {$name}) => ".($event instanceof AfterTested ? 'END' : 'START'));
             $this->behatStepEvents[] = [$event, $name];
         }
     }
@@ -334,7 +285,6 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
     public function setNodeContext(GherkinNodeTested $event)
     {
         if ($this->listenEvent) {
-            ////var_dump("setNodeContext(" . get_class($event) . ') => ' . ($event instanceof AfterTested ? 'END' : 'START'));
             $isAfter = $event instanceof AfterTested;
             switch (true) {
                 case $event instanceof ScenarioTested:
@@ -351,103 +301,58 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
         }
     }
 
-    public function tearDownBackground($event, $name)
+    /**
+     * @param GherkinNodeTested $event
+     * @param string            $name
+     */
+    public function checkEndEventExpectation(GherkinNodeTested $event, $name)
     {
         if ($this->listenEvent) {
-            //var_dump("TEAR DOWN BACKGROUND(".get_class($event).'{'.$name.'})');
-            // Event received, assertion OK
-            $this->expectBackgroundEndEvent = false;
-            if (true === $this->expectBackgroundEndEventEntry) {
-                $this->assertLogFileMatch(
-                    sprintf(
-                        '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[BACKGROUND\]\[OUT\] \{"title":"%s",.*$/m',
-                        preg_quote($this->currentBackground->getTitle(), '/')
-                    ),
-                    'Start step event log entry not found !'
-                );
-            }
-            $this->expectBackgroundEndEventEntry = false;
-
-            // Check that required expectation have been validated
-            \PHPUnit_Framework_Assert::assertFalse(
-                $this->expectStepEndEvent,
-                'Step end event expected but not catched !'
-            );
-        }
-    }
-
-    public function tearDownStep($event, $name)
-    {
-        if ($this->listenEvent) {
-            ////var_dump("TEAR DOWN STEP(".get_class($event).')');
-
-            // Event received, assertion OK
-            $this->expectStepEndEvent = false;
-
-            // If current step have an expectation on step end log entry => check it
-            if (true === $this->expectStepEndEventEntry) {
-                $this->assertLogFileMatch(
-                    sprintf(
-                        '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[STEP\]\[OUT\] \{"text":"%s".*$/m',
-                        preg_quote(
-                            str_replace('""', '\"', $this->currentStep->getText()),
-                            '/'
-                        )
-                    ),
-                    'Step end log entry not found !'
-                );
-            }
-            $this->expectStepEndEventEntry = false;
-        }
-    }
-
-    public function tearDown($event, $name)
-    {
-        if ($this->listenEvent) {
-            //var_dump("TEAR DOWN(".get_class($event).'{'.$name.'})');
-            if (ExampleTested::AFTER === $name) {
-                if (is_array($this->expectExampleEndEventTokenList)) {
-                    \PHPUnit_Framework_Assert::assertSame(
-                        $this->expectExampleEndEventTokenList,
-                        $this->currentScenario->getTokens(),
-                        'End example tokens are not the expected ones !'
-                    );
+            if ($event instanceof StepTested) {
+                if (true === $this->expectStepEndEventEntry) {
+                    $this->assertLogFileMatchStep(false);
                 }
-                // Event received and checked, assertion OK
-                $this->expectExampleEndEventTokenList = false;
-                if (is_array($this->expectExampleEndEventEntryTokenList)) {
-                    $this->assertLogFileMatch(
-                        sprintf(
-                            '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[SCENARIO EXAMPLE\]\[OUT\] \{"tokens":%s,.*$/m',
-                            preg_quote(json_encode($this->currentScenario->getTokens()), '/')
-                        ),
-                        'End example event log entry not found !'
-                    );
+                $this->expectStepEndEvent = false; /* event received so assertion ok */
+                $this->expectStepEndEventEntry = false; /* log entry checked so assertion ok */
+            } elseif ($event instanceof BackgroundTested) {
+                if (true === $this->expectBackgroundEndEventEntry) {
+                    $this->assertLogFileMatchBackground(false);
                 }
-                $this->expectExampleEndEventEntryTokenList = false;
+                $this->expectBackgroundEndEvent = false; /* event received so assertion ok */
+                $this->expectBackgroundEndEventEntry = false; /* log entry checked so assertion ok */
             } else {
-                // Event received, assertion OK
-                $this->expectScenarioEndEvent = false;
-                if (true === $this->expectScenarioEndEventEntry) {
-                    $this->assertLogFileMatch(
-                        sprintf(
-                            '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[SCENARIO\]\[OUT\] \{"title":"%s",.*$/m',
-                            preg_quote($this->currentScenario->getTitle(), '/')
-                        ),
-                        'End scenario event log entry not found !'
-                    );
+                if (ExampleTested::AFTER === $name) {
+                    if (is_array($this->expectExampleEndEventTokenList)) {
+                        \PHPUnit_Framework_Assert::assertSame(
+                            $this->expectExampleEndEventTokenList,
+                            $this->currentScenario->getTokens(),
+                            'End example tokens are not the expected ones !'
+                        );
+                    }
+                    if (true === $this->expectExampleEndEventEntry) {
+                        $this->assertLogFileMatchExample(false);
+                    }
+                    $this->expectExampleEndEventTokenList = false; /* event received and checked so assertion ok */
+                    $this->expectExampleEndEventEntry = false; /* log entry checked so assertion ok */
+                } else {
+                    if (true === $this->expectScenarioEndEventEntry) {
+                        $this->assertLogFileMatchScenario(false);
+                    }
+                    $this->expectScenarioEndEvent = false; /* event received so assertion ok */
+                    $this->expectScenarioEndEventEntry = false; /* log entry checked so assertion ok */
                 }
-                $this->expectScenarioEndEventEntry = false;
             }
         }
     }
 
-    public function checkEndEventExpectation($event, $name)
+    /**
+     * @param GherkinNodeTested $event
+     */
+    public function tearDown(GherkinNodeTested $event)
     {
         if ($this->listenEvent) {
-            //var_dump("checkEndEventExpectation(".get_class($event).'{'.$name.'})');
+            // Check that all required expectations have been validated
             if ($event instanceof AfterScenarioTested) {
-                // Check that all required expectations have been validated
                 \PHPUnit_Framework_Assert::assertFalse(
                     $this->expectScenarioEndEvent,
                     'Scenario end event expected but not catched !'
@@ -461,7 +366,7 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
                     'Example end event expected but not catched !'
                 );
                 \PHPUnit_Framework_Assert::assertFalse(
-                    $this->expectExampleEndEventEntryTokenList,
+                    $this->expectExampleEndEventEntry,
                     'Example end event entry expected but not checked !'
                 );
             }
@@ -525,27 +430,27 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
 
             StepTested::AFTER => [
                 ['storeEvent', $hightPriority],
-                ['tearDownStep', $hightPriority],
                 ['checkEndEventExpectation', $hightPriority],
+                ['tearDown', $hightPriority],
                 ['setNodeContext', $lowPriority],
             ],
             BackgroundTested::AFTER => [
                 ['storeEvent', $hightPriority],
-                ['tearDownBackground', $hightPriority],
                 ['checkEndEventExpectation', $hightPriority],
+                ['tearDown', $hightPriority],
                 ['setNodeContext', $lowPriority],
             ],
 
             ScenarioTested::AFTER => [
                 ['storeEvent', $hightPriority],
-                ['tearDown', $hightPriority],
                 ['checkEndEventExpectation', $hightPriority],
+                ['tearDown', $hightPriority],
                 ['setNodeContext', $lowPriority],
             ],
             ExampleTested::AFTER => [
                 ['storeEvent', $hightPriority],
-                ['tearDown', $hightPriority],
                 ['checkEndEventExpectation', $hightPriority],
+                ['tearDown', $hightPriority],
                 ['setNodeContext', $lowPriority],
             ],
         ];
@@ -567,14 +472,95 @@ class BehatStepLoggerContext implements Context, BehatContextSubscriberInterface
     /** END - CATCH EVENT BEHAVIOR */
 
     /**
-     * @param string $regexp
+     * @param string     $type
+     * @param bool       $isStart
+     * @param array|null $extra
+     * @param string     $message
      */
-    protected function assertLogFileMatch($regexp, $message = '')
+    protected function assertLogFileMatch($type, $isStart, array $extra = null, $message = '')
     {
+        if (is_array($extra)) {
+            $key = array_keys($extra)[0];
+            $value = reset($extra);
+            $extra = sprintf(
+                ' {"%s":%s,',
+                $key,
+                json_encode($value)
+            );
+        }
         \PHPUnit_Framework_Assert::assertRegExp(
-            $regexp,
+            sprintf(
+                '/^.*behat3Symfony\.DEBUG: \[BehatStepLoggerSubscriber\] \[%s\]\[%s\]%s.*$/m',
+                $type,
+                $isStart ? 'IN' : 'OUT',
+                preg_quote($extra,'/')
+            ),
             file_get_contents($this->logFile),
             $message
+        );
+    }
+
+    /**
+     * @param bool $isStart
+     */
+    private function assertLogFileMatchStep($isStart)
+    {
+        $this->assertLogFileMatch(
+            'STEP',
+            $isStart,
+            ['text' => $this->currentStep->getText()],
+            sprintf(
+                '%s step event log entry not found !',
+                $isStart ? 'Start' : 'End'
+            )
+        );
+    }
+
+    /**
+     * @param bool $isStart
+     */
+    private function assertLogFileMatchBackground($isStart)
+    {
+        $this->assertLogFileMatch(
+            'BACKGROUND',
+            $isStart,
+            ['title' => $this->currentBackground->getTitle()],
+            sprintf(
+                '%s background event log entry not found !',
+                $isStart ? 'Start' : 'End'
+            )
+        );
+    }
+
+    /**
+     * @param bool $isStart
+     */
+    private function assertLogFileMatchScenario($isStart)
+    {
+        $this->assertLogFileMatch(
+            'SCENARIO',
+            $isStart,
+            ['title' => $this->currentScenario->getTitle()],
+            sprintf(
+                '%s scenario event log entry not found !',
+                $isStart ? 'Start' : 'End'
+            )
+        );
+    }
+
+    /**
+     * @param bool $isStart
+     */
+    private function assertLogFileMatchExample($isStart)
+    {
+        $this->assertLogFileMatch(
+            'SCENARIO EXAMPLE',
+            $isStart,
+            ['tokens' => $this->currentScenario->getTokens()],
+            sprintf(
+                '%s example event log entry not found !',
+                $isStart ? 'Start' : 'End'
+            )
         );
     }
 }
