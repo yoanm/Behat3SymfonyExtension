@@ -106,7 +106,7 @@ class BehatStepLoggerSubscriber implements EventSubscriberInterface
 
     /**
      * @param GherkinNodeTested $event
-     * @param int            $line
+     * @param int               $line
      *
      * @return array
      */
@@ -134,6 +134,8 @@ class BehatStepLoggerSubscriber implements EventSubscriberInterface
             $eventId = 'FEATURE';
             $context['title'] = $event->getFeature()->getTitle();
             $context['file'] = $event->getFeature()->getFile();
+        } else {
+            throw new \Exception(sprintf('"%s" not handled !', get_class($event)));
         }
 
         if (!$event instanceof FeatureTested) {
