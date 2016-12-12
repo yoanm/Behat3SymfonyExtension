@@ -209,12 +209,8 @@ class MyThirdPartyApiContext implements Context,
         $this->kernel = $kernel;
     }
     
-    /**
-     * @AfterScenario
-     */
     public function resetFakeDataList()
     {
-        // Reset fake data list to avoid overflow on following scenarios
         $this->fakeDataList = [];
     }
     
