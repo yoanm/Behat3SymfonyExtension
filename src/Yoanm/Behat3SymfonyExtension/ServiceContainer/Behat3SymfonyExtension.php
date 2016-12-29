@@ -45,21 +45,8 @@ class Behat3SymfonyExtension implements Extension
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-        $castToBool = function ($value) {
-            $filtered = filter_var(
-                $value,
-                FILTER_VALIDATE_BOOLEAN,
-                FILTER_NULL_ON_FAILURE
-            );
-
-            return (null === $filtered) ? (bool) $value : $filtered;
-        };
         $builder->children()
             ->booleanNode('debug_mode')
-                ->beforeNormalization()
-                ->always()
-                    ->then($castToBool)
-                ->end()
                 ->defaultFalse()
             ->end()
             ->end();
