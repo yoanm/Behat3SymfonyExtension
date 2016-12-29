@@ -1,13 +1,13 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Subscriber;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Subscriber;
 
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Yoanm\Behat3SymfonyExtension\Client\Client;
-use Yoanm\Behat3SymfonyExtension\Subscriber\ListenerPriority;
 use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
+use Yoanm\BehatUtilsExtension\Subscriber\ListenerPriority;
 
 /**
  * Class RebootKernelSubscriberTest
@@ -48,8 +48,7 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testReset()
     {
-        $this->client->resetClient()
-            ->shouldBeCalledTimes(1);
+        $this->client->resetClient()->shouldBeCalled();
         $this->subscriber->reset();
     }
 }

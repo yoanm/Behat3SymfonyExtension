@@ -19,9 +19,11 @@
 >
     <testsuites>
         <testsuite name="technical">
-            <directory>tests</directory>
+            <directory>tests/Technical/Unit/*</directory> <!-- launch unit before => faster than integration -->
+            <directory>tests/Technical/Integration/*</directory>
         </testsuite>
-        <testsuite name="functional">
+        <testsuite name="functional"> <!-- defined functional after technical => longer than technical -->
+            <directory>tests/Functional/*</directory>
         </testsuite>
     </testsuites>
 

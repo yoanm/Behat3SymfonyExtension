@@ -1,5 +1,5 @@
 <?php
-namespace FunctionalTest\Context;
+namespace Functional\Yoanm\Behat3SymfonyExtension\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\FeatureScope;

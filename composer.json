@@ -29,10 +29,12 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\": "tests",
+      "Technical\\Unit\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Technical/Unit/Yoanm/BehatUtilsExtension",
+      "Technical\\Integration\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Technical/Integration/Yoanm/BehatUtilsExtension",
+      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension",
       "Technical\\": "tests/Technical",
       "Functional\\": "tests/Functional",
-      "FunctionalTest\\Context\\": "app_test/features/bootstrap/"
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\Context\\": "app_test/features/bootstrap"
     }
   },
   "require": {
@@ -45,7 +47,8 @@
     "phpunit/phpunit": "~4.0",
     "squizlabs/php_codesniffer": "2.*",
     "behat/mink-extension": "~2.0",
-    "behat/mink-browserkit-driver":  "~1.0"
+    "behat/mink-browserkit-driver":  "~1.0",
+    "matthiasnoback/symfony-dependency-injection-test": "1.*"
   },
   "scripts": {
     "test": [

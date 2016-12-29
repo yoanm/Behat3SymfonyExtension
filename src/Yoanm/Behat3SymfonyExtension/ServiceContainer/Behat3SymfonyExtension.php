@@ -63,7 +63,7 @@ class Behat3SymfonyExtension implements Extension
                 ->defaultFalse()
             ->end()
             ->end();
-        $builder->append((new KernelConfiguration())->getConfigTreeBuilder());
+        $builder->append((new KernelConfiguration())->getConfigNode());
     }
 
     /**
