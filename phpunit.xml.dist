@@ -11,6 +11,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="true"
+         stopOnRisky="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          checkForUnintentionallyCoveredCode="true"
          beStrictAboutOutputDuringTests="true"
