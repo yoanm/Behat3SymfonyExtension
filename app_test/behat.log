@@ -1,2 +1,0 @@
-[2016-12-29 03:11:19] behatUtils.INFO: [SfKernelEventLogger] [REQUEST] {"type":"Master","method":"GET","uri":"http://localhost/exception"} []
-[2016-12-29 03:11:19] behatUtils.ERROR: [SfKernelEventLogger] [EXCEPTION_THROWN] {"message":"my_exception"} []
