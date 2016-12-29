@@ -7,6 +7,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Yoanm\Behat3SymfonyExtension\Client\Client;
 use Yoanm\Behat3SymfonyExtension\Subscriber\RebootKernelSubscriber;
+use Yoanm\BehatUtilsExtension\Subscriber\ListenerPriority;
 
 /**
  * Class RebootKernelSubscriberTest
@@ -38,8 +39,8 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             [
-                ScenarioTested::BEFORE => 'reset',
-                ExampleTested::BEFORE => 'reset',
+                ScenarioTested::BEFORE => ['reset', ListenerPriority::HIGH_PRIORITY],
+                ExampleTested::BEFORE => ['reset', ListenerPriority::HIGH_PRIORITY],
             ],
             RebootKernelSubscriber::getSubscribedEvents()
         );
