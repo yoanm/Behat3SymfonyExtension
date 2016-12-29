@@ -105,7 +105,7 @@ default:
                 class: AppKernel
                 env: test
                 debug: true
-                reboot: true # If true symfony kernel will be rebooted after each scenario/example
+                reboot: true # If true symfony kernel will be rebooted BEFORE each scenario/example
             logger:
                 path: var/log/behat.log
                 level: INFO
