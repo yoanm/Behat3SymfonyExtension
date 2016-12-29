@@ -1,10 +1,10 @@
 <?php
-namespace FunctionalTest;
+namespace FunctionalTest\Context;
 
 use Behat\Behat\Context\Context;
-use Yoanm\Behat3SymfonyExtension\Context\BehatContextSubscriberInterface;
 use Yoanm\Behat3SymfonyExtension\Event\AbstractEvent;
 use Yoanm\Behat3SymfonyExtension\Event\Events;
+use Yoanm\BehatUtilsExtension\Context\BehatContextSubscriberInterface;
 
 class BehatContextSubscriberContext implements Context, BehatContextSubscriberInterface
 {

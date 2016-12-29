@@ -10,9 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration\KernelConfiguration;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration\LoggerConfiguration;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
-use Yoanm\BehatUtilsExtension\ServiceContainer\BehatUtilsExtension;
 
 class Behat3SymfonyExtension implements Extension
 {
@@ -66,7 +64,6 @@ class Behat3SymfonyExtension implements Extension
             ->end()
             ->end();
         $builder->append((new KernelConfiguration())->getConfigTreeBuilder());
-        $builder->append((new LoggerConfiguration())->getConfigTreeBuilder());
     }
 
     /**

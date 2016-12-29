@@ -1,7 +1,6 @@
 <?php
 namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
-use Monolog\Logger;
 use Prophecy\Argument;
 use Prophecy\Argument\Token;
 use Prophecy\Prophecy\ObjectProphecy;

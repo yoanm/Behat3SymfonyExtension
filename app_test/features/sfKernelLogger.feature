@@ -1,4 +1,4 @@
-@with-mink @truncate-log-file
+@truncate-log-file
 Feature: SfKernelLogger
   In order to easily debug
   As dev
