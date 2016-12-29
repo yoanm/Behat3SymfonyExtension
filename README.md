@@ -113,6 +113,7 @@ default:
  
 ## Tests
 ```bash
-$ ./vendor/bin/phpunit
-$ composer run-script behat
+$ composer install
+$ composer run-script test
+$ composer run-script cs
 ```
