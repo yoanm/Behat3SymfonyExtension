@@ -35,6 +35,12 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
         $this->assertArrayHasKey('kernel', $config);
     }
 
+    protected function testDebugModeWithoutBehatUtilsExtensionLoaded()
+    {
+        $this->setExpectedException(\Exception::class, 'BehatUtilsExtension must be loaded before this one !');
+        $this->loadContainer($this->getDefaultConfig() + ['debug_mode' => true], false, false);
+    }
+
     /**
      * @smokeTest
      * Will throw an exception if something goes wrong.
@@ -96,7 +102,6 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
         $container = $this->loadContainer();
 
         $serviceList = $container->getServiceIds();
-
     }
 
     public function testKernelAutoRebootLoadedIfEnabled()
@@ -130,14 +135,15 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
      *
      * @return ContainerBuilder
      */
-    protected function loadContainer(array $config = null, $process = false)
+    protected function loadContainer(array $config = null, $process = false, $fakeBehatUtilsExtension = true)
     {
         if (null == $config) {
             $config = $this->getDefaultConfig();
         }
 
-        //Fake loading of BehatUtilsExtension
-        $this->setParameter('behat_utils_extension.logger.path', 'path');
+        if (true === $fakeBehatUtilsExtension) {
+            $this->setParameter('behat_utils_extension.logger.path', 'path');
+        }
 
         $this->extension->load($this->container, $config);
 
