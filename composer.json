@@ -29,8 +29,6 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Technical\\Unit\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Technical/Unit/Yoanm/BehatUtilsExtension",
-      "Technical\\Integration\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Technical/Integration/Yoanm/BehatUtilsExtension",
       "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension",
       "Technical\\": "tests/Technical",
       "Functional\\": "tests/Functional",
