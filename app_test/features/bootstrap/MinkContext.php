@@ -1,5 +1,5 @@
 <?php
-namespace FunctionalTest;
+namespace FunctionalTest\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Mink\Driver\BrowserKitDriver;
