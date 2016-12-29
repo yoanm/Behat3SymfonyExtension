@@ -59,12 +59,6 @@ It will be used by the mink driver if mink installed and configured to use the `
 ### [`KernelAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/KernelAwareInterface.php)
 Will inject your symfony app kernel instance in your behat contexts
 
-### [`LoggerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/LoggerAwareInterface.php)
-Will inject a monolog logger instance in your behat contexts
-
-### [`BehatContextSubscriberInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/BehatContextSubscriberInterface.php)
-Will allow your behat contexts to be aware of behat events (including [those](./src/Yoanm/Behat3SymfonyExtension/Event/Events.php) dispatched by this extension)
-
 ### [`SfKernelEventLogger`](./src/Yoanm/Behat3SymfonyExtension/Logger/SfKernelEventLogger.php) 
 **Only in case where `kernel.debug` is set to true** (see default kernel configuration below). 
 Produce a log entry each time that your symfony application kernel will : 
@@ -89,7 +83,8 @@ This mode allow two things :
  ```yaml
  default:
      extensions:
-         Yoanm\Behat3SymfonyExtension: 
+         Yoanm\BehatUtilsExtension:
+              logger:
                  level: DEBUG
  ```
 
@@ -106,13 +101,11 @@ default:
                 env: test
                 debug: true
                 reboot: true # If true symfony kernel will be rebooted BEFORE each scenario/example
-            logger:
-                path: var/log/behat.log
-                level: INFO
 ```
  
 ## Tests
 ```bash
-$ ./vendor/bin/phpunit
-$ composer run-script behat
+$ composer install
+$ composer run-script test
+$ composer run-script cs
 ```
