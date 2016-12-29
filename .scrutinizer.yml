@@ -8,7 +8,7 @@ build_failure_conditions:
     - 'issues.label("coding-style").exists'        # No coding style issues allowed
     - 'issues.severity(>= MAJOR).exists'           # New major or higher severity issues
     - 'project.metric("scrutinizer.quality", < 9)' # Code Quality Rating drops below 9
-    - 'project.metric("scrutinizer.test_coverage", < 0.82)' # Code Coverage drops below 82%
+    - 'project.metric("scrutinizer.test_coverage", < 0.90)' # Code Coverage drops below 90%
     - 'project.metric_change("scrutinizer.test_coverage", < -0.02)'
     - 'patches.label("Doc Comments").exists'       # No doc comments patches allowed
     - 'patches.label("Spacing").exists'            # No spacing patches allowed
