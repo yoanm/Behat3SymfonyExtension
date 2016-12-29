@@ -35,7 +35,7 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
         $this->assertArrayHasKey('kernel', $config);
     }
 
-    protected function testDebugModeWithoutBehatUtilsExtensionLoaded()
+    public function testDebugModeWithoutBehatUtilsExtensionLoaded()
     {
         $this->setExpectedException(\Exception::class, 'BehatUtilsExtension must be loaded before this one !');
         $this->loadContainer($this->getDefaultConfig() + ['debug_mode' => true], false, false);

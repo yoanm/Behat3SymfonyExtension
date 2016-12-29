@@ -29,7 +29,7 @@ build:
     tests:
         override:
             -
-                command: composer run script cs-checkstyle
+                command: composer run-script cs-checkstyle
             -
                 command: mkdir coverage && composer run-script coverage-clover
                 idle_timeout: 1200

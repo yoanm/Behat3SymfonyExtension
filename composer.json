@@ -66,7 +66,7 @@
       "./vendor/bin/phpcs"
     ],
     "cs-checkstyle": [
-      "/vendor/bin/phpcs --report=checkstyle"
+      "./vendor/bin/phpcs --report=checkstyle"
     ],
     "coverage-clover": [
       "./vendor/bin/phpunit --coverage-clover coverage/clover.xml"
