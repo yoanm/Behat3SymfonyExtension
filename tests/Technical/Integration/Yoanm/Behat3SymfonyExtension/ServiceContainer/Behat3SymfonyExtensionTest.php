@@ -33,7 +33,6 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
         $config = (new Processor())->process($builder->getNode(true), []);
 
         $this->assertArrayHasKey('kernel', $config);
-
     }
 
     public function testDebugModeWithoutBehatUtilsExtensionLoaded()
