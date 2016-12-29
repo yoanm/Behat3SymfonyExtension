@@ -38,8 +38,8 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             [
-                ScenarioTested::BEFORE => 'reset',
-                ExampleTested::BEFORE => 'reset',
+                ScenarioTested::BEFORE => ['reset', PHP_INT_MAX],
+                ExampleTested::BEFORE => ['reset', PHP_INT_MAX],
             ],
             RebootKernelSubscriber::getSubscribedEvents()
         );

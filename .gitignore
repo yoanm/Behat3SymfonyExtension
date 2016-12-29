@@ -4,4 +4,5 @@ app_test/app/cache
 app_test/app/logs
 app_test/var
 app_test/var/log/behat.log
+app_test/app/YoanmBehat3SymfonyKernelBridge?????????????.php
 

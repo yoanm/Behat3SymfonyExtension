@@ -1,5 +1,5 @@
 <?php
-namespace FunctionalTest;
+namespace FunctionalTest\Context;
 
 use Behat\Behat\Context\Context;
 use Symfony\Component\HttpKernel\KernelInterface;

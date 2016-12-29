@@ -1,18 +1,15 @@
 <?php
-namespace FunctionalTest;
+namespace FunctionalTest\Context;
 
 use Behat\Behat\Context\Context;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
-use Yoanm\Behat3SymfonyExtension\Context\LoggerAwareInterface;
+use Behat\Behat\Hook\Scope\FeatureScope;
 
-class LoggerContext implements Context, LoggerAwareInterface
+class LoggerContext implements Context
 {
-    const TEST_LOG_MESSAGE = 'LOG TEST : i can log something';
+    const TRUNCATE_LOGGER_FEATURE_TAG = 'truncate-log-file';
 
-    /** @var LoggerInterface */
-    private $logger;
-
+    /** @var string */
+    private $logFile;
 
     /**
      * @param string $logFile
@@ -23,51 +20,48 @@ class LoggerContext implements Context, LoggerAwareInterface
     }
 
     /**
-     * @Given I have access to a logger
-     */
-    public function iHaveAccessToALogger()
-    {
-        \PHPUnit_Framework_Assert::assertInstanceOf(
-            Logger::class,
-            $this->logger
-        );
-    }
-
-    /**
-     * @When I log a test message
-     */
-    public function iLogATestMessage()
-    {
-        $this->logger->info(self::TEST_LOG_MESSAGE);
-    }
-
-    /**
-     * @Then Test message is in log file
-     */
-    public function iLogSomething()
-    {
-        $this->assertLogFileMatch(sprintf(
-            '/^.*behat3Symfony\.INFO: \[LoggerContext\] %s \[\] \[\]$/m',
-            preg_quote(self::TEST_LOG_MESSAGE, '/')
-        ));
-    }
-
-    /**
      * @Given I truncate log file
      */
     public function iTruncateLogFile()
     {
-        file_put_contents($this->logFile, '');
+        self::truncateLogFile($this->logFile);
     }
 
     /**
-     * @Then /^A log entry for request event to (?P<type>valid|exception) route must exists$/
+     * @param string|null $file
      */
-    public function aLogEntryForRequestEventToRouteTypeMustExists($type)
+    public static function truncateLogFile($file = null)
     {
-        \PHPUnit_Framework_Assert::assertRegExp(
+        if (null === $file) {
+            // Tricks => clean log file before all features
+            file_put_contents(__DIR__.'/../../behat.log', '');
+
+            return;
+        }
+        file_put_contents($file, '');
+    }
+
+    /**
+     * @BeforeFeature
+     */
+    public static function cleanBeforeFeature(FeatureScope $scope)
+    {
+        if (in_array(
+            self::TRUNCATE_LOGGER_FEATURE_TAG,
+            $scope->getFeature()->getTags()
+        )) {
+            self::truncateLogFile();
+        }
+    }
+
+    /**
+     * @Then /^A log entry must exist for symfony app request to (?P<type>valid|exception) route$/
+     */
+    public function aLogEntryForRequestToRouteTypeMustExists($type)
+    {
+        $this->assertLogFileMatch(
             sprintf(
-                '/^.*behat3Symfony\.INFO: \[SfKernelEventLogger\] \[REQUEST\].*%s.*$/m',
+                '/^.*behatUtils\.INFO: \[SfKernelEventLogger\] \[REQUEST\].*%s.*$/m',
                 preg_quote(
                     'exception' === $type
                         ? MinkContext::EXCEPTION_TEST_ROUTE
@@ -76,36 +70,30 @@ class LoggerContext implements Context, LoggerAwareInterface
                     '/'
                 )
             ),
-            file_get_contents($this->logFile)
+            'Symfony app request log entry not found !'
         );
     }
 
     /**
-     * @Then A log entry for exception event must exists
+     * @Then A log entry must exist for symfony app exception
      */
     public function aLogEntryForExceptionEventMustExists()
     {
         $this->assertLogFileMatch(
-            '/^.*behat3Symfony\.ERROR: \[SfKernelEventLogger\] \[EXCEPTION_THROWN\].*my_exception.*$/m'
+            '/^.*behatUtils\.ERROR: \[SfKernelEventLogger\] \[EXCEPTION_THROWN\].*my_exception.*$/m',
+            'Symfony app exception log entry not found !'
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setBehatLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 
     /**
      * @param string $regexp
      */
-    protected function assertLogFileMatch($regexp)
+    protected function assertLogFileMatch($regexp, $message = '')
     {
         \PHPUnit_Framework_Assert::assertRegExp(
             $regexp,
-            file_get_contents($this->logFile)
+            file_get_contents($this->logFile),
+            $message
         );
     }
 }
