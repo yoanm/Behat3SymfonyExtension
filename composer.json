@@ -3,6 +3,7 @@
     "description":  "Symfony extension for Behat V3",
     "keywords":     ["Behat3", "Symfony"],
     "type":         "library",
+    "version": "0.2.0",
     "authors":      [
         {
             "name":      "yoanm",
