@@ -29,6 +29,7 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "Tests\\": "tests",
       "Technical\\": "tests/Technical",
       "Functional\\": "tests/Functional",
       "FunctionalTest\\Context\\": "app_test/features/bootstrap/"
