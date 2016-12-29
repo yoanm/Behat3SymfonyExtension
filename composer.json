@@ -1,12 +1,15 @@
 {
-    "name":         "yoanm/behat3-symfony-extension",
-    "description":  "Symfony extension for Behat V3",
-    "keywords":     ["Behat3", "Symfony"],
-    "type":         "library",
-    "authors":      [
+    "name": "yoanm/behat3-symfony-extension",
+    "description": "Symfony extension for Behat V3",
+    "keywords": ["Behat3", "Symfony"],
+    "type": "library",
+    "license": "MIT",
+    "version": "0.1.0",
+    "authors": [
         {
-            "name":      "yoanm",
-            "email":     "yoanm@users.noreply.github.com"
+            "name": "yoanm",
+            "email": "yoanm@users.noreply.github.com",
+            "role": "Developer"
         }
     ],
     "suggest": {
@@ -15,8 +18,8 @@
     },
     "require": {
         "php": ">=5.5",
+        "yoanm/behat-utils-extension": "~0.1",
         "behat/behat": "~3.0",
-        "monolog/monolog": "~1.0",
         "symfony/framework-bundle": "~2.7|~3.0"
     },
     "require-dev": {

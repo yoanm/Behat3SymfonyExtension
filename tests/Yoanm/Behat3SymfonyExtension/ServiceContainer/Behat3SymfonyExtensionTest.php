@@ -31,63 +31,7 @@ class Behat3SymfonyExtensionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @dataProvider getTestLoadData
-     *
-     * @param bool $kernelReboot
-     * @param bool $debug
-     */
-    public function testLoad($kernelReboot, $debug)
-    {
-        $config = [
-            'debug_mode' => $debug,
-            'kernel' => [
-                'class' => 'class',
-                'env' => 'test',
-                'debug' => $debug,
-                'reboot' => $kernelReboot,
-                'bootstrap' => null,
-            ],
-            'logger' => [
-                'path' => 'path',
-                'level' => Logger::EMERGENCY
-            ],
-        ];
-        /** @var ContainerBuilder|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerBuilder::class);
-
-        $this->assertNull($this->extension->load($container->reveal(), $config));
-
-        if (true === $debug) {
-            $config['logger']['level'] = Logger::DEBUG;
-        }
-
-        foreach ($config['kernel'] as $key => $value) {
-            $this->assertSetContainerParameterCalls(
-                $container,
-                sprintf('behat3_symfony_extension.kernel.%s', $key),
-                $value
-            );
-        }
-        foreach ($config['logger'] as $key => $value) {
-            $this->assertSetContainerParameterCalls(
-                $container,
-                sprintf('behat3_symfony_extension.logger.%s', $key),
-                $value
-            );
-        }
-
-        $this->assertContainerAddResourceCalls($container, 'client.xml');
-        $this->assertContainerAddResourceCalls($container, 'kernel.xml');
-        $this->assertContainerAddResourceCalls($container, 'initializer.xml');
-        $this->assertContainerAddResourceCalls($container, 'logger.xml');
-        if (true === $config['kernel']['reboot']) {
-            $this->assertContainerAddResourceCalls($container, 'kernel_auto_reboot.xml');
-        }
-        if (true === $config['kernel']['debug']) {
-            $this->assertContainerAddResourceCalls($container, 'kernel_debug_mode.xml');
-        }
-    }
+    
 
     public function testProcess()
     {

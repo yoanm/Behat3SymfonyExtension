@@ -9,7 +9,7 @@
             <tag name="event_dispatcher.subscriber" />
         </service>
         <service id="behat3_symfony_extension.logger.sf_kernel_logger" class="Yoanm\Behat3SymfonyExtension\Logger\SfKernelEventLogger">
-            <argument type="service" id="behat3_symfony_extension.logger" />
+            <argument type="service" id="behat_utils_extension.logger" />
         </service>
     </services>
 </container>
