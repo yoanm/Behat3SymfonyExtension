@@ -15,6 +15,9 @@
   "support": {
     "issues": "https://github.com/yoanm/Behat3SymfonyExtension/issues"
   },
+  "provide": {
+    "yoanm/behat-utils-extension": "~0.1"
+  },
   "suggest": {
     "behat/mink-extension": "~2.0",
     "behat/mink-browserkit-driver":  "~1.0"
