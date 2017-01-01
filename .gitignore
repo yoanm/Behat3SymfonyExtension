@@ -1,4 +1,5 @@
 vendor
+build
 composer.lock
 app_test/app/cache
 app_test/app/logs

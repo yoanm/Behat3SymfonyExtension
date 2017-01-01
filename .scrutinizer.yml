@@ -19,7 +19,8 @@ build:
             - ~/.composer
     dependencies:
         override:
-            - composer install
+            - composer global require hirak/prestissimo
+            - composer build-ci
 
     environment:
         mysql: false
@@ -30,13 +31,12 @@ build:
             SYMFONY_ENV: 'test'
     tests:
         override:
+            - composer cs
             -
-                command: phpcs-run # @see https://scrutinizer-ci.com/docs/tools/php/code-sniffer/
-            -
-                command: ./vendor/bin/phpunit --coverage-clover=coverage-report
+                command: composer coverage-clover
                 idle_timeout: 1200
                 coverage:
-                    file: 'coverage-report'
+                    file: 'build/coverage/clover.xml'
                     format: 'php-clover'
 
 tools:

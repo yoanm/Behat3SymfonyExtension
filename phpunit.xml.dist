@@ -10,8 +10,8 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false"
+         stopOnFailure="true"
+         stopOnRisky="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          checkForUnintentionallyCoveredCode="true"
          beStrictAboutOutputDuringTests="true"
@@ -19,8 +19,12 @@
          bootstrap="vendor/autoload.php"
 >
     <testsuites>
-        <testsuite name="Behat3 Symfony Extension Test Suite">
-            <directory>tests</directory>
+        <testsuite name="technical">
+            <directory>tests/Technical/Unit/*</directory> <!-- launch unit before => faster than integration -->
+            <directory>tests/Technical/Integration/*</directory>
+        </testsuite>
+        <testsuite name="functional"> <!-- defined functional after technical => longer than technical -->
+            <directory>tests/Functional/*</directory>
         </testsuite>
     </testsuites>
 

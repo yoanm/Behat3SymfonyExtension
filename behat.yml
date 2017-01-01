@@ -1,0 +1,5 @@
+default:
+  suites:
+    default:
+      contexts:
+        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\FeatureContext: ~
