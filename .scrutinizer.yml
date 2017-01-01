@@ -18,6 +18,12 @@ build:
             - vendor
             - ~/.composer
 
+    dependencies:
+        before:
+            - composer global require hirak/prestissimo
+        override:
+            - composer build-ci
+
     environment:
         mysql: false
         postgresql: false
@@ -25,12 +31,6 @@ build:
         redis: false
         variables:
             SYMFONY_ENV: 'test'
-
-    dependencies:
-        before:
-            - composer global require hirak/prestissimo
-        override:
-            - composer build-ci
 
     tests:
         override:
