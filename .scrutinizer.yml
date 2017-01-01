@@ -17,10 +17,6 @@ build:
         directories:
             - vendor
             - ~/.composer
-    dependencies:
-        override:
-            - composer global require hirak/prestissimo
-            - composer build-ci
 
     environment:
         mysql: false
@@ -29,6 +25,13 @@ build:
         redis: false
         variables:
             SYMFONY_ENV: 'test'
+
+    dependencies:
+        before:
+            - composer global require hirak/prestissimo
+        override:
+            - composer build-ci
+
     tests:
         override:
             - composer cs

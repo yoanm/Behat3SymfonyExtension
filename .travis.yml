@@ -15,9 +15,11 @@ env:
 matrix:
   fast_finish: true
 
-install:
+before_install:
   - composer global require hirak/prestissimo
   - composer require "symfony/symfony:${SYMFONY_VERSION}" --update-with-dependencies
+
+install:
   - composer build-ci
 
 script:
