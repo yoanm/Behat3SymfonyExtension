@@ -26,5 +26,8 @@ script:
   - composer test
 
 cache:
+  files:
+    - composer.lock
   directories:
     - $HOME/.composer
+    - vendor
