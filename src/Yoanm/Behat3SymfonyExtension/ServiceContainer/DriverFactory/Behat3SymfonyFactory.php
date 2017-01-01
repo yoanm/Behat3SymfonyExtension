@@ -6,7 +6,6 @@ use Behat\MinkExtension\ServiceContainer\Driver\DriverFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Behat3SymfonyExtension;
 
 class Behat3SymfonyFactory implements DriverFactory
