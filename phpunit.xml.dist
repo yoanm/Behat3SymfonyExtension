@@ -15,7 +15,7 @@
          beStrictAboutTestsThatDoNotTestAnything="true"
          checkForUnintentionallyCoveredCode="true"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutTestSize="true"
+         beStrictAboutChangesToGlobalState="true"
          bootstrap="vendor/autoload.php"
 >
     <testsuites>

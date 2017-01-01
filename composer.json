@@ -9,12 +9,12 @@
       "email": "yoanm@users.noreply.github.com",
       "role": "Developer"
     }
-  ],e
+  ],
   "suggest": {
     "behat/mink-extension": "~2.0",
     "behat/mink-browserkit-driver":  "~1.0"
   },
-    "support": {
+  "support": {
     "issues": "https://github.com/yoanm/Behat3SymfonyExtension/issues"
   },
   "autoload": {
