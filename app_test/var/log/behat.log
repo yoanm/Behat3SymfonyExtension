@@ -1,2 +1,0 @@
-[2017-01-01 17:31:19] behat3Symfony.INFO: [SfKernelEventLogger] [REQUEST] {"type":"Master","method":"GET","uri":"http://localhost/exception"} []
-[2017-01-01 17:31:19] behat3Symfony.ERROR: [SfKernelEventLogger] [EXCEPTION_THROWN] {"message":"my_exception"} []
