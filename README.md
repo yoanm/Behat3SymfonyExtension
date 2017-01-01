@@ -2,9 +2,9 @@
 
 [![Scrutinizer Build Status](https://img.shields.io/scrutinizer/build/g/yoanm/Behat3SymfonyExtension.svg?label=Scrutinizer)](https://scrutinizer-ci.com/g/yoanm/Behat3SymfonyExtension/?branch=master) [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/yoanm/Behat3SymfonyExtension.svg?label=Code%20quality)](https://scrutinizer-ci.com/g/yoanm/Behat3SymfonyExtension/?branch=master) [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/yoanm/Behat3SymfonyExtension.svg?label=Coverage)](https://scrutinizer-ci.com/g/yoanm/Behat3SymfonyExtension/?branch=master)
 
-[![Travis Build Status](https://img.shields.io/travis/yoanm/Behat3SymfonyExtension/master.svg?label=travis)](https://travis-ci.org/yoanm/Behat3SymfonyExtension) [![PHP Versions](https://img.shields.io/badge/php-5.5%20%2F%205.6%20%2F%207.0-8892BF.svg)](https://php.net/) [![Symfony Versions](https://img.shields.io/badge/Symfony-2.7%%20%%2F%%202.8%%20%%2F%%203.0-312933.svg)](https://symfony.com/)
+[![Travis Build Status](https://img.shields.io/travis/yoanm/Behat3SymfonyExtension/master.svg?label=travis)](https://travis-ci.org/yoanm/Behat3SymfonyExtension) [![PHP Versions](https://img.shields.io/badge/php-5.5%20%2F%205.6%20%2F%207.0-8892BF.svg)](https://php.net/) [![Symfony Versions](https://img.shields.io/badge/Symfony-2.7%20%2F%202.8%20%2F%203.0-312933.svg)](https://symfony.com/)
 
-[![Travis Build Status](https://img.shields.io/travis/yoanm/Behat3SymfonyExtension.svg?label=travis)](https://travis-ci.org/yoanm/Behat3SymfonyExtension?label=Travis)
+[![Latest Stable Version](https://img.shields.io/packagist/v/yoanm/behat3-symfony-extension.svg)](https://packagist.org/packages/yoanm/behat3-symfony-extension)
 
 Behat3SymfonyExtension is a layer between Behat 3.0+ and Symfony2.7+|3+, strongly inspired by [Symfony2Extension](https://github.com/Behat/Symfony2Extension).
 
@@ -115,4 +115,3 @@ default:
 
 # Contributing
 See [contributing note](./CONTRIBUTING.md)
->>>>>>> Stashed changes
