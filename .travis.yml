@@ -7,19 +7,23 @@ php:
 
 sudo: false
 
-matrix:
-  fast_finish: true
-
-install:
-  - composer require "symfony/symfony:${SYMFONY_VERSION}"
-
-script:
-  - composer run-script test
-
 env:
   - SYMFONY_VERSION=2.7.*
   - SYMFONY_VERSION=2.8.*
   - SYMFONY_VERSION=3.*
+
+matrix:
+  fast_finish: true
+
+before_install:
+  - composer global require hirak/prestissimo
+  - composer require "symfony/symfony:${SYMFONY_VERSION}" --update-with-dependencies
+
+install:
+  - composer build-ci
+
+script:
+  - composer test
 
 cache:
   files:

@@ -1,5 +1,5 @@
 <?php
-namespace Functional\Yoanm\Behat3SymfonyExtension\Context;
+namespace Functional\Yoanm\Behat3SymfonyExtension\BehatContext;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\FeatureScope;
@@ -63,10 +63,7 @@ class LoggerContext implements Context
             sprintf(
                 '/^.*behatUtils\.INFO: \[SfKernelEventLogger\] \[REQUEST\].*%s.*$/m',
                 preg_quote(
-                    'exception' === $type
-                        ? MinkContext::EXCEPTION_TEST_ROUTE
-                        : MinkContext::VALID_TEST_ROUTE
-                    ,
+                    'exception' === $type ? MinkContext::EXCEPTION_TEST_ROUTE : MinkContext::VALID_TEST_ROUTE,
                     '/'
                 )
             ),
