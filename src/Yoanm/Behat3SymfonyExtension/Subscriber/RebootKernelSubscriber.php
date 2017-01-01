@@ -6,6 +6,7 @@ use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Yoanm\Behat3SymfonyExtension\Client\Client;
+use Yoanm\BehatUtilsExtension\Subscriber\ListenerPriority;
 
 /**
  * Class RebootKernelSubscriber
@@ -18,7 +19,9 @@ class RebootKernelSubscriber implements EventSubscriberInterface
     private $logger;
 
     /**
-     * @param Client $client
+     *
+     * @param Client          $client
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Client $client,
@@ -33,9 +36,10 @@ class RebootKernelSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
+        //Register with the highest priority to reset the client (and so the kernel) before all others things
         return [
-            ScenarioTested::BEFORE => 'reset',
-            ExampleTested::BEFORE => 'reset',
+            ScenarioTested::BEFORE => ['reset', ListenerPriority::HIGH_PRIORITY],
+            ExampleTested::BEFORE => ['reset', ListenerPriority::HIGH_PRIORITY],
         ];
     }
 

@@ -3,6 +3,8 @@
   "description": "Symfony extension for Behat V3",
   "keywords": ["Behat3", "Symfony"],
   "type": "library",
+  "license": "MIT",
+  "version": "0.2.0",
   "authors": [
     {
       "name": "yoanm",
@@ -27,20 +29,22 @@
       "Technical\\Integration\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Integration",
       "Technical\\Unit\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Unit",
       "Functional\\Yoanm\\Behat3SymfonyExtension\\": "tests/Functional",
-      "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap"
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap",
+      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension"
     }
   },
   "require": {
     "php": ">=5.5",
     "behat/behat": "~3.0",
     "monolog/monolog": "~1.0",
-    "symfony/framework-bundle": "~2.7|~3.0"
+    "yoanm/behat-utils-extension": "~0.1"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",
     "squizlabs/php_codesniffer": "2.*",
     "behat/mink-extension": "~2.0",
-    "behat/mink-browserkit-driver":  "~1.0"
+    "behat/mink-browserkit-driver":  "~1.0",
+    "matthiasnoback/symfony-dependency-injection-test": "1.*"
   },
   "scripts": {
     "build": [
@@ -67,10 +71,7 @@
       "./vendor/bin/phpunit --testsuite technical"
     ],
     "behat": [
-      "cd app_test && ../vendor/bin/behat --no-snippets --colors --format progress --profile default-config",
-      "cd app_test && ../vendor/bin/behat --no-snippets --colors --format progress --profile custom-config",
-      "cd app_test && ../vendor/bin/behat --no-snippets --colors --format progress --profile debug-mode",
-      "cd app_test && ../vendor/bin/behat --no-snippets --colors --format progress --profile with-mink"
+      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress"
     ],
     "cs": [
       "./vendor/bin/phpcs"

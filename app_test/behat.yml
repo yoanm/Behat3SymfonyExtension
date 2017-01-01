@@ -1,15 +1,10 @@
 default:
   suites:
     default:
-      filters:
-        tags: "@nothing"
       contexts:
         - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\ExtensionContext:
             extensionConfig:
               debug_mode: %behat3_symfony_extension.debug_mode%
-              logger:
-                path: %behat3_symfony_extension.logger.path%
-                level: %behat3_symfony_extension.logger.level%
               kernel:
                 bootstrap: %behat3_symfony_extension.kernel.bootstrap%
                 path: %behat3_symfony_extension.kernel.path%
@@ -17,60 +12,19 @@ default:
                 env: %behat3_symfony_extension.kernel.env%
                 debug: %behat3_symfony_extension.kernel.debug%
                 reboot: %behat3_symfony_extension.kernel.reboot%
-        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\LoggerContext:
-          - %paths.base%/%behat3_symfony_extension.logger.path%
         - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\KernelContext: ~
+        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\LoggerContext:
+          - %paths.base%/%behat_utils_extension.logger.path%
         - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\MinkContext: ~
         - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\BehatContextSubscriberContext: ~
-
-default-config:
-  suites:
-    default:
-      filters:
-        tags: "~@custom-config-check&&~@with-mink&&~@debug-mode"
   extensions:
-    Yoanm\Behat3SymfonyExtension: ~
-
-custom-config:
-  suites:
-    default:
-      filters:
-        tags: "@custom-config-check"
-  extensions:
-    Yoanm\Behat3SymfonyExtension:
-      kernel:
-        bootstrap: app/custom-autoload.php
-        path: app/CustomAppKernel.php
-        class: CustomAppKernel
-        env: dev
-        debug: false
-        reboot: false
-      logger:
-        path: var/log/behat2.log
-        level: DEBUG
-
-
-debug-mode:
-  suites:
-    default:
-      filters:
-        tags: "@debug-mode"
-  extensions:
-    Yoanm\Behat3SymfonyExtension:
-      debug_mode: true
-    Behat\MinkExtension:
-      sessions:
-        my_session:
-            behat3Symfony: ~
-
-with-mink:
-  suites:
-    default:
-      filters:
-        tags: "~@default-config-check&&~@custom-config-check&&~debug-mode"
-  extensions:
-    Yoanm\Behat3SymfonyExtension: ~
-    Behat\MinkExtension:
-      sessions:
-        my_session:
-            behat3Symfony: ~
+      Yoanm\BehatUtilsExtension: ~
+      Yoanm\Behat3SymfonyExtension:
+        debug_mode: true
+        kernel:
+          debug: true
+          reboot: true
+      Behat\MinkExtension:
+        sessions:
+          my_session:
+              behat3Symfony: ~

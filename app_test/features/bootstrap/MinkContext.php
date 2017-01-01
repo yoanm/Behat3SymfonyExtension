@@ -7,7 +7,6 @@ use Behat\Mink\Driver\DriverInterface;
 use Behat\Mink\Mink;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Yoanm\Behat3SymfonyExtension\Client\Client;
-use Yoanm\Behat3SymfonyExtension\Driver\KernelDriver;
 
 class MinkContext implements Context, MinkAwareContext
 {
