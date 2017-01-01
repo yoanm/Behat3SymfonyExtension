@@ -25,10 +25,7 @@ class Behat3SymfonyExtension implements Extension
         return 'behat3_symfony';
     }
 
-    // @codeCoverageIgnoreStart
     /**
-     * (Not possible to cover this because ExtensionManager is a final class)
-     *
      * {@inheritdoc}
      */
     public function initialize(ExtensionManager $extensionManager)
@@ -38,7 +35,6 @@ class Behat3SymfonyExtension implements Extension
             $minExtension->registerDriverFactory(new Behat3SymfonyFactory());
         }
     }
-    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
