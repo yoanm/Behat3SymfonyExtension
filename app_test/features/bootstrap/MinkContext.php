@@ -1,5 +1,5 @@
 <?php
-namespace FunctionalTest;
+namespace Functional\Yoanm\Behat3SymfonyExtension\BehatContext;
 
 use Behat\Behat\Context\Context;
 use Behat\Mink\Driver\BrowserKitDriver;
@@ -58,7 +58,8 @@ class MinkContext implements Context, MinkAwareContext
     {
         try {
             $this->getDriver()->visit(self::EXCEPTION_TEST_ROUTE);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
     }
 
     /**

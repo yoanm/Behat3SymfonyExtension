@@ -2,11 +2,13 @@
 <ruleset name="Behat3 Symfony Extension">
     <file>src</file>
     <file>tests</file>
-    <file>features/bootstrap</file>
+    <file>app_test/features/bootstrap</file>
 
     <arg value="p"/>
     <arg name="colors"/>
     <arg name="extensions" value="php"/>
 
     <rule ref="PSR2"/>
+    <!-- it's just a template -->
+    <exclude-pattern>src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php</exclude-pattern>
 </ruleset>

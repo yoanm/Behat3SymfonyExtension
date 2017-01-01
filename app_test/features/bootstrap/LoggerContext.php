@@ -1,5 +1,5 @@
 <?php
-namespace FunctionalTest;
+namespace Functional\Yoanm\Behat3SymfonyExtension\BehatContext;
 
 use Behat\Behat\Context\Context;
 use Monolog\Logger;
@@ -69,10 +69,7 @@ class LoggerContext implements Context, LoggerAwareInterface
             sprintf(
                 '/^.*behat3Symfony\.INFO: \[SfKernelEventLogger\] \[REQUEST\].*%s.*$/m',
                 preg_quote(
-                    'exception' === $type
-                        ? MinkContext::EXCEPTION_TEST_ROUTE
-                        : MinkContext::VALID_TEST_ROUTE
-                    ,
+                    'exception' === $type ? MinkContext::EXCEPTION_TEST_ROUTE : MinkContext::VALID_TEST_ROUTE,
                     '/'
                 )
             ),

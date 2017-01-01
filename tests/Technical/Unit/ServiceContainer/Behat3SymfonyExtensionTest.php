@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\ServiceContainer;
 
 use Monolog\Logger;
 use Prophecy\Argument;

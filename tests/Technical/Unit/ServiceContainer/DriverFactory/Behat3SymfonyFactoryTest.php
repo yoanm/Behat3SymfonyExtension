@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory;
 
 use Behat\Mink\Driver\BrowserKitDriver;
 use Prophecy\Prophecy\ObjectProphecy;

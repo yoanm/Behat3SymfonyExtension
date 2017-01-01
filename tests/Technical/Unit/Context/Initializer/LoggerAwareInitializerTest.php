@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Context\Initializer;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 use Monolog\Logger;
