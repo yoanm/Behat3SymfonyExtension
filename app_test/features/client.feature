@@ -1,4 +1,3 @@
-@with-mink
 Feature: Client
   In order to use mink
   As dev

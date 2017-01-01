@@ -10,7 +10,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration\KernelConfiguration;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration\LoggerConfiguration;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
 
 class Behat3SymfonyExtension implements Extension
@@ -39,9 +38,9 @@ class Behat3SymfonyExtension implements Extension
             $minExtension->registerDriverFactory(new Behat3SymfonyFactory());
         }
     }
+    // @codeCoverageIgnoreEnd
 
     /**
-     * (Will be covered by Functional tests)
      * {@inheritdoc}
      */
     public function configure(ArrayNodeDefinition $builder)
@@ -65,9 +64,7 @@ class Behat3SymfonyExtension implements Extension
             ->end()
             ->end();
         $builder->append((new KernelConfiguration())->getConfigTreeBuilder());
-        $builder->append((new LoggerConfiguration())->getConfigTreeBuilder());
     }
-    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
@@ -85,12 +82,15 @@ class Behat3SymfonyExtension implements Extension
         $loader->load('client.xml');
         $loader->load('kernel.xml');
         $loader->load('initializer.xml');
-        $loader->load('logger.xml');
         if (true === $config['kernel']['reboot']) {
             $loader->load('kernel_auto_reboot.xml');
         }
         if (true === $config['kernel']['debug']) {
             $loader->load('kernel_debug_mode.xml');
+
+            // Override log level parameter
+            $this->checkUtilsExtensionAlreadyLoaded($container);
+            $container->setParameter('behat_utils_extension.logger.level', Logger::DEBUG);
         }
     }
 
@@ -162,9 +162,19 @@ class Behat3SymfonyExtension implements Extension
     {
         if (true === $config['debug_mode']) {
             $config['kernel']['debug'] = true;
-            $config['logger']['level'] = Logger::DEBUG;
         }
 
         return $config;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @throws \Exception
+     */
+    protected function checkUtilsExtensionAlreadyLoaded(ContainerBuilder $container)
+    {
+        if (!$container->hasParameter('behat_utils_extension.logger.path')) {
+            throw new \Exception('BehatUtilsExtension must be loaded before this one !');
+        }
     }
 }

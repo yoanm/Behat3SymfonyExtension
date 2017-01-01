@@ -8,7 +8,7 @@ build_failure_conditions:
     - 'issues.label("coding-style").exists'        # No coding style issues allowed
     - 'issues.severity(>= MAJOR).exists'           # New major or higher severity issues
     - 'project.metric("scrutinizer.quality", < 9)' # Code Quality Rating drops below 9
-    - 'project.metric("scrutinizer.test_coverage", < 0.82)' # Code Coverage drops below 82%
+    - 'project.metric("scrutinizer.test_coverage", < 0.90)' # Code Coverage drops below 90%
     - 'project.metric_change("scrutinizer.test_coverage", < -0.02)'
     - 'patches.label("Doc Comments").exists'       # No doc comments patches allowed
     - 'patches.label("Spacing").exists'            # No spacing patches allowed
@@ -17,9 +17,12 @@ build:
         directories:
             - vendor
             - ~/.composer
+
     dependencies:
+        before:
+            - composer global require hirak/prestissimo
         override:
-            - composer install
+            - composer build-ci
 
     environment:
         mysql: false
@@ -28,15 +31,15 @@ build:
         redis: false
         variables:
             SYMFONY_ENV: 'test'
+
     tests:
         override:
+            - composer cs
             -
-                command: phpcs-run # @see https://scrutinizer-ci.com/docs/tools/php/code-sniffer/
-            -
-                command: ./vendor/bin/phpunit --coverage-clover=coverage-report
+                command: composer coverage-clover
                 idle_timeout: 1200
                 coverage:
-                    file: 'coverage-report'
+                    file: 'build/coverage/clover.xml'
                     format: 'php-clover'
 
 tools:
@@ -57,7 +60,7 @@ tools:
             simplify_boolean_return:
                 enabled: true
     external_code_coverage: false
-    php_code_coverage:      false
+    php_code_coverage: false
     php_changetracking: true
     php_cpd: true
     php_cs_fixer: false

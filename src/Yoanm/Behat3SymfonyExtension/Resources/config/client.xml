@@ -6,7 +6,7 @@
     <services>
         <service id="behat3_symfony_extension.test.client" class="Yoanm\Behat3SymfonyExtension\Client\Client">
             <argument type="service" id="behat3_symfony_extension.kernel" />
-            <argument type="service" id="behat3_symfony_extension.logger" />
+            <argument type="service" id="behat_utils_extension.logger" />
             <argument type="service" id="event_dispatcher" />
             <argument type="collection" />
             <argument type="service" id="behat3_symfony_extension.test.client.history" />
