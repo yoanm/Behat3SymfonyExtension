@@ -17,15 +17,12 @@ matrix:
 
 install:
   - composer global require hirak/prestissimo
+  - composer require "symfony/symfony:${SYMFONY_VERSION}" --update-with-dependencies
   - composer build-ci
-  - composer require "symfony/symfony:${SYMFONY_VERSION}" "symfony/framework-bundle:${SYMFONY_VERSION}"
 
 script:
   - composer test
 
 cache:
-  files:
-    - composer.lock
   directories:
     - $HOME/.composer
-    - vendor
