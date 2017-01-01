@@ -74,7 +74,8 @@
       "./vendor/bin/phpunit --testsuite technical"
     ],
     "behat": [
-      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress"
+      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress",
+      "rm -f app_test/app/YoanmBehat3SymfonyKernelBridge?????????????.php"
     ],
     "cs": [
       "./vendor/bin/phpcs"
