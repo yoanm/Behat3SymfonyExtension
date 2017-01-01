@@ -17,24 +17,29 @@ build:
         directories:
             - vendor
             - ~/.composer
+
     dependencies:
+        before:
+            - composer global require hirak/prestissimo
         override:
-            - composer install
+            - composer build-ci
 
     environment:
         mysql: false
         postgresql: false
         elasticsearch: false
         redis: false
+        variables:
+            SYMFONY_ENV: 'test'
+
     tests:
         override:
+            - composer cs
             -
-                command: composer run-script cs-checkstyle
-            -
-                command: mkdir coverage && composer run-script coverage-clover
+                command: composer coverage-clover
                 idle_timeout: 1200
                 coverage:
-                    file: 'coverage/clover.xml'
+                    file: 'build/coverage/clover.xml'
                     format: 'php-clover'
 
 tools:

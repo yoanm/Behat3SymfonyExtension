@@ -12,15 +12,15 @@
       "role": "Developer"
     }
   ],
-  "support": {
-    "issues": "https://github.com/yoanm/Behat3SymfonyExtension/issues"
-  },
   "provide": {
     "yoanm/behat-utils-extension": "~0.1"
   },
   "suggest": {
     "behat/mink-extension": "~2.0",
     "behat/mink-browserkit-driver":  "~1.0"
+  },
+  "support": {
+    "issues": "https://github.com/yoanm/Behat3SymfonyExtension/issues"
   },
   "autoload": {
     "psr-0": {
@@ -29,16 +29,17 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension",
-      "Technical\\": "tests/Technical",
-      "Functional\\": "tests/Functional",
-      "Functional\\Yoanm\\Behat3SymfonyExtension\\Context\\": "app_test/features/bootstrap"
+      "Technical\\Integration\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Integration",
+      "Technical\\Unit\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Unit",
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\": "tests/Functional",
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap",
+      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension"
     }
   },
   "require": {
     "php": ">=5.5",
-    "yoanm/behat-utils-extension": "~0.1",
     "behat/behat": "~3.0",
+    "yoanm/behat-utils-extension": "~0.1",
     "symfony/framework-bundle": "~2.7|~3.0"
   },
   "require-dev": {
@@ -49,28 +50,40 @@
     "matthiasnoback/symfony-dependency-injection-test": "1.*"
   },
   "scripts": {
+    "build": [
+      "@composer install --prefer-dist --optimize-autoloader --ansi --no-suggest --no-interaction"
+    ],
+    "build-ci": [
+      "mkdir -p build/coverage",
+      "@composer install --prefer-dist --ansi --no-suggest --no-interaction"
+    ],
+    "ci": [
+      "@build-ci",
+      "@cs",
+      "@test"
+    ],
     "test": [
       "@t-test",
       "@f-test"
     ],
     "f-test": [
-      "./vendor/bin/phpunit --colors=auto --testsuite functional",
-      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress"
+      "./vendor/bin/phpunit --testsuite functional",
+      "@behat"
     ],
     "t-test": [
-      "./vendor/bin/phpunit --colors=auto --testsuite technical"
+      "./vendor/bin/phpunit --testsuite technical"
+    ],
+    "behat": [
+      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress"
     ],
     "cs": [
       "./vendor/bin/phpcs"
     ],
-    "cs-checkstyle": [
-      "./vendor/bin/phpcs --report=checkstyle"
-    ],
-    "coverage-clover": [
-      "./vendor/bin/phpunit --coverage-clover coverage/clover.xml"
-    ],
     "coverage": [
       "./vendor/bin/phpunit --coverage-html coverage"
+    ],
+    "coverage-clover": [
+      "./vendor/bin/phpunit --coverage-clover build/coverage/clover.xml"
     ]
   }
 }

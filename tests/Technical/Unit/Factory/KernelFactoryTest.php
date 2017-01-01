@@ -1,10 +1,10 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Factory;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Factory;
 
 use Monolog\Logger;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Tests\Yoanm\Behat3SymfonyExtension\Bridge\MockYoanmBehat3SymfonyKernelBridge;
+use Technical\Unit\Yoanm\Behat3SymfonyExtension\Bridge\MockYoanmBehat3SymfonyKernelBridge;
 use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
 use Yoanm\Behat3SymfonyExtension\Factory\KernelFactory;
 

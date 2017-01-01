@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Logger;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Logger;
 
 use Monolog\Logger;
 use Prophecy\Prophecy\ObjectProphecy;

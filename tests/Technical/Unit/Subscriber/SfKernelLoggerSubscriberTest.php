@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Subscriber;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Subscriber;
 
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerInterface;

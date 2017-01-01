@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Dispatcher;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Dispatcher;
 
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
