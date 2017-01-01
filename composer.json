@@ -33,7 +33,7 @@
       "Technical\\Unit\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Unit",
       "Functional\\Yoanm\\Behat3SymfonyExtension\\": "tests/Functional",
       "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap",
-      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension"
+      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/"
     }
   },
   "require": {
