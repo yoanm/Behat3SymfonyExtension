@@ -14,8 +14,7 @@ composer ci
  * Make your changes (Add/Update tests according to your changes).
  * Make sure tests are still green:
 ```bash
-composer cs
-composer test
+composer ci
 ```
 
  * To check code coverage, launch
