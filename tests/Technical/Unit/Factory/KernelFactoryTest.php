@@ -4,7 +4,7 @@ namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Factory;
 use Monolog\Logger;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Technical\Unit\Yoanm\Behat3SymfonyExtension\Bridge\MockYoanmBehat3SymfonyKernelBridge;
+use Technical\Unit\Yoanm\Behat3SymfonyExtension\Bridge\YoanmBehat3SymfonyKernelBridgeMock;
 use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
 use Yoanm\Behat3SymfonyExtension\Factory\KernelFactory;
 
@@ -33,11 +33,11 @@ class KernelFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        MockYoanmBehat3SymfonyKernelBridge::$throwExceptionOnStartup = false;
+        YoanmBehat3SymfonyKernelBridgeMock::$throwExceptionOnStartup = false;
         $this->behatKernelEventDispatcher = $this->prophesize(BehatKernelEventDispatcher::class);
         $this->logger = $this->prophesize(Logger::class);
-        $this->originalKernelPath = __DIR__.'/../Bridge/MockYoanmBehat3SymfonyKernelBridge.php';
-        $this->originalKernelClassName = MockYoanmBehat3SymfonyKernelBridge::class;
+        $this->originalKernelPath = __DIR__.'/../../../../app_test/AppKernel.php';
+        $this->originalKernelClassName = YoanmBehat3SymfonyKernelBridgeMock::class;
         $this->kernelEnvironment = 'custom_test';
         $this->kernelDebug = true;
         $this->debugMode = false;
@@ -70,7 +70,7 @@ class KernelFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $kernel = $this->factory->load();
 
-        $this->assertInstanceOf(MockYoanmBehat3SymfonyKernelBridge::class, $kernel);
+        $this->assertInstanceOf(YoanmBehat3SymfonyKernelBridgeMock::class, $kernel);
 
         $this->assertAttributeSame(
             $this->behatKernelEventDispatcher->reveal(),
@@ -80,14 +80,9 @@ class KernelFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertKernelBridgeFileHasBeenDeleted($kernel);
     }
 
-    /**
-     * @return KernelInterface
-     *
-     * @throws \Exception
-     */
     public function testLoadWithException()
     {
-        MockYoanmBehat3SymfonyKernelBridge::$throwExceptionOnStartup = true;
+        YoanmBehat3SymfonyKernelBridgeMock::$throwExceptionOnStartup = true;
         try {
             $this->setExpectedException(
                 \Exception::class,
@@ -116,7 +111,7 @@ class KernelFactoryTest extends \PHPUnit_Framework_TestCase
         );
         $kernel = $this->factory->load();
 
-        $this->assertInstanceOf(MockYoanmBehat3SymfonyKernelBridge::class, $kernel);
+        $this->assertInstanceOf(YoanmBehat3SymfonyKernelBridgeMock::class, $kernel);
 
         $this->assertAttributeSame(
             $this->behatKernelEventDispatcher->reveal(),

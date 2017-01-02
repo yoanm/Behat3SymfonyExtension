@@ -10,7 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration\KernelConfiguration;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyDriverFactory;
 
 class Behat3SymfonyExtension implements Extension
 {
@@ -32,7 +32,7 @@ class Behat3SymfonyExtension implements Extension
     {
         $minExtension = $extensionManager->getExtension('mink');
         if ($minExtension instanceof MinkExtension) {
-            $minExtension->registerDriverFactory(new Behat3SymfonyFactory());
+            $minExtension->registerDriverFactory(new Behat3SymfonyDriverFactory());
         }
     }
 

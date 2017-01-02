@@ -102,6 +102,13 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
         $container = $this->loadContainer();
 
         $serviceList = $container->getServiceIds();
+
+        // Client
+        $this->assertContains('behat3_symfony_extension.test.client', $serviceList);
+        // Kernel
+        $this->assertContains(Behat3SymfonyExtension::KERNEL_SERVICE_ID, $serviceList);
+        // Initializer
+        $this->assertContains('behat3_symfony_extension.initializer.kernel_aware', $serviceList);
     }
 
     public function testKernelAutoRebootLoadedIfEnabled()
@@ -174,7 +181,7 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
     protected function getDefaultConfig()
     {
         $config = [
-            'debug_mode' => true,
+            'debug_mode' => false,
             'kernel' => [
                 'bootstrap' => 'app/autoload.php',
                 'path' => 'app/AppKernel.php',
