@@ -16,7 +16,6 @@ Behat3SymfonyExtension is a layer between Behat 3.0+ and Symfony2.7+|3+, strongl
    * [`Client`](#client)
    * [`KernelAwareInterface`](#kernelawareinterface)
    * [`LoggerAwareInterface`](#loggerawareinterface)
-   * [`BehatContextSubscriberInterface`](#behatcontextsubscriberinterface)
    * [`SfKernelEventLogger`](#sfkerneleventlogger)
    * [Debug mode](#debug-mode)
 * [Default configuration reference](#default-configuration-reference)
@@ -64,9 +63,6 @@ Will inject your symfony app kernel instance in your behat contexts
 
 ## [`LoggerAwareInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/LoggerAwareInterface.php)
 Will inject a monolog logger instance in your behat contexts
-
-## [`BehatContextSubscriberInterface`](./src/Yoanm/Behat3SymfonyExtension/Context/BehatContextSubscriberInterface.php)
-Will allow your behat contexts to be aware of behat events (including [those](./src/Yoanm/Behat3SymfonyExtension/Event/Events.php) dispatched by this extension)
  
 ## [`SfKernelEventLogger`](./src/Yoanm/Behat3SymfonyExtension/Logger/SfKernelEventLogger.php) 
 
