@@ -1,47 +1,92 @@
 {
-    "name":         "yoanm/behat3-symfony-extension",
-    "description":  "Symfony extension for Behat V3",
-    "keywords":     ["Behat3", "Symfony"],
-    "type":         "library",
-    "authors":      [
-        {
-            "name":      "yoanm",
-            "email":     "yoanm@users.noreply.github.com"
-        }
-    ],
-    "suggest": {
-      "behat/mink-extension": "~2.0",
-      "behat/mink-browserkit-driver":  "~1.0"
-    },
-    "require": {
-        "php": ">=5.5",
-        "behat/behat": "~3.0",
-        "monolog/monolog": "~1.0",
-        "symfony/framework-bundle": "~2.7|~3.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~4.0",
-        "squizlabs/php_codesniffer": "2.*",
-        "behat/mink-extension": "~2.0",
-        "behat/mink-browserkit-driver":  "~1.0"
-    },
-    "autoload": {
-        "psr-0": {
-            "Yoanm\\Behat3SymfonyExtension": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/",
-            "FunctionalTest\\": "app_test/features/bootstrap/"
-        }
-    },
-    "scripts": {
-      "behat": [
-        "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress --profile default-config",
-        "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress --profile custom-config",
-        "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress --profile debug-mode",
-        "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress --profile with-mink"
-      ]
+  "name": "yoanm/behat3-symfony-extension",
+  "type": "library",
+  "license": "MIT",
+  "version": "0.2.0",
+  "description": "Symfony extension for Behat V3",
+  "keywords": ["Behat3", "Symfony"],
+  "authors": [
+    {
+      "name": "yoanm",
+      "email": "yoanm@users.noreply.github.com",
+      "role": "Developer"
     }
+  ],
+  "provide": {
+    "yoanm/behat-utils-extension": "~0.6"
+  },
+  "suggest": {
+    "behat/mink-extension": "~2.0",
+    "behat/mink-browserkit-driver":  "~1.0"
+  },
+  "support": {
+    "issues": "https://github.com/yoanm/Behat3SymfonyExtension/issues"
+  },
+  "autoload": {
+    "psr-0": {
+      "Yoanm\\Behat3SymfonyExtension": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Technical\\Unit\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Unit",
+      "Technical\\Integration\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Integration",
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\": "tests/Functional",
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap",
+      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/"
+    }
+  },
+  "require": {
+    "php": ">=5.5",
+    "behat/behat": "~3.0",
+    "yoanm/behat-utils-extension": "~0.6",
+    "symfony/framework-bundle": "~2.7|~3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "squizlabs/php_codesniffer": "2.*",
+    "behat/mink-extension": "~2.0",
+    "behat/mink-browserkit-driver":  "~1.0",
+    "matthiasnoback/symfony-dependency-injection-test": "1.*",
+    "doctrine/annotations": "^1.2"
+  },
+  "scripts": {
+    "build": [
+      "@composer install --prefer-dist --optimize-autoloader --ansi --no-suggest --no-interaction"
+    ],
+    "build-ci": [
+      "mkdir -p build/coverage",
+      "@composer install --prefer-dist --ansi --no-suggest --no-interaction"
+    ],
+    "ci": [
+      "rm composer.lock 2>/dev/null | true",
+      "@build-ci",
+      "@cs",
+      "@test"
+    ],
+    "test": [
+      "@t-test",
+      "@f-test"
+    ],
+    "f-test": [
+      "./vendor/bin/phpunit --testsuite functional",
+      "@behat"
+    ],
+    "t-test": [
+      "./vendor/bin/phpunit --testsuite technical"
+    ],
+    "behat": [
+      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress",
+      "rm -f app_test/app/YoanmBehat3SymfonyKernelBridge?????????????.php"
+    ],
+    "cs": [
+      "./vendor/bin/phpcs"
+    ],
+    "coverage": [
+      "./vendor/bin/phpunit --coverage-html build/coverage"
+    ],
+    "coverage-clover": [
+      "./vendor/bin/phpunit --coverage-clover build/coverage/clover.xml"
+    ]
+  }
 }
