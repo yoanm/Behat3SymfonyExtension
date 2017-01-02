@@ -40,14 +40,6 @@ class Client extends BaseClient
     /**
      * @return boolean
      */
-    public function hasPerformedRequest()
-    {
-        return $this->requestPerformed;
-    }
-
-    /**
-     * @return boolean
-     */
     public function resetClient()
     {
         $this->logger->debug('Resetting client');

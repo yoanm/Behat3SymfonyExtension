@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Event;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Event;
 
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpKernel\Kernel;

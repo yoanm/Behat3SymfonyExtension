@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Dispatcher;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Dispatcher;
 
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -71,7 +71,7 @@ class BehatKernelEventDispatcherTest extends \PHPUnit_Framework_TestCase
                     Argument::which('getKernel', $kernel->reveal())
                 )
             )
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         return $kernel;
     }

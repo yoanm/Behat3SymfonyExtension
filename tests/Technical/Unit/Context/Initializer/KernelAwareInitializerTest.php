@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Context\Initializer;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -35,7 +35,7 @@ class KernelAwareInitializerTest extends \PHPUnit_Framework_TestCase
         $context = $this->prophesize(KernelAwareInterface::class);
 
         $context->setKernel($this->kernel->reveal())
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $this->initializer->initializeContext($context->reveal());
     }

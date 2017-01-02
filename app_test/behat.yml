@@ -2,7 +2,7 @@ default:
   suites:
     default:
       contexts:
-        - FunctionalTest\Context\ExtensionContext:
+        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\ExtensionContext:
             extensionConfig:
               debug_mode: %behat3_symfony_extension.debug_mode%
               kernel:
@@ -12,11 +12,11 @@ default:
                 env: %behat3_symfony_extension.kernel.env%
                 debug: %behat3_symfony_extension.kernel.debug%
                 reboot: %behat3_symfony_extension.kernel.reboot%
-        - FunctionalTest\Context\KernelContext: ~
-        - FunctionalTest\Context\LoggerContext:
+        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\KernelContext: ~
+        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\LoggerContext:
           - %paths.base%/%behat_utils_extension.logger.path%
-        - FunctionalTest\Context\MinkContext: ~
-        - FunctionalTest\Context\BehatContextSubscriberContext: ~
+        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\MinkContext: ~
+        - Functional\Yoanm\Behat3SymfonyExtension\BehatContext\BehatContextSubscriberContext: ~
   extensions:
       Yoanm\BehatUtilsExtension: ~
       Yoanm\Behat3SymfonyExtension:

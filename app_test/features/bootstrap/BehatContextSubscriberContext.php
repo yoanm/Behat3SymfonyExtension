@@ -1,5 +1,5 @@
 <?php
-namespace FunctionalTest\Context;
+namespace Functional\Yoanm\Behat3SymfonyExtension\BehatContext;
 
 use Behat\Behat\Context\Context;
 use Yoanm\Behat3SymfonyExtension\Event\AbstractEvent;

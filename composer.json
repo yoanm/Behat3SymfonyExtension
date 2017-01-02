@@ -1,10 +1,10 @@
 {
   "name": "yoanm/behat3-symfony-extension",
-  "description": "Symfony extension for Behat V3",
-  "keywords": ["Behat3", "Symfony"],
   "type": "library",
   "license": "MIT",
   "version": "0.2.0",
+  "description": "Symfony extension for Behat V3",
+  "keywords": ["Behat3", "Symfony"],
   "authors": [
     {
       "name": "yoanm",
@@ -12,15 +12,15 @@
       "role": "Developer"
     }
   ],
-  "support": {
-    "issues": "https://github.com/yoanm/Behat3SymfonyExtension/issues"
-  },
   "provide": {
-    "yoanm/behat-utils-extension": "~0.1"
+    "yoanm/behat-utils-extension": "~0.6"
   },
   "suggest": {
     "behat/mink-extension": "~2.0",
     "behat/mink-browserkit-driver":  "~1.0"
+  },
+  "support": {
+    "issues": "https://github.com/yoanm/Behat3SymfonyExtension/issues"
   },
   "autoload": {
     "psr-0": {
@@ -29,16 +29,17 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension",
-      "Technical\\": "tests/Technical",
-      "Functional\\": "tests/Functional",
-      "Functional\\Yoanm\\Behat3SymfonyExtension\\Context\\": "app_test/features/bootstrap"
+      "Technical\\Unit\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Unit",
+      "Technical\\Integration\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Integration",
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\": "tests/Functional",
+      "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap",
+      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/"
     }
   },
   "require": {
     "php": ">=5.5",
-    "yoanm/behat-utils-extension": "~0.1",
     "behat/behat": "~3.0",
+    "yoanm/behat-utils-extension": "~0.6",
     "symfony/framework-bundle": "~2.7|~3.0"
   },
   "require-dev": {
@@ -46,31 +47,46 @@
     "squizlabs/php_codesniffer": "2.*",
     "behat/mink-extension": "~2.0",
     "behat/mink-browserkit-driver":  "~1.0",
-    "matthiasnoback/symfony-dependency-injection-test": "1.*"
+    "matthiasnoback/symfony-dependency-injection-test": "1.*",
+    "doctrine/annotations": "^1.2"
   },
   "scripts": {
+    "build": [
+      "@composer install --prefer-dist --optimize-autoloader --ansi --no-suggest --no-interaction"
+    ],
+    "build-ci": [
+      "mkdir -p build/coverage",
+      "@composer install --prefer-dist --ansi --no-suggest --no-interaction"
+    ],
+    "ci": [
+      "rm composer.lock 2>/dev/null | true",
+      "@build-ci",
+      "@cs",
+      "@test"
+    ],
     "test": [
       "@t-test",
       "@f-test"
     ],
     "f-test": [
-      "./vendor/bin/phpunit --colors=auto --testsuite functional",
-      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress"
+      "./vendor/bin/phpunit --testsuite functional",
+      "@behat"
     ],
     "t-test": [
-      "./vendor/bin/phpunit --colors=auto --testsuite technical"
+      "./vendor/bin/phpunit --testsuite technical"
+    ],
+    "behat": [
+      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress",
+      "rm -f app_test/app/YoanmBehat3SymfonyKernelBridge?????????????.php"
     ],
     "cs": [
       "./vendor/bin/phpcs"
     ],
-    "cs-checkstyle": [
-      "./vendor/bin/phpcs --report=checkstyle"
+    "coverage": [
+      "./vendor/bin/phpunit --coverage-html build/coverage"
     ],
     "coverage-clover": [
-      "./vendor/bin/phpunit --coverage-clover coverage/clover.xml"
-    ],
-    "coverage": [
-      "./vendor/bin/phpunit --coverage-html coverage"
+      "./vendor/bin/phpunit --coverage-clover build/coverage/clover.xml"
     ]
   }
 }

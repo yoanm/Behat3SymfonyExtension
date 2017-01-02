@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Yoanm\Behat3SymfonyExtension\Subscriber;
+namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Subscriber;
 
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -35,9 +35,7 @@ class SfKernelLoggerSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testGetSubscribedEvents()
     {
         $this->assertSame(
-            [
-                Events::AFTER_KERNEL_BOOT => 'initSfKernelLogger',
-            ],
+            [Events::AFTER_KERNEL_BOOT => 'initSfKernelLogger'],
             SfKernelLoggerSubscriber::getSubscribedEvents()
         );
     }
@@ -55,16 +53,16 @@ class SfKernelLoggerSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $event->getKernel()
             ->willReturn($kernel->reveal())
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
         $kernel->getContainer()
             ->willReturn($container->reveal())
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
         $container->get('event_dispatcher')
             ->willReturn($eventDispatcher->reveal())
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $eventDispatcher->addSubscriber($this->sfKernelEventLogger->reveal())
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $this->subscriber->initSfKernelLogger($event->reveal());
     }

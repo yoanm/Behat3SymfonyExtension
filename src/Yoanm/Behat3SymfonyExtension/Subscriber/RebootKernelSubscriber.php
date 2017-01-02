@@ -15,20 +15,25 @@ class RebootKernelSubscriber implements EventSubscriberInterface
 {
     /** @var Client */
     private $client;
-    /** @var LoggerInterface */
+    /** @var LoggerInterface|null */
     private $logger;
+    /** @var bool */
+    private $debugMode;
 
     /**
      *
      * @param Client          $client
      * @param LoggerInterface $logger
+     * @param bool            $debugMode
      */
     public function __construct(
         Client $client,
-        LoggerInterface $logger
+        LoggerInterface $logger = null,
+        $debugMode = false
     ) {
         $this->client = $client;
         $this->logger = $logger;
+        $this->debugMode = $debugMode;
     }
 
     /**
@@ -46,7 +51,9 @@ class RebootKernelSubscriber implements EventSubscriberInterface
     public function reset()
     {
         // Resetting the client will also reboot the kernel
-        $this->logger->debug('Resetting mink driver client');
+        if (true === $this->debugMode) {
+            $this->logger->debug('Resetting mink driver client');
+        }
         $this->client->resetClient();
     }
 }
