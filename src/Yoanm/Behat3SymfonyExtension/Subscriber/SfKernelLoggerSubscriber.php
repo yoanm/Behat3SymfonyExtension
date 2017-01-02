@@ -28,9 +28,7 @@ class SfKernelLoggerSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [
-            Events::AFTER_KERNEL_BOOT => 'initSfKernelLogger',
-        ];
+        return [Events::AFTER_KERNEL_BOOT => 'initSfKernelLogger'];
     }
 
     /**

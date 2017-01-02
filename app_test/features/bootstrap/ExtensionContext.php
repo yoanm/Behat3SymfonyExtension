@@ -1,5 +1,5 @@
 <?php
-namespace FunctionalTest;
+namespace Functional\Yoanm\Behat3SymfonyExtension\BehatContext;
 
 use Behat\Behat\Context\Context;
 

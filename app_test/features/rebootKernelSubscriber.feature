@@ -3,15 +3,12 @@ Feature: RebootKernelSubscriber
   As tester
   I need to have a clean kernel at scenario beginning
 
-    @test-kernel-reboot
   Scenario: Scenario made to get the current container instance
       Given I backup container instance
 
-    @test-kernel-reboot
   Scenario: Assert that kernel is rebooted before each scenario
       Given current container instance has changed
 
-   @test-kernel-reboot @with-mink
   Scenario: Assert that kernel is not rebooted for the first request, but rebooted for all following one
      Given I backup container instance
      And I listen for symfony kernel event
