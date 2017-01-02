@@ -55,14 +55,14 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
     {
         // Don't use default configuration as it can change
         $config = [
-            'debug_mode' => true,
+            'debug_mode' => 'debug_mode',
             'kernel' => [
-                'bootstrap' => 'app/autoload.php',
-                'path' => 'app/AppKernel.php',
-                'class' => 'AppKernel',
-                'env' => 'test',
-                'debug' => true,
-                'reboot' => true,
+                'bootstrap' => 'bootstrap',
+                'path' => 'path',
+                'class' => 'class',
+                'env' => 'env',
+                'debug' => 'debug',
+                'reboot' => 'reboot',
             ],
         ];
         $container = $this->loadContainer($config);
