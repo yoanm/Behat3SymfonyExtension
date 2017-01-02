@@ -47,7 +47,8 @@
     "squizlabs/php_codesniffer": "2.*",
     "behat/mink-extension": "~2.0",
     "behat/mink-browserkit-driver":  "~1.0",
-    "matthiasnoback/symfony-dependency-injection-test": "1.*"
+    "matthiasnoback/symfony-dependency-injection-test": "1.*",
+    "doctrine/annotations": "^1.2"
   },
   "scripts": {
     "build": [
@@ -82,7 +83,7 @@
       "./vendor/bin/phpcs"
     ],
     "coverage": [
-      "./vendor/bin/phpunit --coverage-html coverage"
+      "./vendor/bin/phpunit --coverage-html build/coverage"
     ],
     "coverage-clover": [
       "./vendor/bin/phpunit --coverage-clover build/coverage/clover.xml"
