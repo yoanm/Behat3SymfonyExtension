@@ -13,7 +13,7 @@
     }
   ],
   "provide": {
-    "yoanm/behat-utils-extension": "~0.4"
+    "yoanm/behat-utils-extension": "~0.6"
   },
   "suggest": {
     "behat/mink-extension": "~2.0",
@@ -39,7 +39,7 @@
   "require": {
     "php": ">=5.5",
     "behat/behat": "~3.0",
-    "yoanm/behat-utils-extension": "~0.4",
+    "yoanm/behat-utils-extension": "~0.6",
     "symfony/framework-bundle": "~2.7|~3.0"
   },
   "require-dev": {
