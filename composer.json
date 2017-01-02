@@ -29,8 +29,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Technical\\Integration\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Integration",
       "Technical\\Unit\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Unit",
+      "Technical\\Integration\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Integration",
       "Functional\\Yoanm\\Behat3SymfonyExtension\\": "tests/Functional",
       "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap",
       "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/"
