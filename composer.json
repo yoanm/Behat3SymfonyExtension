@@ -58,6 +58,7 @@
       "@composer install --prefer-dist --ansi --no-suggest --no-interaction"
     ],
     "ci": [
+      "rm composer.lock 2>/dev/null | true",
       "@build-ci",
       "@cs",
       "@test"

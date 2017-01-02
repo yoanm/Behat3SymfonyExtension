@@ -31,7 +31,8 @@ class RebootKernelSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->subscriber = new RebootKernelSubscriber(
             $this->client->reveal(),
-            $this->logger->reveal()
+            $this->logger->reveal(),
+            true
         );
     }
 
