@@ -10,17 +10,21 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false"
+         stopOnFailure="true"
+         stopOnRisky="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          checkForUnintentionallyCoveredCode="true"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutTestSize="true"
+         beStrictAboutChangesToGlobalState="true"
          bootstrap="vendor/autoload.php"
 >
     <testsuites>
-        <testsuite name="Behat3 Symfony Extension Test Suite">
-            <directory>tests</directory>
+        <testsuite name="technical">
+            <directory>tests/Technical/Unit/*</directory> <!-- launch unit before => faster than integration -->
+            <directory>tests/Technical/Integration/*</directory>
+        </testsuite>
+        <testsuite name="functional"> <!-- defined functional after technical => longer than technical -->
+            <directory>tests/Functional/*</directory>
         </testsuite>
     </testsuites>
 
@@ -28,13 +32,8 @@
         <whitelist>
             <directory>src</directory>
             <exclude>
-                <!-- Will be covered by FT -->
-                <file>src/Yoanm/Behat3SymfonyExtension/Client/Client.php</file>
                 <!-- Not possible to test it, it's just a template -->
                 <file>src/Yoanm/Behat3SymfonyExtension/Bridge/YoanmBehat3SymfonyKernelBridge.php</file>
-                <!-- Will be covered by functional tests -->
-                <file>src/Yoanm/Behat3SymfonyExtension/ServiceContainer/Configuration/KernelConfiguration.php</file>
-                <file>src/Yoanm/Behat3SymfonyExtension/ServiceContainer/Configuration/LoggerConfiguration.php</file>
             </exclude>
         </whitelist>
     </filter>
