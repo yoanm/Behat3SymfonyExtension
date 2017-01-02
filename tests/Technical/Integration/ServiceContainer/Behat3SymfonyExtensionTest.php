@@ -38,7 +38,7 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
     public function testDebugModeWithoutBehatUtilsExtensionLoaded()
     {
         $this->setExpectedException(\Exception::class, 'BehatUtilsExtension must be loaded before this one !');
-        $this->loadContainer($this->getDefaultConfig() + ['debug_mode' => true], false, false);
+        $this->loadContainer($this->getConfig(['debug_mode' => true]), false, false);
     }
 
     /**
@@ -113,7 +113,7 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
 
     public function testKernelAutoRebootLoadedIfEnabled()
     {
-        $container = $this->loadContainer($this->getDefaultConfig() + ['kernel' => ['reload' => true]]);
+        $container = $this->loadContainer($this->getConfig(['kernel' => ['reload' => true]]));
 
         // Assert RebootKernelSubscriber is present (means 'kernel_auto_reboot.xml' has been loaded)
         $this->assertContains('behat3_symfony_extension.subscriber.reboot_kernel', $container->getServiceIds());
@@ -121,15 +121,18 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
 
     public function testKernelDebugLoadedIfEnabled()
     {
-        $container = $this->loadContainer($this->getDefaultConfig() + ['kernel' => ['debug' => true]]);
+        $container = $this->loadContainer($this->getConfig(['kernel' => ['debug' => true]]));
 
         $this->assertKernelDebugLoaded($container);
     }
 
+    /**
+     * @group test
+     */
     public function testConfigIsNormalized()
     {
         $container = $this->loadContainer(
-            $this->getDefaultConfig() + ['debug_mode' => true, 'kernel' => ['debug' => false]]
+            $this->getConfig(['debug_mode' => true, 'kernel' => ['debug' => false]])
         );
 
         // If debug mode => kernel debug mode is automatically overriden
@@ -145,7 +148,7 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
     protected function loadContainer(array $config = null, $process = false, $fakeBehatUtilsExtension = true)
     {
         if (null == $config) {
-            $config = $this->getDefaultConfig();
+            $config = $this->getConfig();
         }
 
         if (true === $fakeBehatUtilsExtension) {
@@ -176,21 +179,25 @@ class Behat3SymfonyExtensionTest extends AbstractContainerBuilderTestCase
     }
 
     /**
+     * @param array $customConfig
+     *
      * @return array
      */
-    protected function getDefaultConfig()
+    protected function getConfig(array $customConfig = [])
     {
-        $config = [
-            'debug_mode' => false,
-            'kernel' => [
-                'bootstrap' => 'app/autoload.php',
-                'path' => 'app/AppKernel.php',
-                'class' => 'AppKernel',
-                'env' => 'test',
-                'debug' => true,
-                'reboot' => true,
+        return array_replace_recursive(
+            [
+                'debug_mode' => false,
+                'kernel' => [
+                    'bootstrap' => 'app/autoload.php',
+                    'path' => 'app/AppKernel.php',
+                    'class' => 'AppKernel',
+                    'env' => 'test',
+                    'debug' => true,
+                    'reboot' => true,
+                ]
             ],
-        ];
-        return $config;
+            $customConfig
+        );
     }
 }
