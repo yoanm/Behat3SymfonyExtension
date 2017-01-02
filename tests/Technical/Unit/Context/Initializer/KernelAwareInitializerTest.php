@@ -35,7 +35,7 @@ class KernelAwareInitializerTest extends \PHPUnit_Framework_TestCase
         $context = $this->prophesize(KernelAwareInterface::class);
 
         $context->setKernel($this->kernel->reveal())
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $this->initializer->initializeContext($context->reveal());
     }

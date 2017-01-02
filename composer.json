@@ -1,10 +1,10 @@
 {
   "name": "yoanm/behat3-symfony-extension",
-  "description": "Symfony extension for Behat V3",
-  "keywords": ["Behat3", "Symfony"],
   "type": "library",
   "license": "MIT",
   "version": "0.2.0",
+  "description": "Symfony extension for Behat V3",
+  "keywords": ["Behat3", "Symfony"],
   "authors": [
     {
       "name": "yoanm",
@@ -13,7 +13,7 @@
     }
   ],
   "provide": {
-    "yoanm/behat-utils-extension": "~0.1"
+    "yoanm/behat-utils-extension": "~0.4"
   },
   "suggest": {
     "behat/mink-extension": "~2.0",
@@ -33,13 +33,13 @@
       "Technical\\Unit\\Yoanm\\Behat3SymfonyExtension\\": "tests/Technical/Unit",
       "Functional\\Yoanm\\Behat3SymfonyExtension\\": "tests/Functional",
       "Functional\\Yoanm\\Behat3SymfonyExtension\\BehatContext\\": "app_test/features/bootstrap",
-      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/Yoanm/BehatUtilsExtension"
+      "Functional\\Yoanm\\BehatUtilsExtension\\": "vendor/yoanm/behat-utils-extension/tests/Functional/"
     }
   },
   "require": {
     "php": ">=5.5",
     "behat/behat": "~3.0",
-    "yoanm/behat-utils-extension": "~0.1",
+    "yoanm/behat-utils-extension": "~0.4",
     "symfony/framework-bundle": "~2.7|~3.0"
   },
   "require-dev": {
@@ -47,7 +47,8 @@
     "squizlabs/php_codesniffer": "2.*",
     "behat/mink-extension": "~2.0",
     "behat/mink-browserkit-driver":  "~1.0",
-    "matthiasnoback/symfony-dependency-injection-test": "1.*"
+    "matthiasnoback/symfony-dependency-injection-test": "1.*",
+    "doctrine/annotations": "^1.2"
   },
   "scripts": {
     "build": [
@@ -58,6 +59,7 @@
       "@composer install --prefer-dist --ansi --no-suggest --no-interaction"
     ],
     "ci": [
+      "rm composer.lock 2>/dev/null | true",
       "@build-ci",
       "@cs",
       "@test"
@@ -74,13 +76,14 @@
       "./vendor/bin/phpunit --testsuite technical"
     ],
     "behat": [
-      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress"
+      "cd app_test && ../vendor/bin/behat --no-snippets --strict --colors --format progress",
+      "rm -f app_test/app/YoanmBehat3SymfonyKernelBridge?????????????.php"
     ],
     "cs": [
       "./vendor/bin/phpcs"
     ],
     "coverage": [
-      "./vendor/bin/phpunit --coverage-html coverage"
+      "./vendor/bin/phpunit --coverage-html build/coverage"
     ],
     "coverage-clover": [
       "./vendor/bin/phpunit --coverage-clover build/coverage/clover.xml"

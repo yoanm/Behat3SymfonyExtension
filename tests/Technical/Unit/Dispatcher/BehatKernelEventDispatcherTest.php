@@ -71,7 +71,7 @@ class BehatKernelEventDispatcherTest extends \PHPUnit_Framework_TestCase
                     Argument::which('getKernel', $kernel->reveal())
                 )
             )
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         return $kernel;
     }

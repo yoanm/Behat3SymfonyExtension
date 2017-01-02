@@ -3,7 +3,7 @@ namespace Technical\Unit\Yoanm\Behat3SymfonyExtension\Bridge;
 
 use Yoanm\Behat3SymfonyExtension\Dispatcher\BehatKernelEventDispatcher;
 
-class MockYoanmBehat3SymfonyKernelBridge
+class YoanmBehat3SymfonyKernelBridgeMock
 {
     /** @var bool */
     public static $throwExceptionOnStartup = false;

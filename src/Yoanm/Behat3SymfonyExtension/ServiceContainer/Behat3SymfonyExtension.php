@@ -10,7 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Yoanm\Behat3SymfonyExtension\ServiceContainer\Configuration\KernelConfiguration;
-use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyFactory;
+use Yoanm\Behat3SymfonyExtension\ServiceContainer\DriverFactory\Behat3SymfonyDriverFactory;
 
 class Behat3SymfonyExtension implements Extension
 {
@@ -25,45 +25,28 @@ class Behat3SymfonyExtension implements Extension
         return 'behat3_symfony';
     }
 
-    // @codeCoverageIgnoreStart
     /**
-     * (Not possible to cover this because ExtensionManager is a final class)
-     *
      * {@inheritdoc}
      */
     public function initialize(ExtensionManager $extensionManager)
     {
         $minExtension = $extensionManager->getExtension('mink');
         if ($minExtension instanceof MinkExtension) {
-            $minExtension->registerDriverFactory(new Behat3SymfonyFactory());
+            $minExtension->registerDriverFactory(new Behat3SymfonyDriverFactory());
         }
     }
-    // @codeCoverageIgnoreEnd
 
     /**
      * {@inheritdoc}
      */
     public function configure(ArrayNodeDefinition $builder)
     {
-        $castToBool = function ($value) {
-            $filtered = filter_var(
-                $value,
-                FILTER_VALIDATE_BOOLEAN,
-                FILTER_NULL_ON_FAILURE
-            );
-
-            return (null === $filtered) ? (bool) $value : $filtered;
-        };
         $builder->children()
             ->booleanNode('debug_mode')
-                ->beforeNormalization()
-                ->always()
-                    ->then($castToBool)
-                ->end()
                 ->defaultFalse()
             ->end()
             ->end();
-        $builder->append((new KernelConfiguration())->getConfigTreeBuilder());
+        $builder->append((new KernelConfiguration())->getConfigNode());
     }
 
     /**

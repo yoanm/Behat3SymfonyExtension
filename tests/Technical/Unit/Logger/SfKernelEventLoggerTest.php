@@ -60,19 +60,19 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
 
         $event->getRequest()
             ->willReturn($request->reveal())
-            ->shouldBeCalledTimes(2);
+            ->shouldBeCalled();
 
         $event->getRequestType()
             ->willReturn($requestType)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $request->getMethod()
             ->willReturn($method)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $request->getUri()
             ->willReturn($uri)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $this->logger->debug(
             '[REQUEST]',
@@ -99,14 +99,14 @@ class SfKernelEventLoggerTest extends \PHPUnit_Framework_TestCase
 
         $event->getException()
             ->willReturn($exception)
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $this->logger
             ->error(
                 '[EXCEPTION_THROWN]',
                 ['message' => $message]
             )
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalled();
 
         $this->sfKernelLogger->onKernelException($event->reveal());
     }
